@@ -20,6 +20,10 @@ public final class Time {
 	 * A timestamps for the item when it was operated by database.
 	 */
 	private long mEditTime;
+	/**
+	 * {@code true=on}, {@code false=off}.
+	 */
+	private boolean mOnOff;
 
 	/**
 	 * Instantiates a new Time.
@@ -32,12 +36,15 @@ public final class Time {
 	 * 		the minute
 	 * @param editTime
 	 * 		A timestamps for the item when it was operated by database.
+	 * @param onOff
+	 * 		Status of this {@link timekeeping.de.timekeeping.data.Time}, {@code true=on}, {@code false=off}.
 	 */
-	public Time(long id, int hour, int minute, long editTime) {
+	public Time(long id, int hour, int minute, long editTime, boolean onOff) {
 		mId = id;
 		mHour = hour;
 		mMinute = minute;
 		mEditTime = editTime;
+		mOnOff = onOff;
 	}
 
 	/**
@@ -109,9 +116,33 @@ public final class Time {
 	/**
 	 * Sets edit time. A timestamps for the item when it was operated by database.
 	 *
-	 * @param editTime the edit time
+	 * @param editTime
+	 * 		the edit time
 	 */
 	public void setEditTime(long editTime) {
 		mEditTime = editTime;
+	}
+
+	/**
+	 * Is on or off.
+	 * <p/>
+	 * {@code true=on}, {@code false=off}.
+	 *
+	 * @return the boolean
+	 */
+	public boolean isOnOff() {
+		return mOnOff;
+	}
+
+	/**
+	 * Sets on or off.
+	 * <p/>
+	 * {@code true=on}, {@code false=off}.
+	 *
+	 * @param onOff
+	 * 		the on off
+	 */
+	public void setOnOff(boolean onOff) {
+		mOnOff = onOff;
 	}
 }

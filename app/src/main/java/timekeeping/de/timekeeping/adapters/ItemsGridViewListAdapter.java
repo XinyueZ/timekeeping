@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gc.materialdesign.views.ButtonRectangle;
+
 import timekeeping.de.timekeeping.R;
 import timekeeping.de.timekeeping.data.Time;
 import timekeeping.de.timekeeping.utils.Utils;
@@ -74,6 +76,7 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 		}
 		Time time = mItemList.get(position);
 		vh.mTimeTv.setText(Utils.formatTime(time));
+		vh.mOnOffBtn.setText(time.isOnOff() ? R.string.status_on : R.string.status_off);
 		super.getView(position, convertView, parent);
 		return convertView;
 	}
@@ -225,11 +228,13 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 	protected static class ViewHolder extends ViewHolderActionMode {
 		CardView mGv;
 		TextView mTimeTv;
+		ButtonRectangle mOnOffBtn;
 
 		protected ViewHolder(View convertView) {
 			super(convertView);
 			mGv = (CardView) convertView.findViewById(R.id.cv);
 			mTimeTv = (TextView) convertView.findViewById(R.id.time_tv);
+			mOnOffBtn = (ButtonRectangle) convertView.findViewById(R.id.on_off_btn);
 		}
 	}
 }

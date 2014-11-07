@@ -57,12 +57,12 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 
 		mAdp = new ItemsGridViewListAdapter();
 		List<Time> times = new ArrayList<Time>();
-		times.add(new Time(1, 2, 3, System.currentTimeMillis()));
-		times.add(new Time(2, 21, 13, System.currentTimeMillis()));
-		times.add(new Time(3, 22, 23, System.currentTimeMillis()));
-		times.add(new Time(4, 23, 43, System.currentTimeMillis()));
-		times.add(new Time(5, 11, 43, System.currentTimeMillis()));
-		times.add(new Time(5, 20, 23, System.currentTimeMillis()));
+		times.add(new Time(1, 2, 3, System.currentTimeMillis(), false));
+		times.add(new Time(2, 21, 13, System.currentTimeMillis(), true));
+		times.add(new Time(3, 22, 23, System.currentTimeMillis(), false));
+		times.add(new Time(4, 23, 43, System.currentTimeMillis(), true));
+		times.add(new Time(5, 11, 43, System.currentTimeMillis(), true));
+		times.add(new Time(5, 20, 23, System.currentTimeMillis(), false));
 		mAdp.setItemList(times);
 		mGridView.setAdapter(mAdp);
 	}

@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">Timekeeping</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="application_name">Timekeeping</string>
     <string name="action_settings">Settings</string>
-
+    <string name="status_on">ON</string>
+    <string name="status_off">OFF</string>
 </resources>

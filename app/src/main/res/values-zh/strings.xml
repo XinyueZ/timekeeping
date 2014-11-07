@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="status_on">打开</string>
+    <string name="status_off">关闭</string>
+</resources>
