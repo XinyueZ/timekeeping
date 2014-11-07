@@ -1,0 +1,6 @@
+[submodule "submodules/ChoppingBootstrap"]
+	path = submodules/ChoppingBootstrap
+	url = https://github.com/XinyueZ/Chopping.git
+[submodule "submodules/MaterialDesignLibrary"]
+	path = submodules/MaterialDesignLibrary
+	url = https://github.com/navasmdc/MaterialDesignLibrary
