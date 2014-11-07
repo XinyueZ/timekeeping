@@ -16,6 +16,10 @@ public final class Time {
 	 * Minute.
 	 */
 	private int mMinute;
+	/**
+	 * A timestamps for the item when it was operated by database.
+	 */
+	private long mEditTime;
 
 	/**
 	 * Instantiates a new Time.
@@ -26,11 +30,14 @@ public final class Time {
 	 * 		the hour
 	 * @param minute
 	 * 		the minute
+	 * @param editTime
+	 * 		A timestamps for the item when it was operated by database.
 	 */
-	public Time(long id, int hour, int minute) {
+	public Time(long id, int hour, int minute, long editTime) {
 		mId = id;
 		mHour = hour;
 		mMinute = minute;
+		mEditTime = editTime;
 	}
 
 	/**
@@ -63,9 +70,48 @@ public final class Time {
 	/**
 	 * Sets id.
 	 *
-	 * @param id the id
+	 * @param id
+	 * 		the id
 	 */
 	public void setId(long id) {
 		mId = id;
+	}
+
+	/**
+	 * Sets hour.
+	 *
+	 * @param hour
+	 * 		the hour
+	 */
+	public void setHour(int hour) {
+		mHour = hour;
+	}
+
+	/**
+	 * Sets minute.
+	 *
+	 * @param minute
+	 * 		the minute
+	 */
+	public void setMinute(int minute) {
+		mMinute = minute;
+	}
+
+	/**
+	 * Gets edit time. A timestamps for the item when it was operated by database.
+	 *
+	 * @return the edit time
+	 */
+	public long getEditTime() {
+		return mEditTime;
+	}
+
+	/**
+	 * Sets edit time. A timestamps for the item when it was operated by database.
+	 *
+	 * @param editTime the edit time
+	 */
+	public void setEditTime(long editTime) {
+		mEditTime = editTime;
 	}
 }

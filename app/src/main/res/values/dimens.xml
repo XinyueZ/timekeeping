@@ -3,4 +3,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="size_add_new_btn">60dp</dimen>
+    <dimen name="activity_main_horizontal_margin">5dp</dimen>
+    <dimen name="activity_main_vertical_margin">5dp</dimen>
 </resources>
