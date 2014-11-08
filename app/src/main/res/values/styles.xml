@@ -11,7 +11,7 @@
 
     <style name="Time_TextView">
         <item name="font">thin</item>
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColor">@color/common_black</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>

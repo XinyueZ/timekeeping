@@ -4,13 +4,17 @@
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:colorPrimary">@color/primary_material_light</item>
+        <item name="android:colorPrimary">@color/common_indigo</item>
         <item name="android:colorPrimaryDark">@color/primary_material_dark</item>
         <item name="android:windowBackground">@color/background_material_light</item>
+        <item name="android:textColorPrimary">@color/common_white</item>
+        <item name="android:dropDownListViewStyle">@style/OverflowDropDown</item>
         <!-- Support library compatibility -->
         <item name="windowActionBarOverlay">true</item>
-        <item name="colorPrimary">@color/primary_material_light</item>
+        <item name="colorPrimary">@color/common_indigo</item>
         <item name="colorPrimaryDark">@color/material_deep_teal_200</item>
+        <item name="dropDownListViewStyle">@style/OverflowDropDown</item>
+
     </style>
 
 
@@ -30,5 +34,11 @@
     <!--Actionbar title text-->
     <style name="TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="font">regular</item>
+    </style>
+
+    <!--Actionbar overflow menu divider-->
+    <style name="OverflowDropDown" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:background">@color/common_blue</item>
     </style>
 </resources>

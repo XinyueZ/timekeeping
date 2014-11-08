@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="250dp"
     card_view:cardElevation="1dp"
-    card_view:cardMaxElevation="2dp"
+    card_view:cardMaxElevation="0dp"
     card_view:cardCornerRadius="0dp">
 
     <FrameLayout

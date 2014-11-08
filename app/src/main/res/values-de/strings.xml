@@ -6,4 +6,5 @@
     <string name="accept_this_time">Zeitnahme %1$s ?</string>
     <string name="accept">Ja</string>
     <string name="change">Änderen</string>
+    <string name="tray_info">Spreche die Zeit, die Sie möchten.</string>
 </resources>

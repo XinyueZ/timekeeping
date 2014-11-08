@@ -103,7 +103,8 @@ public final class TimekeepingService extends Service implements OnInitListener 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setWhen(System.currentTimeMillis())
 				.setTicker(getString(R.string.application_name)).setAutoCancel(true).setSmallIcon(R.drawable.ic_tray)
 				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher)).setContentIntent(
-						pendingIntent).setContentText(getString(R.string.application_name));
+						pendingIntent).setContentTitle(getString(R.string.application_name)).setContentText(getString(
+						R.string.tray_info));
 		startForeground((int) System.currentTimeMillis(), builder.build());
 		return super.onStartCommand(intent, flags, startId);
 	}

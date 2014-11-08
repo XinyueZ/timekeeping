@@ -9,4 +9,5 @@
     <string name="accept_this_time">Accept this time to speak %1$s ?</string>
     <string name="accept">Yes</string>
     <string name="change">Change</string>
+    <string name="tray_info">Speak time you\'ve wanted.</string>
 </resources>
