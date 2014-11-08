@@ -29,11 +29,11 @@
             android:gravity="center"
             android:layoutAnimation="@anim/grid_wave_scale" />
 
-        <com.gc.materialdesign.views.ButtonFloatSmall
+        <com.gc.materialdesign.views.ButtonFloat
             android:id="@+id/add_new_time_btn"
-            android:layout_width="@dimen/size_add_new_btn"
-            android:layout_height="@dimen/size_add_new_btn"
-            android:background="#1E88E5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/common_blue"
             android:layout_gravity="right|bottom"
             materialdesign:iconFloat="@drawable/ic_action_new" />
 

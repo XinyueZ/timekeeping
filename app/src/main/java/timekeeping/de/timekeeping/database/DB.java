@@ -1,6 +1,9 @@
 package timekeeping.de.timekeeping.database;
 
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -93,6 +96,7 @@ public final class DB {
 			ContentValues v = new ContentValues();
 			v.put(TimeTbl.HOUR, item.getHour());
 			v.put(TimeTbl.MINUTE, item.getMinute());
+			v.put(TimeTbl.ONOFF, item.isOnOff() ? 1 : 0);
 			v.put(TimeTbl.EDIT_TIME, System.currentTimeMillis());
 			rowId = mDB.insert(TimeTbl.TABLE_NAME, null, v);
 			item.setId(rowId);
@@ -122,6 +126,7 @@ public final class DB {
 			ContentValues v = new ContentValues();
 			v.put(TimeTbl.HOUR, item.getHour());
 			v.put(TimeTbl.MINUTE, item.getMinute());
+			v.put(TimeTbl.ONOFF, item.isOnOff() ? 1 : 0);
 			v.put(TimeTbl.EDIT_TIME, System.currentTimeMillis());
 			String[] args = new String[] { item.getId() + "" };
 			rowId = mDB.update(TimeTbl.TABLE_NAME, v, TimeTbl.ID + " = ?", args);
@@ -143,7 +148,7 @@ public final class DB {
 	 * <p/>
 	 * Return -1 if there's error when removed data.
 	 */
-	public synchronized int removeHistory(Time item) {
+	public synchronized int removeTime(Time item) {
 		if (mDB == null || !mDB.isOpen()) {
 			open();
 		}
@@ -165,5 +170,65 @@ public final class DB {
 			close();
 		}
 		return rowsRemain;
+	}
+
+
+	/**
+	 * Sort direction.
+	 */
+	public enum Sort {
+		DESC("DESC"), ASC("ASC");
+		/**
+		 * Text represents this enum.
+		 */
+		private String nm;
+
+		/**
+		 * Init {@link timekeeping.de.timekeeping.database.DB.Sort}.
+		 *
+		 * @param nm
+		 * 		{@code DESC or ASC}.
+		 */
+		Sort(String nm) {
+			this.nm = nm;
+		}
+
+		@Override
+		public String toString() {
+			return nm;
+		}
+	}
+
+	/**
+	 * Returns all {@link timekeeping.de.timekeeping.data.Time}s from DB order by the time of edition.
+	 *
+	 * @param sort
+	 * 		"DESC" or "ASC".
+	 *
+	 * @return All {@link  timekeeping.de.timekeeping.data.Time}s from DB order by the time of edition.
+	 */
+	public synchronized List<Time> getTimes(Sort sort) {
+		if (mDB == null || !mDB.isOpen()) {
+			open();
+		}
+		Cursor c = mDB.query(TimeTbl.TABLE_NAME, null, null, null, null, null,
+				TimeTbl.EDIT_TIME + " " + sort.toString());
+		Time item = null;
+		List<Time> list = new LinkedList<Time>();
+		try {
+
+			while (c.moveToNext()) {
+				item = new Time(c.getLong(c.getColumnIndex(TimeTbl.ID)), c.getInt(c.getColumnIndex(TimeTbl.HOUR)),
+						c.getInt(c.getColumnIndex(TimeTbl.MINUTE)), c.getLong(c.getColumnIndex(TimeTbl.EDIT_TIME)),
+						c.getInt(c.getColumnIndex(TimeTbl.ONOFF)) == 1);
+				list.add(item);
+			}
+		} finally {
+			if (c != null) {
+				c.close();
+			}
+			close();
+			return list;
+		}
 	}
 }

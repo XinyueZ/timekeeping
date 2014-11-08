@@ -77,6 +77,8 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 		Time time = mItemList.get(position);
 		vh.mTimeTv.setText(Utils.formatTime(time));
 		vh.mOnOffBtn.setText(time.isOnOff() ? R.string.status_on : R.string.status_off);
+//		vh.mOnOffBtn.setBackgroundResource(time.isOnOff() ? R.color.common_blue : R.color.common_red);
+
 		super.getView(position, convertView, parent);
 		return convertView;
 	}

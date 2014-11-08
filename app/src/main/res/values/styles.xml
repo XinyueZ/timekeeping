@@ -4,7 +4,7 @@
     <style name="Status_Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">50dp</item>
-        <item name="android:background">#1E88E5</item>
+        <item name="android:background">@color/common_blue</item>
         <item name="android:layout_gravity">bottom|center_horizontal</item>
         <item name="android:layout_marginBottom">15dp</item>
     </style>
