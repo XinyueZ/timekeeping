@@ -1,4 +1,4 @@
-package com.timekeeping.app;
+package com.timekeeping.app.services;
 
 import java.util.List;
 
@@ -16,6 +16,7 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.NotificationCompat;
 
 import com.timekeeping.R;
+import com.timekeeping.app.activities.MainActivity;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;

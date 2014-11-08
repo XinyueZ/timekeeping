@@ -1,13 +1,17 @@
-package com.timekeeping.app;
+package com.timekeeping.app.activities;
 
 import java.util.List;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,23 +21,29 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.GridView;
 
+import com.chopping.activities.BaseActivity;
+import com.chopping.application.BasicPrefs;
 import com.chopping.utils.DeviceUtils;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnTimeSetListener;
 import com.timekeeping.R;
 import com.timekeeping.adapters.ItemsGridViewListAdapter;
+import com.timekeeping.app.fragments.AppListImpFragment;
+import com.timekeeping.app.services.TimekeepingService;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
 import com.timekeeping.utils.ParallelTask;
+import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.Utils;
 
 /**
- * The {@link com.timekeeping.app.MainActivity}.
+ * The {@link MainActivity}.
  *
  * @author Xinyue Zhao
  */
-public class MainActivity extends ActionBarActivity implements OnInitListener, OnClickListener, OnTimeSetListener, AbsListView.OnScrollListener {
+public class MainActivity extends BaseActivity implements OnInitListener, OnClickListener, OnTimeSetListener,
+		AbsListView.OnScrollListener {
 
 	/**
 	 * Holding all saved {@link  com.timekeeping.data.Time}s.
@@ -43,16 +53,31 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 	 * {@link android.widget.Adapter} for {@link #mGridView}.
 	 */
 	private ItemsGridViewListAdapter mAdp;
+	/**
+	 * Height of {@link android.support.v7.app.ActionBar}.
+	 */
+	private int mActionBarHeight;
 
+	/**
+	 * Navigation drawer.
+	 */
+	private DrawerLayout mDrawerLayout;
 
+	/**
+	 * Use navigation-drawer for this fork.
+	 */
+	private ActionBarDrawerToggle mDrawerToggle;
 	/**
 	 * Helper value to detect scroll direction of {@link android.widget.ListView} {@link #mGridView}.
 	 */
 	private int mLastFirstVisibleItem;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		getActionBarHeight();
+		initDrawer();
 
 		//Let all columns to equal.
 		mGridView = (GridView) findViewById(R.id.schedule_gv);
@@ -70,8 +95,8 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 		mAdp = new ItemsGridViewListAdapter();
 		mGridView.setAdapter(mAdp);
 		refreshGrid();
-
 	}
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -102,8 +127,15 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
 
 
-
 		return true;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (mDrawerToggle != null) {
+			mDrawerToggle.syncState();
+		}
 	}
 
 	@Override
@@ -180,7 +212,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 			@Override
 			protected void onPostExecute(Time time) {
 				super.onPostExecute(time);
-				if(time != null) {
+				if (time != null) {
 					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
 					refreshGrid();
 				}
@@ -201,7 +233,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 				if (!getSupportActionBar().isShowing()) {
 					getSupportActionBar().show();
 				}
-			} else  if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+			} else if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
 				if (getSupportActionBar().isShowing()) {
 					getSupportActionBar().hide();
 				}
@@ -226,4 +258,71 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
 	}
+
+
+	@Override
+	protected void onAppConfigLoaded() {
+		super.onAppConfigLoaded();
+		showAppList();
+	}
+
+	@Override
+	protected void onAppConfigIgnored() {
+		super.onAppConfigIgnored();
+		showAppList();
+	}
+
+	/**
+	 * Show all external applications links.
+	 */
+	private void showAppList() {
+		getSupportFragmentManager().beginTransaction().replace(R.id.app_list_fl, AppListImpFragment.newInstance(this))
+				.commit();
+	}
+
+	@Override
+	protected BasicPrefs getPrefs() {
+		return Prefs.getInstance(getApplication());
+	}
+
+
+	/**
+	 * Initialize the navigation drawer.
+	 */
+	private void initDrawer() {
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeButtonEnabled(true);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.application_name,
+					R.string.app_name) {
+				@Override
+				public void onDrawerSlide(View drawerView, float slideOffset) {
+					super.onDrawerSlide(drawerView, slideOffset);
+					if (!getSupportActionBar().isShowing()) {
+						getSupportActionBar().show();
+					}
+				}
+			};
+			mDrawerLayout.setDrawerListener(mDrawerToggle);
+			findViewById(R.id.drawer_header_v).getLayoutParams().height = mActionBarHeight;
+		}
+	}
+
+
+	/**
+	 * Calculate height of actionbar.
+	 */
+	private void getActionBarHeight() {
+		int[] abSzAttr;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			abSzAttr = new int[] { android.R.attr.actionBarSize };
+		} else {
+			abSzAttr = new int[] { R.attr.actionBarSize };
+		}
+		TypedArray a = obtainStyledAttributes(abSzAttr);
+		mActionBarHeight = a.getDimensionPixelSize(0, -1);
+	}
+
 }

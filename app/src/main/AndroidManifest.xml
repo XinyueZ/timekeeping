@@ -20,7 +20,7 @@
         tools:replace="android:label"
         android:name=".app.App">
         <activity
-            android:name=".app.MainActivity"
+            android:name=".app.activities.MainActivity"
             android:label="@string/application_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@ f
 
 
         <service
-            android:name=".app.TimekeepingService"
+            android:name=".app.services.TimekeepingService"
             android:enabled="true"
             android:exported="false" />
     </application>
