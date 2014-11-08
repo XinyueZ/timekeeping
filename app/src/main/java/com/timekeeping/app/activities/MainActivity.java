@@ -152,6 +152,9 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
 		int id = item.getItemId();
 		switch (id) {
 		case R.id.action_about:
