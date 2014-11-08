@@ -7,7 +7,7 @@
     <string name="accept">Ja</string>
     <string name="change">Änderen</string>
     <string name="tray_info">Spreche die Zeit, die Sie möchten.</string>
-
+    <string name="lbl_view_types">Ansicht</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
 
