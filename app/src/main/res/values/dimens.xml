@@ -6,4 +6,6 @@
     <dimen name="activity_main_horizontal_margin">5dp</dimen>
     <dimen name="activity_main_vertical_margin">5dp</dimen>
     <dimen name="padding_eula">16dp</dimen>
+    <dimen name="padding_small_float_btn">10dp</dimen>
+    <dimen name="size_small_float_btn">35dp</dimen>
 </resources>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cv"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="280dp"
     card_view:cardElevation="1dp"
     card_view:cardMaxElevation="0dp"
     card_view:cardCornerRadius="0dp">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -16,9 +17,31 @@
             android:id="@+id/time_tv"
             style="@style/Time_TextView" />
 
-        <com.gc.materialdesign.views.ButtonRectangle
+
+        <com.gc.materialdesign.views.ButtonFloatSmall
+            android:id="@+id/edit_btn"
+            style="@style/Grid_ButtonFloatSmall"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/on_off_btn"
+            materialdesign:animate="true"
+            materialdesign:iconFloat="@drawable/ic_edit" />
+
+
+        <com.gc.materialdesign.views.ButtonFloatSmall
             android:id="@+id/on_off_btn"
-            android:text="status"
-            style="@style/Status_Button" />
-    </FrameLayout>
+            style="@style/Grid_ButtonFloatSmall"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/delete_btn"
+            materialdesign:animate="true"
+            materialdesign:iconFloat="@drawable/ic_on" />
+
+
+        <com.gc.materialdesign.views.ButtonFloatSmall
+            android:id="@+id/delete_btn"
+            style="@style/Grid_ButtonFloatSmall"
+            android:layout_alignParentRight="true"
+            materialdesign:animate="true"
+            materialdesign:iconFloat="@drawable/ic_delete" />
+
+    </RelativeLayout>
 </android.support.v7.widget.CardView>
