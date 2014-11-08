@@ -1,8 +1,7 @@
-package timekeeping.de.timekeeping.app;
+package com.timekeeping.app;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,27 +11,27 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.chopping.utils.DeviceUtils;
+import com.gc.materialdesign.widgets.SnackBar;
+import com.timekeeping.R;
+import com.timekeeping.adapters.ItemsGridViewListAdapter;
+import com.timekeeping.data.Time;
+import com.timekeeping.utils.Utils;
 
-import timekeeping.de.timekeeping.R;
-import timekeeping.de.timekeeping.adapters.ItemsGridViewListAdapter;
-import timekeeping.de.timekeeping.data.Time;
+import org.joda.time.DateTime;
 
 /**
- * The {@link timekeeping.de.timekeeping.app.MainActivity}.
+ * The {@link com.timekeeping.app.MainActivity}.
  *
  * @author Xinyue Zhao
  */
-public class MainActivity extends ActionBarActivity implements OnInitListener {
+public class MainActivity extends ActionBarActivity implements OnInitListener, OnClickListener {
+
 	/**
-	 * Speak text.
-	 */
-	private TextToSpeech mTextToSpeech;
-	/**
-	 * Holding all saved {@link timekeeping.de.timekeeping.data.Time}s.
+	 * Holding all saved {@link  com.timekeeping.data.Time}s.
 	 */
 	private GridView mGridView;
 	/**
@@ -55,6 +54,8 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, 0x1);
 
+		findViewById(R.id.add_new_time_btn).setOnClickListener(this);
+		//Adapter for grid and dummy data.
 		mAdp = new ItemsGridViewListAdapter();
 		List<Time> times = new ArrayList<Time>();
 		times.add(new Time(1, 2, 3, System.currentTimeMillis(), false));
@@ -65,15 +66,14 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		times.add(new Time(5, 20, 23, System.currentTimeMillis(), false));
 		mAdp.setItemList(times);
 		mGridView.setAdapter(mAdp);
+
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0x1) {
 			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-				mTextToSpeech = new TextToSpeech(getApplicationContext(), this);
-				Toast.makeText(this, mTextToSpeech.isLanguageAvailable(Locale.GERMAN) + "", Toast.LENGTH_SHORT).show();
-				mTextToSpeech.setLanguage(Locale.GERMANY);
+				startService(new Intent(getApplication(), TimekeepingService.class));
 			} else {
 				// missing data, install it
 				Intent installIntent = new Intent();
@@ -99,13 +99,44 @@ public class MainActivity extends ActionBarActivity implements OnInitListener {
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**@hide*/
+	/**
+	 * This method is only for test some functions on platform
+	 *
+	 * @param view
+	 * 		no used.
+	 */
 	public void sayHello(View view) {
 		String myText1 = "12:23";
-		mTextToSpeech.speak(myText1, TextToSpeech.QUEUE_FLUSH, null);
+		//		mTextToSpeech.speak(myText1, TextToSpeech.QUEUE_FLUSH, null);
 	}
 
 	@Override
 	public void onInit(int status) {
 	}
 
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.add_new_time_btn:
+			addNewTime();
+			break;
+		}
+	}
+
+	/**
+	 * Added a new entry of {@link com.timekeeping.data.Time} to database.
+	 */
+	private void addNewTime() {
+		DateTime now = DateTime.now();
+		String nowStr = Utils.formatTime(now.getHourOfDay(), now.getMinuteOfHour(), true);
+		new SnackBar(this, getString(R.string.accept_this_time, nowStr), getString(R.string.accept),
+				new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						com.chopping.utils.Utils.showShortToast(getApplication(), "add new");
+					}
+				}).show();
+	}
 }

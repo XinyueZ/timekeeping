@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <timekeeping.de.timekeeping.widget.FontTextView
+        <com.timekeeping.widget.FontTextView
             android:id="@+id/time_tv"
             style="@style/Time_TextView" />
 

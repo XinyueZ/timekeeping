@@ -1,4 +1,4 @@
-package timekeeping.de.timekeeping.adapters;
+package com.timekeeping.adapters;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonRectangle;
+import com.timekeeping.R;
+import com.timekeeping.data.Time;
+import com.timekeeping.utils.Utils;
 
-import timekeeping.de.timekeeping.R;
-import timekeeping.de.timekeeping.data.Time;
-import timekeeping.de.timekeeping.utils.Utils;
 
 /**
  * The adapter for main {@link android.widget.ListView}.
@@ -77,7 +77,7 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 		Time time = mItemList.get(position);
 		vh.mTimeTv.setText(Utils.formatTime(time));
 		vh.mOnOffBtn.setText(time.isOnOff() ? R.string.status_on : R.string.status_off);
-//		vh.mOnOffBtn.setBackgroundResource(time.isOnOff() ? R.color.common_blue : R.color.common_red);
+		//		vh.mOnOffBtn.setBackgroundResource(time.isOnOff() ? R.color.common_blue : R.color.common_red);
 
 		super.getView(position, convertView, parent);
 		return convertView;
@@ -223,7 +223,7 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 	}
 
 	/**
-	 * ViewHolder patter for {@link timekeeping.de.timekeeping.R.layout#item_grid}.
+	 * ViewHolder patter for {@link com.timekeeping.R.layout#item_grid}.
 	 *
 	 * @author Xinyue Zhao
 	 */

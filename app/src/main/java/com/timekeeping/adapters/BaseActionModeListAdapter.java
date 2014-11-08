@@ -1,4 +1,4 @@
-package timekeeping.de.timekeeping.adapters;
+package com.timekeeping.adapters;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import com.chopping.application.LL;
+import com.timekeeping.R;
 
-import timekeeping.de.timekeeping.R;
 
 /**
  * An {@link android.widget.BaseAdapter} for {@link android.widget.ListView}s that can start {@link

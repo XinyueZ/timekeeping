@@ -1,4 +1,4 @@
-package timekeeping.de.timekeeping.database;
+package com.timekeeping.database;
 
 
 import java.util.LinkedList;
@@ -9,7 +9,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import timekeeping.de.timekeeping.data.Time;
+import com.timekeeping.data.Time;
+
 
 /**
  * Defines methods that operate on database.
@@ -32,7 +33,7 @@ public final class DB {
 	/**
 	 * Helper class that create, delete, update tables of database.
 	 */
-	private DatabaseHelper mDatabaseHelper;
+	private  DatabaseHelper mDatabaseHelper;
 	/**
 	 * The database object.
 	 */
@@ -67,7 +68,7 @@ public final class DB {
 	 * Open database.
 	 */
 	public synchronized void open() {
-		mDatabaseHelper = new DatabaseHelper(mContext);
+		mDatabaseHelper = new  DatabaseHelper(mContext);
 		mDB = mDatabaseHelper.getWritableDatabase();
 	}
 
@@ -82,7 +83,7 @@ public final class DB {
 	 * Add a time.
 	 *
 	 * @param item
-	 * 		{@link timekeeping.de.timekeeping.data.Time} to insert.
+	 * 		{@link  com.timekeeping.data.Time} to insert.
 	 *
 	 * @return {@code true} if insert is success.
 	 */
@@ -112,7 +113,7 @@ public final class DB {
 	 * Update a time on time-table.
 	 *
 	 * @param item
-	 * 		{@link timekeeping.de.timekeeping.data.Time} to update.
+	 * 		{@link com.timekeeping.data.Time} to update.
 	 *
 	 * @return {@code true} if insert is success.
 	 */
@@ -184,7 +185,7 @@ public final class DB {
 		private String nm;
 
 		/**
-		 * Init {@link timekeeping.de.timekeeping.database.DB.Sort}.
+		 * Init {@link com.timekeeping.database.DB.Sort}.
 		 *
 		 * @param nm
 		 * 		{@code DESC or ASC}.
@@ -200,12 +201,12 @@ public final class DB {
 	}
 
 	/**
-	 * Returns all {@link timekeeping.de.timekeeping.data.Time}s from DB order by the time of edition.
+	 * Returns all {@link com.timekeeping.data.Time}s from DB order by the time of edition.
 	 *
 	 * @param sort
 	 * 		"DESC" or "ASC".
 	 *
-	 * @return All {@link  timekeeping.de.timekeeping.data.Time}s from DB order by the time of edition.
+	 * @return All {@link  }s from DB order by the time of edition.
 	 */
 	public synchronized List<Time> getTimes(Sort sort) {
 		if (mDB == null || !mDB.isOpen()) {

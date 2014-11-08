@@ -3,4 +3,7 @@
 
     <string name="status_on">打开</string>
     <string name="status_off">关闭</string>
+    <string name="accept_this_time">接受当前时间 %1$s ？</string>
+    <string name="accept">是</string>
+    <string name="change">改变</string>
 </resources>

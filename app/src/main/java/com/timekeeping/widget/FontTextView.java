@@ -1,4 +1,4 @@
-package timekeeping.de.timekeeping.widget;
+package com.timekeeping.widget;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -8,7 +8,8 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import timekeeping.de.timekeeping.R;
+import com.timekeeping.R;
+
 
 /**
  * A TextView that allows a custom font to be defined in a layout. The font must

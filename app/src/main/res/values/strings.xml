@@ -6,4 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="status_on">ON</string>
     <string name="status_off">OFF</string>
+    <string name="accept_this_time">Accept this time to speak %1$s ?</string>
+    <string name="accept">Yes</string>
+    <string name="change">Change</string>
 </resources>

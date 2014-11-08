@@ -3,4 +3,7 @@
 
     <string name="status_on">Ein</string>
     <string name="status_off">Aus</string>
+    <string name="accept_this_time">Zeitnahme %1$s ?</string>
+    <string name="accept">Ja</string>
+    <string name="change">Änderen</string>
 </resources>

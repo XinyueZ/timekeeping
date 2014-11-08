@@ -1,4 +1,4 @@
-package timekeeping.de.timekeeping.data;
+package com.timekeeping.data;
 
 /**
  * Structure of a time instance.
@@ -37,7 +37,7 @@ public final class Time {
 	 * @param editTime
 	 * 		A timestamps for the item when it was operated by database.
 	 * @param onOff
-	 * 		Status of this {@link timekeeping.de.timekeeping.data.Time}, {@code true=on}, {@code false=off}.
+	 * 		Status of this {@link Time}, {@code true=on}, {@code false=off}.
 	 */
 	public Time(long id, int hour, int minute, long editTime, boolean onOff) {
 		mId = id;

@@ -1,4 +1,4 @@
-package timekeeping.de.timekeeping.database;
+package com.timekeeping.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
