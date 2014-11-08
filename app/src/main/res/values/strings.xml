@@ -3,11 +3,14 @@
 
     <string name="app_name">Timekeeping</string>
     <string name="application_name">Timekeeping</string>
-    <string name="action_settings">Settings</string>
     <string name="status_on">ON</string>
     <string name="status_off">OFF</string>
     <string name="accept_this_time">Accept this time to speak %1$s ?</string>
     <string name="accept">Yes</string>
     <string name="change">Change</string>
     <string name="tray_info">Speak time you\'ve wanted.</string>
+
+    <string name="lbl_share">Share</string>
+    <string name="lbl_share_app_title">A good App you should have: %s</string>
+    <string name="lbl_share_app_content">%s \n\nDownload: market://details?id=com.timekeeping </string>
 </resources>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -25,6 +26,7 @@ import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
 import com.timekeeping.utils.ParallelTask;
+import com.timekeeping.utils.Utils;
 
 /**
  * The {@link com.timekeeping.app.MainActivity}.
@@ -89,14 +91,26 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_main, menu);
+
+		MenuItem menuShare = menu.findItem(R.id.action_share_app);
+		//Getting the actionprovider associated with the menu item whose id is share.
+		android.support.v7.widget.ShareActionProvider provider =
+				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
+		//Setting a share intent.
+		String subject = getString(R.string.lbl_share_app_title, getString(R.string.application_name));
+		String text = getString(R.string.lbl_share_app_content, getString(R.string.tray_info));
+		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
+
+
+
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		switch (id) {
+
 		}
 		return super.onOptionsItemSelected(item);
 	}
