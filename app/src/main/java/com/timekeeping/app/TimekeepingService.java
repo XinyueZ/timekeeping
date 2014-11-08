@@ -1,6 +1,5 @@
 package com.timekeeping.app;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import android.app.Service;
@@ -28,6 +27,10 @@ import org.joda.time.DateTime;
  */
 public final class TimekeepingService extends Service implements OnInitListener {
 	/**
+	 * Action when database has been updated.
+	 */
+	public static final String ACTION_UPDATE = "com.timekeeping.app.action.UPDATE";
+	/**
 	 * Retrieved data list from {@link com.timekeeping.database.DB}.
 	 */
 	private List<Time> mTimes;
@@ -39,18 +42,32 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	/**
 	 * We wanna every-minute-event, this is the {@link android.content.IntentFilter} for every minute from system.
 	 */
-	private IntentFilter mIntentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+	private IntentFilter mTickFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
 	/**
 	 * We wanna event to handle for every minute, this is the {@link android.content.BroadcastReceiver} for every minute
 	 * from system.
 	 */
-	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver mTickReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context cxt, Intent intent) {
 			speak();
 		}
 	};
 
+
+	/**
+	 * Database has been updated, we need refresh list of {@link com.timekeeping.data.Time}s.
+	 */
+	private IntentFilter mUpdateFilter = new IntentFilter(ACTION_UPDATE);
+	/**
+	 * Event for update the list of {@link com.timekeeping.data.Time}s.
+	 */
+	private BroadcastReceiver mUpdateReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context cxt, Intent intent) {
+			loadData();
+		}
+	};
 
 	/**
 	 * Init this service.
@@ -69,38 +86,36 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		registerReceiver(mReceiver, mIntentFilter);
+		registerReceiver(mTickReceiver, mTickFilter);
+		registerReceiver(mUpdateReceiver, mUpdateFilter);
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		//noinspection unchecked
-		new ParallelTask<WeakReference<TimekeepingService>, Void, Void>() {
+		loadData();
+		return super.onStartCommand(intent, flags, startId);
+	}
+
+	/**
+	 * Load all {@link com.timekeeping.data.Time}s from database.
+	 */
+	private void loadData() {
+		new ParallelTask<Void, Void, Void>() {
 			@Override
-			protected Void doInBackground(WeakReference<TimekeepingService>... params) {
-				WeakReference<TimekeepingService> cxtRef = params[0];
-				if (cxtRef.get() != null) {
-					TimekeepingService service = cxtRef.get();
-					mTimes = DB.getInstance(service.getApplication()).getTimes(Sort.DESC);
-					mTextToSpeech = new TextToSpeech(service.getApplication(), TimekeepingService.this);
-				}
+			protected Void doInBackground(Void... params) {
+				mTimes = DB.getInstance(getApplication()).getTimes(Sort.DESC);
+				mTextToSpeech = new TextToSpeech(getApplication(), TimekeepingService.this);
 				return null;
 			}
-
-			@Override
-			protected void onPostExecute(Void aVoid) {
-				super.onPostExecute(aVoid);
-			}
-		}.executeParallel(new WeakReference<TimekeepingService>(this));
-
-
-		return super.onStartCommand(intent, flags, startId);
+		}.executeParallel();
 	}
 
 	@Override
 	public void onDestroy() {
-		unregisterReceiver(mReceiver);
+		unregisterReceiver(mTickReceiver);
+		unregisterReceiver(mUpdateReceiver);
 		mTextToSpeech = null;
+		mTimes = null;
 		super.onDestroy();
 	}
 

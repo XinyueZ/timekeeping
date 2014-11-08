@@ -1,6 +1,5 @@
 package com.timekeeping.app;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -8,27 +7,31 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v7.app.ActionBarActivity;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.GridView;
 
 import com.chopping.utils.DeviceUtils;
-import com.gc.materialdesign.widgets.SnackBar;
+import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
+import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnTimeSetListener;
 import com.timekeeping.R;
 import com.timekeeping.adapters.ItemsGridViewListAdapter;
 import com.timekeeping.data.Time;
-import com.timekeeping.utils.Utils;
-
-import org.joda.time.DateTime;
+import com.timekeeping.database.DB;
+import com.timekeeping.database.DB.Sort;
+import com.timekeeping.utils.ParallelTask;
 
 /**
  * The {@link com.timekeeping.app.MainActivity}.
  *
  * @author Xinyue Zhao
  */
-public class MainActivity extends ActionBarActivity implements OnInitListener, OnClickListener {
+public class MainActivity extends ActionBarActivity implements OnInitListener, OnClickListener, OnTimeSetListener, AbsListView.OnScrollListener {
 
 	/**
 	 * Holding all saved {@link  com.timekeeping.data.Time}s.
@@ -39,6 +42,11 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 	 */
 	private ItemsGridViewListAdapter mAdp;
 
+
+	/**
+	 * Helper value to detect scroll direction of {@link android.widget.ListView} {@link #mGridView}.
+	 */
+	private int mLastFirstVisibleItem;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,6 +56,7 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 		mGridView = (GridView) findViewById(R.id.schedule_gv);
 		int screenWidth = DeviceUtils.getScreenSize(this, 0).Width;
 		mGridView.setColumnWidth(screenWidth / 3);
+		mGridView.setOnScrollListener(this);
 
 		//Init speech-framework.
 		Intent checkIntent = new Intent();
@@ -57,15 +66,8 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 		findViewById(R.id.add_new_time_btn).setOnClickListener(this);
 		//Adapter for grid and dummy data.
 		mAdp = new ItemsGridViewListAdapter();
-		List<Time> times = new ArrayList<Time>();
-		times.add(new Time(1, 2, 3, System.currentTimeMillis(), false));
-		times.add(new Time(2, 21, 13, System.currentTimeMillis(), true));
-		times.add(new Time(3, 22, 23, System.currentTimeMillis(), false));
-		times.add(new Time(4, 23, 43, System.currentTimeMillis(), true));
-		times.add(new Time(5, 11, 43, System.currentTimeMillis(), true));
-		times.add(new Time(5, 20, 23, System.currentTimeMillis(), false));
-		mAdp.setItemList(times);
 		mGridView.setAdapter(mAdp);
+		refreshGrid();
 
 	}
 
@@ -99,17 +101,6 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**@hide*/
-	/**
-	 * This method is only for test some functions on platform
-	 *
-	 * @param view
-	 * 		no used.
-	 */
-	public void sayHello(View view) {
-		String myText1 = "12:23";
-		//		mTextToSpeech.speak(myText1, TextToSpeech.QUEUE_FLUSH, null);
-	}
 
 	@Override
 	public void onInit(int status) {
@@ -128,15 +119,97 @@ public class MainActivity extends ActionBarActivity implements OnInitListener, O
 	 * Added a new entry of {@link com.timekeeping.data.Time} to database.
 	 */
 	private void addNewTime() {
-		DateTime now = DateTime.now();
-		String nowStr = Utils.formatTime(now.getHourOfDay(), now.getMinuteOfHour(), true);
-		new SnackBar(this, getString(R.string.accept_this_time, nowStr), getString(R.string.accept),
-				new OnClickListener() {
+		RadialTimePickerDialog timePickerDialog = RadialTimePickerDialog.newInstance(this, 0, 0,
+				DateFormat.is24HourFormat(this));
+		timePickerDialog.show(getSupportFragmentManager(), null);
+	}
 
-					@Override
-					public void onClick(View v) {
-						com.chopping.utils.Utils.showShortToast(getApplication(), "add new");
-					}
-				}).show();
+	/**
+	 * Refresh the data on the {@link #mGridView}.
+	 */
+	private void refreshGrid() {
+		new ParallelTask<Void, List<Time>, List<Time>>() {
+			@Override
+			protected List<Time> doInBackground(Void... params) {
+				return DB.getInstance(getApplication()).getTimes(Sort.DESC);
+			}
+
+			@Override
+			protected void onPostExecute(List<Time> times) {
+				super.onPostExecute(times);
+				mAdp.setItemList(times);
+				mAdp.notifyDataSetChanged();
+			}
+		}.executeParallel();
+	}
+
+	/**
+	 * Insert a {@link com.timekeeping.data.Time} to database.
+	 *
+	 * @param hourOfDay
+	 * 		Hour
+	 * @param minute
+	 * 		Minute.
+	 */
+	private void insertNewTime(int hourOfDay, int minute) {
+		new ParallelTask<Time, Time, Time>() {
+			@Override
+			protected Time doInBackground(Time... params) {
+				Time newTime = params[0];
+				if (DB.getInstance(getApplication()).addTime(newTime)) {
+					return newTime;
+				} else {
+					return null;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Time time) {
+				super.onPostExecute(time);
+				if(time != null) {
+					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
+					refreshGrid();
+				}
+			}
+		}.executeParallel(new Time(-1, hourOfDay, minute, -1, true));
+	}
+
+	@Override
+	public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute) {
+		insertNewTime(hourOfDay, minute);
+	}
+
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		if (view.getId() == mGridView.getId()) {
+			if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+				if (!getSupportActionBar().isShowing()) {
+					getSupportActionBar().show();
+				}
+			} else  if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+				if (getSupportActionBar().isShowing()) {
+					getSupportActionBar().hide();
+				}
+			}
+
+			final int currentFirstVisibleItem = view.getFirstVisiblePosition();
+			if (currentFirstVisibleItem > mLastFirstVisibleItem) {
+				if (getSupportActionBar().isShowing()) {
+					getSupportActionBar().hide();
+				}
+			} else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
+				if (!getSupportActionBar().isShowing()) {
+					getSupportActionBar().show();
+				}
+			}
+			mLastFirstVisibleItem = currentFirstVisibleItem;
+		}
+	}
+
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
 	}
 }

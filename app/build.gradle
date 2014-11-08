@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.0"
 
     defaultConfig {
-        applicationId "com.timekeeping.de.com.timekeeping"
+        applicationId "com.timekeeping"
         minSdkVersion 10
         targetSdkVersion 21
         versionCode 1
@@ -27,4 +27,5 @@ dependencies {
     compile project(':volley_cz')
     compile project(':ChoppingBootstrap')
     compile project(':MaterialDesignLibrary')
+    compile project(':android-betterpickers')
 }

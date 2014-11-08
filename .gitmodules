@@ -4,3 +4,6 @@
 [submodule "submodules/MaterialDesignLibrary"]
 	path = submodules/MaterialDesignLibrary
 	url = https://github.com/navasmdc/MaterialDesignLibrary
+[submodule "submodules/android-betterpickers"]
+	path = submodules/android-betterpickers
+	url = git@github.com:XinyueZ/android-betterpickers.git
