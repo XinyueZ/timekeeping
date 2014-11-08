@@ -2,16 +2,23 @@ package com.timekeeping.app.activities;
 
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,8 +33,11 @@ import com.chopping.application.BasicPrefs;
 import com.chopping.utils.DeviceUtils;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnTimeSetListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.timekeeping.R;
 import com.timekeeping.adapters.ItemsGridViewListAdapter;
+import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AppListImpFragment;
 import com.timekeeping.app.services.TimekeepingService;
 import com.timekeeping.data.Time;
@@ -136,13 +146,17 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		if (mDrawerToggle != null) {
 			mDrawerToggle.syncState();
 		}
+
+		checkPlayService();
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		switch (id) {
-
+		case R.id.action_about:
+			showDialogFragment(AboutDialogFragment.newInstance(this), null);
+			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -285,6 +299,11 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		return Prefs.getInstance(getApplication());
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		setErrorHandlerAvailable(true);
+	}
 
 	/**
 	 * Initialize the navigation drawer.
@@ -323,6 +342,65 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		}
 		TypedArray a = obtainStyledAttributes(abSzAttr);
 		mActionBarHeight = a.getDimensionPixelSize(0, -1);
+	}
+
+
+
+	/**
+	 * To confirm whether the validation of the Play-service of Google Inc.
+	 */
+	private void checkPlayService() {
+		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		if (isFound == ConnectionResult.SUCCESS ||
+				isFound == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) {//Ignore update.
+			//The "End User License Agreement" must be confirmed before you use this application.
+			if (!Prefs.getInstance(getApplication()).isEULAOnceConfirmed()) {
+				showDialogFragment(AboutDialogFragment.EulaConfirmationDialog.newInstance(this), null);
+			}
+		} else {
+			new AlertDialog.Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_play_service)
+					.setCancelable(false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					dialog.dismiss();
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse(getString(R.string.play_service_url)));
+					startActivity(intent);
+					finish();
+				}
+			}).create().show();
+		}
+	}
+
+	/**
+	 * Show  {@link android.support.v4.app.DialogFragment}.
+	 *
+	 * @param _dlgFrg
+	 * 		An instance of {@link android.support.v4.app.DialogFragment}.
+	 * @param _tagName
+	 * 		Tag name for dialog, default is "dlg". To grantee that only one instance of {@link
+	 * 		android.support.v4.app.DialogFragment} can been seen.
+	 */
+	protected void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
+		try {
+			if (_dlgFrg != null) {
+				DialogFragment dialogFragment = _dlgFrg;
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				// Ensure that there's only one dialog to the user.
+				Fragment prev = getSupportFragmentManager().findFragmentByTag("dlg");
+				if (prev != null) {
+					ft.remove(prev);
+				}
+				try {
+					if (TextUtils.isEmpty(_tagName)) {
+						dialogFragment.show(ft, "dlg");
+					} else {
+						dialogFragment.show(ft, _tagName);
+					}
+				} catch (Exception _e) {
+				}
+			}
+		} catch (Exception _e) {
+		}
 	}
 
 }

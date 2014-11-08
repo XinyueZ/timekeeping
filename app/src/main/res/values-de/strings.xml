@@ -10,4 +10,13 @@
 
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
+
+
+    <string name="btn_confirm">Sicher</string>
+    <string name="btn_cancel">Abbrechen</string>
+    <string name="btn_close">Schließen</string>
+    <string name="btn_ok">Ok</string>
+
+    <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
+        weiter.</string>
 </resources>
