@@ -18,11 +18,17 @@
         <!--<item name="android:icon">@null</item>-->
         <!--<item name="android:background">@color/bg_actionbar</item>-->
         <item name="android:title">@string/application_name</item>
+        <item name="android:titleTextStyle">@style/TitleTextStyle</item>
         <!-- Support library compatibility -->
         <!--<item name="icon">@null</item>-->
         <!--<item name="background">@color/bg_actionbar</item> -->
         <!--<item name="text">@string/application_name</item>-->
         <item name="title">@string/application_name</item>
+        <item name="titleTextStyle">@style/TitleTextStyle</item>
     </style>
 
+    <!--Actionbar title text-->
+    <style name="TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="font">regular</item>
+    </style>
 </resources>

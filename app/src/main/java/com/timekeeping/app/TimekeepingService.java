@@ -2,16 +2,20 @@ package com.timekeeping.app;
 
 import java.util.List;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.app.NotificationCompat;
 
+import com.timekeeping.R;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
@@ -93,6 +97,14 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		loadData();
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), new Intent(this,
+						MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK),
+				PendingIntent.FLAG_CANCEL_CURRENT);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setWhen(System.currentTimeMillis())
+				.setTicker(getString(R.string.application_name)).setAutoCancel(true).setSmallIcon(R.drawable.ic_tray)
+				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher)).setContentIntent(
+						pendingIntent).setContentText(getString(R.string.application_name));
+		startForeground((int) System.currentTimeMillis(), builder.build());
 		return super.onStartCommand(intent, flags, startId);
 	}
 
