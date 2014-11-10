@@ -412,7 +412,9 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			@Override
 			protected Time doInBackground(Time... params) {
 				Time newTime = params[0];
-				if (DB.getInstance(getApplication()).addTime(newTime)) {
+				DB db = DB.getInstance(getApplication());
+				boolean find = db.findTime(newTime);
+				if (!find && db.addTime(newTime)) {
 					return newTime;
 				} else {
 					return null;
@@ -428,6 +430,11 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 					com.chopping.utils.Utils.showLongToast(getApplication(),
 							time.isOnOff() ? R.string.on_status : R.string.off_status);
+
+					ActionBar actionBar = getSupportActionBar();
+					if(actionBar != null) {
+						actionBar.hide();
+					}
 				}
 			}
 		}.executeParallel(new Time(-1, hourOfDay, minute, -1, true));
@@ -440,8 +447,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		new ParallelTask<Void, Time, Time>() {
 			@Override
 			protected Time doInBackground(Void... params) {
-				Time oldEntry = mAdp.findItem(mEditedTime);
-				if (DB.getInstance(getApplication()).updateTime(mEditedTime)) {
+				DB db = DB.getInstance(getApplication());
+				boolean find = db.findTime(mEditedTime);
+				if (!find && db.updateTime(mEditedTime)) {
+					Time oldEntry = mAdp.findItem(mEditedTime);
 					return oldEntry;
 				} else {
 					return null;

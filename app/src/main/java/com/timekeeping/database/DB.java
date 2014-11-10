@@ -232,4 +232,25 @@ public final class DB {
 			return list;
 		}
 	}
+
+	/**
+	 * To check whether the {@link com.timekeeping.data.Time} with hour and minute is in DB or not. To prevent from storing duplicated item.
+	 * @param item The item to check.
+	 * @return {@link true} if find.
+	 */
+	public boolean findTime(Time item ) {
+		if (mDB == null || !mDB.isOpen()) {
+			open();
+		}
+		boolean success;
+		try {
+			String whereClause = TimeTbl.HOUR + "=? AND " + TimeTbl.MINUTE + "=?";
+			String[] whereArgs = new String[] { String.valueOf(item.getHour()), String.valueOf(item.getMinute()) };
+			Cursor c = mDB.query(TimeTbl.TABLE_NAME, new String[] { TimeTbl.ID }, whereClause, whereArgs, null, null, null);
+			success = c.getCount() >= 1;
+		} finally {
+			close();
+		}
+		return success ;
+	}
 }
