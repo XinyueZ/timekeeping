@@ -143,7 +143,7 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	private void speak() {
 		DateTime now = DateTime.now();
 		for (Time time : mTimes) {
-			if (time.getHour() == now.getHourOfDay() && time.getMinute() == now.getMinuteOfHour()) {
+			if (time.getHour() == now.getHourOfDay() && time.getMinute() == now.getMinuteOfHour() && time.isOnOff()) {
 				//Speak time.
 				if (mTextToSpeech != null) {
 					String timeToSpeak = Utils.formatTime(time.getHour(), time.getMinute(), false);
