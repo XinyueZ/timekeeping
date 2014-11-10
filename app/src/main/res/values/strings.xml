@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Timekeeping</string>
-    <string name="application_name">Timekeeping</string>
-    <string name="accept_this_time">Accept this time to speak %1$s ?</string>
+    <string name="app_name">Voice Clock</string>
+    <string name="application_name">Voice Clock</string>
     <string name="accept">Yes</string>
     <string name="change">Change</string>
     <string name="tray_info">Speak time you\'ve wanted.</string>
     <string name="on_status">Timekeeping at %1$s</string>
     <string name="off_status">Stop timekeeping at %1$s</string>
 
-    <string name="lbl_pause_all_items">Pause all timekeepings?</string>
+    <string name="lbl_pause_all_items">Pause all?</string>
     <string name="lbl_pause_yes">Yes</string>
     <string name="lbl_pause_no">No</string>
     <string name="lbl_delete">Delete Item</string>
     <string name="lbl_share">Share</string>
     <string name="lbl_view_types">View switch</string>
     <string name="lbl_share_app_title">A good App you should have: %s</string>
-    <string name="lbl_share_app_content">%s \n\nDownload: market://details?id=com.timekeeping </string>
+    <string name="lbl_share_app_content">%s \n\nDownload: market://details?id=com.timekeeping</string>
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
+    <string name="lbl_about">About</string>
 
     <string name="play_service_url">market://details?id=com.google.android.gms</string>
 

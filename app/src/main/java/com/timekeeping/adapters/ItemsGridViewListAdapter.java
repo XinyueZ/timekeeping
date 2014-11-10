@@ -84,8 +84,6 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 		vh.mTimeTv.setText(Utils.formatTime(time));
 
 		Resources resources = parent.getContext().getResources();
-		vh.mOnOffBtn.setDrawableIcon(resources.getDrawable(time.isOnOff() ? R.drawable.ic_off : R.drawable.ic_on)		);
-
 		vh.mDeleteBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -98,14 +96,24 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 				EventBus.getDefault().post(new EditTimeEvent(time));
 			}
 		});
+		vh.mOnOffBtn.setDrawableIcon(resources.getDrawable(time.isOnOff() ? R.drawable.ic_off : R.drawable.ic_on)		);
 		vh.mOnOffBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				EventBus.getDefault().post(new SwitchOnOffTimeEvent(time));
 			}
 		});
-
 		vh.mCv.setBackgroundResource(time.isOnOff() ? R.color.common_white : R.color.common_grey);
+
+		if(isActionMode()) {
+			vh.mEditBtn.setVisibility(View.INVISIBLE);
+			vh.mDeleteBtn.setVisibility(View.INVISIBLE);
+			vh.mOnOffBtn.setVisibility(View.INVISIBLE);
+		} else {
+			vh.mEditBtn.setVisibility(View.VISIBLE);
+			vh.mDeleteBtn.setVisibility(View.VISIBLE);
+			vh.mOnOffBtn.setVisibility(View.VISIBLE);
+		}
 		super.getView(position, convertView, parent);
 		return convertView;
 	}

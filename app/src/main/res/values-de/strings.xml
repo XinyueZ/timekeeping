@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="accept_this_time">Zeitnahme %1$s ?</string>
+
     <string name="accept">Ja</string>
     <string name="change">Änderen</string>
     <string name="tray_info">Spreche die Zeit, die Sie möchten.</string>
@@ -11,10 +11,11 @@
     <string name="lbl_view_types">Ansicht ändern</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
-    <string name="lbl_pause_all_items">Möchten Sie all pausieren?</string>
+    <string name="lbl_pause_all_items">Möchten Sie alle pausieren?</string>
     <string name="lbl_pause_yes">Ja</string>
     <string name="lbl_pause_no">Nein</string>
     <string name="lbl_delete">Item löschen</string>
+    <string name="lbl_about">Über mich</string>
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_cancel">Abbrechen</string>
