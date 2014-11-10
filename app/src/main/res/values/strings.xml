@@ -7,9 +7,12 @@
     <string name="accept">Yes</string>
     <string name="change">Change</string>
     <string name="tray_info">Speak time you\'ve wanted.</string>
-    <string name="on_status">ON!</string>
-    <string name="off_status">OFF!</string>
+    <string name="on_status">Timekeeping at %1$s</string>
+    <string name="off_status">Stop timekeeping at %1$s</string>
 
+    <string name="lbl_pause_all_items">Pause all timekeepings?</string>
+    <string name="lbl_pause_yes">Yes</string>
+    <string name="lbl_pause_no">No</string>
     <string name="lbl_delete">Delete Item</string>
     <string name="lbl_share">Share</string>
     <string name="lbl_view_types">View switch</string>

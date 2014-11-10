@@ -4,7 +4,9 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
@@ -41,6 +43,7 @@ import com.chopping.utils.DeviceUtils;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnDialogDismissListener;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnTimeSetListener;
+import com.gc.materialdesign.widgets.SnackBar;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.timekeeping.R;
@@ -69,7 +72,7 @@ import de.greenrobot.event.EventBus;
  * @author Xinyue Zhao
  */
 public class MainActivity extends BaseActivity implements OnInitListener, OnClickListener, OnTimeSetListener,
-		OnScrollListener, OnItemLongClickListener, Callback, OnDialogDismissListener {
+		OnScrollListener, OnItemLongClickListener, Callback, OnDialogDismissListener, OnDismissListener {
 	/**
 	 * Main layout for this component.
 	 */
@@ -428,17 +431,14 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
 					refreshGrid();
 
-					com.chopping.utils.Utils.showLongToast(getApplication(),
-							time.isOnOff() ? R.string.on_status : R.string.off_status);
-
-					ActionBar actionBar = getSupportActionBar();
-					if (actionBar != null) {
-						actionBar.hide();
-					}
+					hideActionBar();
+					showStatusMessage(time);
+					mGv.scrollTo(0, 0);
 				}
 			}
 		}.executeParallel(new Time(-1, hourOfDay, minute, -1, true));
 	}
+
 
 	/**
 	 * Edited and update a {@link com.timekeeping.data.Time} to database.
@@ -465,12 +465,13 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 					mAdp.editItem(oldEntry, mEditedTime);
 					mEdit = false;
 
-					com.chopping.utils.Utils.showLongToast(getApplication(),
-							mEditedTime.isOnOff() ? R.string.on_status : R.string.off_status);
+					hideActionBar();
+					showStatusMessage(mEditedTime);
 				}
 			}
 		}.executeParallel();
 	}
+
 
 	/**
 	 * Edited and update a {@link com.timekeeping.data.Time} to database.
@@ -495,11 +496,27 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 					mAdp.editItem(oldEntry, mEditedTime);
 					mEdit = false;
 
-					com.chopping.utils.Utils.showLongToast(getApplication(),
-							mEditedTime.isOnOff() ? R.string.on_status : R.string.off_status);
+					showStatusMessage(mEditedTime);
 				}
 			}
 		}.executeParallel();
+	}
+
+	/**
+	 * Show a message after changing item on database.
+	 *
+	 * @param time
+	 * 		The item that has been changed.
+	 */
+	private void showStatusMessage(Time time) {
+		Resources res = getResources();
+		mAddNewV.setVisibility(View.INVISIBLE);
+		String fmt = getString(time.isOnOff() ? R.string.on_status : R.string.off_status);
+		String message = String.format(fmt, Utils.formatTime(time));
+		SnackBar bar = new SnackBar(this, message, getString(R.string.btn_close), this).setBackgroundSnackBar(
+				res.getColor(R.color.common_indigo)).setColorButton(res.getColor(R.color.common_green));
+		bar.setOnDismissListener(this);
+		bar.show();
 	}
 
 	@Override
@@ -576,7 +593,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		setErrorHandlerAvailable(true);
+		setErrorHandlerAvailable(false);
 	}
 
 	/**
@@ -744,5 +761,24 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	@Override
 	public void onDialogDismiss(DialogInterface dialoginterface) {
 		mAddNewV.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		mAddNewV.setVisibility(View.VISIBLE);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null && !actionBar.isShowing()) {
+			actionBar.show();
+		}
+	}
+
+	/**
+	 * Hide the {@link android.support.v7.app.ActionBar} but shows after   seconds.
+	 */
+	private void hideActionBar() {
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.hide();
+		}
 	}
 }

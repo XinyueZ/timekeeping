@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.content.res.Resources;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -85,7 +84,7 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 		vh.mTimeTv.setText(Utils.formatTime(time));
 
 		Resources resources = parent.getContext().getResources();
-		vh.mOnOffBtn.setDrawableIcon(resources.getDrawable(time.isOnOff() ? R.drawable.ic_off : R.drawable.ic_on));
+		vh.mOnOffBtn.setDrawableIcon(resources.getDrawable(time.isOnOff() ? R.drawable.ic_off : R.drawable.ic_on)		);
 
 		vh.mDeleteBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -105,6 +104,8 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 				EventBus.getDefault().post(new SwitchOnOffTimeEvent(time));
 			}
 		});
+
+		vh.mCv.setBackgroundResource(time.isOnOff() ? R.color.common_white : R.color.common_grey);
 		super.getView(position, convertView, parent);
 		return convertView;
 	}
@@ -255,7 +256,7 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 	 * @author Xinyue Zhao
 	 */
 	protected static class ViewHolder extends ViewHolderActionMode {
-		CardView mGv;
+		View mCv;
 		TextView mTimeTv;
 		ButtonFloat mEditBtn;
 		ButtonFloat mOnOffBtn;
@@ -263,7 +264,7 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 
 		protected ViewHolder(View convertView) {
 			super(convertView);
-			mGv = (CardView) convertView.findViewById(R.id.cv);
+			mCv = (View) convertView.findViewById(R.id.cv_content);
 			mTimeTv = (TextView) convertView.findViewById(R.id.time_tv);
 			mEditBtn = (ButtonFloat) convertView.findViewById(R.id.edit_btn);
 			mOnOffBtn = (ButtonFloat) convertView.findViewById(R.id.on_off_btn);

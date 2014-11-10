@@ -27,6 +27,11 @@ public final class Prefs extends BasicPrefs {
 	 */
 	private static final String KEY_LAST_VIEW = "key_last_view";
 	/**
+	 * Storage. Pause all items or not.
+	 */
+	private static final String KEY_PAUSE_ALL = "key_pause_all";
+
+	/**
 	 * Created a DeviceData storage.
 	 *
 	 * @param context
@@ -89,6 +94,25 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public void setLastAListView(boolean isListView) {
 		setBoolean(KEY_LAST_VIEW, isListView);
+	}
+
+	/**
+	 * Set storage for the status of "pause all" or not.
+	 *
+	 * @param pause
+	 * 		{@code true} if all items are paused.
+	 */
+	public void setPauseAll(boolean pause) {
+		setBoolean(KEY_PAUSE_ALL, pause);
+	}
+
+	/**
+	 * To know whether all items have been paused or not.
+	 *
+	 * @return{@code true} if all items are paused.
+	 */
+	public boolean areAllPaused() {
+		return getBoolean(KEY_PAUSE_ALL, false);
 	}
 
 }

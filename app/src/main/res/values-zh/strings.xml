@@ -5,9 +5,12 @@
     <string name="accept">是</string>
     <string name="change">改变</string>
     <string name="tray_info">报出您需要的时间</string>
-    <string name="on_status">启用</string>
-    <string name="off_status">暂停</string>
+    <string name="on_status">启用%1$s的报时</string>
+    <string name="off_status">暂停%1$s的报时</string>
 
+    <string name="lbl_pause_all_items">暂停您的报时助手？</string>
+    <string name="lbl_pause_yes">是</string>
+    <string name="lbl_pause_no">不</string>
     <string name="lbl_delete">删除选项</string>
     <string name="lbl_share">分享</string>
     <string name="lbl_view_types">改变界面</string>

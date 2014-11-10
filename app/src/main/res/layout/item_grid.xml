@@ -10,6 +10,7 @@
     card_view:cardCornerRadius="0dp">
 
     <RelativeLayout
+        android:id="@+id/cv_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -23,7 +24,7 @@
             style="@style/Grid_ButtonFloatSmall"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/on_off_btn"
-            materialdesign:animate="true"
+            materialdesign:animate="false"
             materialdesign:iconFloat="@drawable/ic_edit" />
 
 
@@ -32,7 +33,7 @@
             style="@style/Grid_ButtonFloatSmall"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/delete_btn"
-            materialdesign:animate="true"
+            materialdesign:animate="false"
             materialdesign:iconFloat="@drawable/ic_on" />
 
 
@@ -40,7 +41,7 @@
             android:id="@+id/delete_btn"
             style="@style/Grid_ButtonFloatSmall"
             android:layout_alignParentRight="true"
-            materialdesign:animate="true"
+            materialdesign:animate="false"
             materialdesign:iconFloat="@drawable/ic_delete" />
 
 

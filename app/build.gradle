@@ -17,6 +17,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
+    lintOptions {
+        htmlReport false
+        abortOnError false
+    }
 }
 
 dependencies {

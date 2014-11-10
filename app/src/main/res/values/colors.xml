@@ -6,4 +6,5 @@
     <color name="common_red">#B71C1C</color>
     <color name="common_white">#FFFFFF</color>
     <color name="common_black">#000000</color>
+    <color name="common_grey">#B0BEC5</color>
 </resources>

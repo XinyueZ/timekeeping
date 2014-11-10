@@ -21,6 +21,7 @@ import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
 import com.timekeeping.utils.ParallelTask;
+import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.Utils;
 
 import org.joda.time.DateTime;
@@ -141,18 +142,21 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	 * Speak now for the right time.
 	 */
 	private void speak() {
-		DateTime now = DateTime.now();
-		for (Time time : mTimes) {
-			if (time.getHour() == now.getHourOfDay() && time.getMinute() == now.getMinuteOfHour() && time.isOnOff()) {
-				//Speak time.
-				if (mTextToSpeech != null) {
-					String timeToSpeak = Utils.formatTime(time.getHour(), time.getMinute(), false);
-					//noinspection unchecked
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-						//No checked, need emulator or device to test here.
-						mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
-					} else {
-						mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null);
+		if(!Prefs.getInstance(getApplication()).areAllPaused()) {
+			DateTime now = DateTime.now();
+			for (Time time : mTimes) {
+				if (time.getHour() == now.getHourOfDay() && time.getMinute() == now.getMinuteOfHour() &&
+						time.isOnOff()) {
+					//Speak time.
+					if (mTextToSpeech != null) {
+						String timeToSpeak = Utils.formatTime(time.getHour(), time.getMinute(), false);
+						//noinspection unchecked
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+							//No checked, need emulator or device to test here.
+							mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+						} else {
+							mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null);
+						}
 					}
 				}
 			}

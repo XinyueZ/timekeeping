@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sc="http://schemas.android.com/apk/res-auto"
+    android:paddingRight="@dimen/drawer_main_horizontal_margin"
+    android:paddingLeft="@dimen/drawer_main_horizontal_margin"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <com.timekeeping.widget.FontTextView
+        style="@style/Drawer_TextView"
+        android:text="@string/lbl_pause_all_items" />
+
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/pause_resume_cb"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:thumb="@drawable/switch_thumb"
+        android:textOff="@string/lbl_pause_no"
+        android:textOn="@string/lbl_pause_yes"
+        android:enabled="true"
+        android:layout_gravity="right"
+        sc:track="@drawable/switch_track_holo_light"
+        sc:switchTextAppearance="@style/TextAppearance.Holo.Light.Widget.Switch"
+        sc:thumbTextPadding="20dip"
+        sc:switchMinWidth="100dip"
+        sc:switchPadding="20dip"
+        android:layout_marginTop="@dimen/drawer_main_horizontal_margin"/>
+
+
+</LinearLayout>
