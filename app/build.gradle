@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+def buildNumber = 'bld' + (System.env.BUILD_NUMBER ?: 'SNAPSHOT')
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.0"
@@ -35,4 +35,13 @@ dependencies {
     compile project(':ChoppingBootstrap')
     compile project(':MaterialDesignLibrary')
     compile project(':android-betterpickers')
+}
+
+// Rename final apks
+android.applicationVariants.all { variant ->
+    def apk = variant.outputFile
+    def newName = apk.name
+            .replace("_Android", "")
+            .replace(".apk", "-${android.defaultConfig.versionName}${buildNumber}.apk")
+    variant.outputFile = new File(apk.parent, newName)
 }
