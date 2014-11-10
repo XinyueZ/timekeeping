@@ -46,6 +46,7 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 import com.gc.materialdesign.widgets.SnackBar;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.timekeeping.R;
 import com.timekeeping.adapters.ItemsGridViewListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
@@ -571,10 +572,14 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				if (!getSupportActionBar().isShowing()) {
 					getSupportActionBar().show();
 				}
+				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
+				animator.translationY(0).setDuration(500);
 			} else if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
 				if (getSupportActionBar().isShowing()) {
 					getSupportActionBar().hide();
 				}
+				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
+				animator.translationY(mActionBarHeight * 4).setDuration(500);
 			}
 
 			final int currentFirstVisibleItem = view.getFirstVisiblePosition();
