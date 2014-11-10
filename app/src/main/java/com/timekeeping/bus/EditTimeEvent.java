@@ -10,7 +10,7 @@ public final class EditTimeEvent extends  TimeEvent {
 	 * @param time
 	 * 		A {@link com.timekeeping.data.Time} object.
 	 */
-	protected EditTimeEvent(Time time) {
+	public EditTimeEvent(Time time) {
 		super(time);
 	}
 }

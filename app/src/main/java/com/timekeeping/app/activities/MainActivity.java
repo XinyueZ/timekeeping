@@ -49,6 +49,7 @@ import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AppListImpFragment;
 import com.timekeeping.app.services.TimekeepingService;
 import com.timekeeping.bus.DeleteTimeEvent;
+import com.timekeeping.bus.EditTimeEvent;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
@@ -107,6 +108,15 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * The {@link android.support.v7.view.ActionMode}.
 	 */
 	private ActionMode mActionMode;
+	/**
+	 * Edit a item  or  not.
+	 */
+	private boolean mEdit;
+	/**
+	 * {@link Time} to edit.
+	 */
+	private Time mEditedTime;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -135,6 +145,20 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				mAdp.removeItem(time);
 			}
 		}.executeParallel(e.getTime());
+	}
+
+	/**
+	 * Handler for {@link EditTimeEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link EditTimeEvent}.
+	 */
+	public void onEvent(EditTimeEvent e) {
+		mEdit = true;
+		mEditedTime = e.getTime();
+		if(mEditedTime != null) {
+			editTime();
+		}
 	}
 
 	//------------------------------------------------
@@ -276,6 +300,18 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	}
 
 	/**
+	 * Edit a entry of {@link com.timekeeping.data.Time} to database.
+	 */
+	private void editTime() {
+		mAddNewV.setVisibility(View.INVISIBLE);
+		RadialTimePickerDialog timePickerDialog = RadialTimePickerDialog.newInstance(this, mEditedTime.getHour(), mEditedTime.getMinute(),
+				DateFormat.is24HourFormat(this));
+		timePickerDialog.setOnDismissListener(this);
+		timePickerDialog.show(getSupportFragmentManager(), null);
+	}
+
+
+	/**
 	 * Refresh the data on the {@link #mGv}.
 	 */
 	private void refreshGrid() {
@@ -325,9 +361,43 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		}.executeParallel(new Time(-1, hourOfDay, minute, -1, true));
 	}
 
+	/**
+	 * Edited and update a {@link com.timekeeping.data.Time} to database.
+	 *
+	 */
+	private void updateTime() {
+		new ParallelTask<Void, Time, Time>() {
+			@Override
+			protected Time doInBackground(Void... params) {
+				Time oldEntry = mAdp.findItem(mEditedTime);
+				if (DB.getInstance(getApplication()).updateTime(mEditedTime)) {
+					return oldEntry;
+				} else {
+					return null;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Time oldEntry) {
+				super.onPostExecute(oldEntry);
+				if (oldEntry != null) {
+					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
+					mAdp.editItem(oldEntry, mEditedTime);
+					mEdit = false;
+				}
+			}
+		}.executeParallel();
+	}
+
 	@Override
 	public void onTimeSet(RadialTimePickerDialog dialog, int hourOfDay, int minute) {
-		insertNewTime(hourOfDay, minute);
+		if(mEdit ) {
+			mEditedTime.setHour(hourOfDay);
+			mEditedTime.setMinute(minute);
+			updateTime();
+		} else {
+			insertNewTime(hourOfDay, minute);
+		}
 	}
 
 

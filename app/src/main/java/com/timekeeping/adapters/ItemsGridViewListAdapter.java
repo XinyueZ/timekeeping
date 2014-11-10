@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.gc.materialdesign.views.ButtonFloat;
 import com.timekeeping.R;
 import com.timekeeping.bus.DeleteTimeEvent;
+import com.timekeeping.bus.EditTimeEvent;
 import com.timekeeping.data.Time;
 import com.timekeeping.utils.Utils;
 
@@ -89,6 +90,12 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 			@Override
 			public void onClick(View v) {
 				EventBus.getDefault().post(new DeleteTimeEvent(time));
+			}
+		});
+		vh.mEditBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EventBus.getDefault().post(new EditTimeEvent(time));
 			}
 		});
 		super.getView(position, convertView, parent);
@@ -186,16 +193,17 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 	 * <p/>
 	 * It calls <b>{@link #notifyDataSetChanged()}</b> internally.
 	 *
-	 * @param itemFound
+	 * @param oldEntry
 	 * 		The item that has been cached.
-	 * @param newItem
+	 * @param newEntry
 	 * 		The item to edit.
 	 */
-	public void editItem(Time itemFound, Time newItem) {
-		itemFound.setId(newItem.getId());
-		itemFound.setHour(newItem.getHour());
-		itemFound.setMinute(newItem.getMinute());
-		itemFound.setEditTime(newItem.getEditTime());
+	public void editItem(Time oldEntry, Time newEntry) {
+		oldEntry.setId(newEntry.getId());
+		oldEntry.setHour(newEntry.getHour());
+		oldEntry.setMinute(newEntry.getMinute());
+		oldEntry.setOnOff(newEntry.isOnOff());
+		oldEntry.setEditTime(newEntry.getEditTime());
 		notifyDataSetChanged();
 	}
 
