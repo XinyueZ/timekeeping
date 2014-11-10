@@ -1,7 +1,4 @@
-<resources    >
-
-
-
+<resources>
     <style name="Time_TextView">
         <item name="font">thin</item>
         <item name="android:textColor">@color/common_black</item>

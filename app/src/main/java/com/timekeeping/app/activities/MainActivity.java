@@ -21,6 +21,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -50,7 +52,9 @@ import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
 import com.timekeeping.utils.ParallelTask;
 import com.timekeeping.utils.Prefs;
+import com.timekeeping.utils.TypefaceSpan;
 import com.timekeeping.utils.Utils;
+import com.timekeeping.widget.FontTextView.Fonts;
 
 /**
  * The {@link MainActivity}.
@@ -130,6 +134,17 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		refreshGrid();
 
 		mGv.setOnItemLongClickListener(this);
+
+		//Customized the title of ActionBar with a right font.
+		SpannableString s = new SpannableString(getString(R.string.application_name));
+		s.setSpan(new TypefaceSpan(this, Fonts.FONT_LIGHT), 0, s.length(),
+				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+		// Update the action bar title with the TypefaceSpan instance
+		ActionBar actionBar = getSupportActionBar();
+		if(actionBar != null) {
+			actionBar.setTitle(s);
+		}
 	}
 
 

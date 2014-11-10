@@ -20,24 +20,24 @@ import com.timekeeping.R;
  *      android
  */
 public class FontTextView extends TextView {
-	public FontTextView(Context _context) {
-		super(_context);
+	public FontTextView(Context context) {
+		super(context);
 	}
 
-	public FontTextView(Context _context, AttributeSet _attrs) {
-		super(_context, _attrs);
-		initialize(_context, _attrs);
+	public FontTextView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		initialize(context, attrs);
 	}
 
-	public FontTextView(Context _context, AttributeSet _attrs, int _defStyle) {
-		super(_context, _attrs, _defStyle);
-		initialize(_context, _attrs);
+	public FontTextView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		initialize(context, attrs);
 	}
 
-	private void initialize(Context _context, AttributeSet _attrs) {
+	private void initialize(Context context, AttributeSet attrs) {
 		String font;
 
-		TypedArray a = _context.obtainStyledAttributes(_attrs,
+		TypedArray a = context.obtainStyledAttributes(attrs,
 				R.styleable.FontTextView);
 		int fontIndex = a.getInt(R.styleable.FontTextView_font, -1);
 
@@ -48,6 +48,12 @@ public class FontTextView extends TextView {
 			break;
 		case 1:
 			font = Fonts.FONT_THIN;
+			break;
+		case 2:
+			font = Fonts.FONT_BOLD;
+			break;
+		case 3:
+			font = Fonts.FONT_LIGHT;
 			break;
 		default:
 			font = Fonts.FONT_REGULAR;
@@ -61,9 +67,9 @@ public class FontTextView extends TextView {
 		}
 	}
 
-	public void setFont(String _font) {
+	public void setFont(String font) {
 		if (!isInEditMode()) {
-			Typeface tf = Fonts.getFont(getContext(), _font);
+			Typeface tf = Fonts.getFont(getContext(), font);
 			setTypeface(tf);
 		}
 	}
@@ -79,15 +85,18 @@ public class FontTextView extends TextView {
 
 		public static final String FONT_REGULAR = "Roboto-Regular.ttf";
 		public static final String FONT_THIN = "Roboto-Thin.ttf";
+		public static final String FONT_BOLD = "RobotoCondensed-Bold.ttf";
+		public static final String FONT_LIGHT = "RobotoCondensed-Light.ttf";
 
-		public static Typeface getFont(Context _context, String _assetPath) {
-			Typeface font = sTypefaces.get(_assetPath);
+		public static Typeface getFont(Context context, String assetPath) {
+			Typeface font = sTypefaces.get(assetPath);
 			if (font == null) {
-				font = Typeface.createFromAsset(_context.getAssets(), "fonts/"
-						+ _assetPath);
-				sTypefaces.put(_assetPath, font);
+				font = Typeface.createFromAsset(context.getAssets(), "fonts/"
+						+ assetPath);
+				sTypefaces.put(assetPath, font);
 			}
 			return font;
 		}
+
 	}
 }
