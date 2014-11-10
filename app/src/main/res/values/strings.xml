@@ -42,4 +42,6 @@
     <string name="btn_ok">Ok</string>
     <string name="btn_agree">I agree.</string>
     <string name="btn_not_agree">I do not agree.</string>
+
+    <string name="ad_unit_id">ca-app-pub-9133982521997162/8826039731</string>
 </resources>

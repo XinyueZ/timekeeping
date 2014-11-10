@@ -44,6 +44,9 @@ import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnDialogDismissListener;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnTimeSetListener;
 import com.gc.materialdesign.widgets.SnackBar;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -125,6 +128,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * {@link Time} to edit.
 	 */
 	private Time mEditedTime;
+
+	/** The interstitial ad. */
+	private InterstitialAd mInterstitialAd;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -825,5 +832,33 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		if (actionBar != null) {
 			actionBar.hide();
 		}
+	}
+
+	/**
+	 *  Invoke displayInterstitial() when you are ready to display an interstitial.
+	 */
+	public void displayInterstitial() {
+		if (mInterstitialAd.isLoaded()) {
+			mInterstitialAd.show();
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		// Create an ad.
+		mInterstitialAd = new InterstitialAd(this);
+		mInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id));
+		// Create ad request.
+		AdRequest adRequest = new AdRequest.Builder().build();
+		// Begin loading your interstitial.
+		mInterstitialAd.setAdListener(new AdListener(){
+			@Override
+			public void onAdLoaded() {
+				super.onAdLoaded();
+				displayInterstitial();
+			}
+		});
+		mInterstitialAd.loadAd(adRequest);
 	}
 }
