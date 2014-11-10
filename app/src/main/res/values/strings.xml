@@ -10,6 +10,7 @@
     <string name="change">Change</string>
     <string name="tray_info">Speak time you\'ve wanted.</string>
 
+    <string name="lbl_delete">Delete Item</string>
     <string name="lbl_share">Share</string>
     <string name="lbl_view_types">View</string>
     <string name="lbl_share_app_title">A good App you should have: %s</string>

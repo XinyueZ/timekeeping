@@ -43,5 +43,9 @@
             materialdesign:animate="true"
             materialdesign:iconFloat="@drawable/ic_delete" />
 
+
+        <CheckBox
+            android:id="@id/delete_cb"
+            style="@style/Grid_Item_DeleteBtn" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

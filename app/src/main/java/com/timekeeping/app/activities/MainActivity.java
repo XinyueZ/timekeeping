@@ -14,10 +14,13 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.view.ActionMode;
+import android.support.v7.view.ActionMode.Callback;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.Menu;
@@ -26,6 +29,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 
 import com.chopping.activities.BaseActivity;
@@ -53,14 +58,21 @@ import com.timekeeping.utils.Utils;
  * @author Xinyue Zhao
  */
 public class MainActivity extends BaseActivity implements OnInitListener, OnClickListener, OnTimeSetListener,
-		AbsListView.OnScrollListener {
-
+		OnScrollListener, OnItemLongClickListener, Callback {
+	/**
+	 * Main layout for this component.
+	 */
+	private static final int LAYOUT = R.layout.activity_main;
+	/**
+	 * Menu for the Action-Mode.
+	 */
+	private static final int ACTION_MODE_MENU = R.menu.action_mode;
 	/**
 	 * Holding all saved {@link  com.timekeeping.data.Time}s.
 	 */
-	private GridView mGridView;
+	private GridView mGv;
 	/**
-	 * {@link android.widget.Adapter} for {@link #mGridView}.
+	 * {@link android.widget.Adapter} for {@link #mGv}.
 	 */
 	private ItemsGridViewListAdapter mAdp;
 	/**
@@ -78,35 +90,64 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	private ActionBarDrawerToggle mDrawerToggle;
 	/**
-	 * Helper value to detect scroll direction of {@link android.widget.ListView} {@link #mGridView}.
+	 * Helper value to detect scroll direction of {@link android.widget.ListView} {@link #mGv}.
 	 */
 	private int mLastFirstVisibleItem;
+	/**
+	 * UI that is clicked to add new item.
+	 */
+	private View mAddNewV;
+	/**
+	 * The {@link android.support.v7.view.ActionMode}.
+	 */
+	private ActionMode mActionMode;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(LAYOUT);
 		getActionBarHeight();
 		initDrawer();
 
 		//Let all columns to equal.
-		mGridView = (GridView) findViewById(R.id.schedule_gv);
+		mGv = (GridView) findViewById(R.id.schedule_gv);
 		int screenWidth = DeviceUtils.getScreenSize(this, 0).Width;
-		mGridView.setColumnWidth(screenWidth / 3);
-		mGridView.setOnScrollListener(this);
+		mGv.setColumnWidth(screenWidth / 3);
+		mGv.setOnScrollListener(this);
 
 		//Init speech-framework.
 		Intent checkIntent = new Intent();
 		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 		startActivityForResult(checkIntent, 0x1);
 
-		findViewById(R.id.add_new_time_btn).setOnClickListener(this);
+		//Add new item.
+		mAddNewV = findViewById(R.id.add_new_time_btn);
+		mAddNewV.setOnClickListener(this);
+
 		//Adapter for grid and dummy data.
 		mAdp = new ItemsGridViewListAdapter();
-		mGridView.setAdapter(mAdp);
+		mGv.setAdapter(mAdp);
 		refreshGrid();
+
+		mGv.setOnItemLongClickListener(this);
 	}
 
+
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		if (mAdp != null) {
+			mAdp.actionModeBegin();
+		}
+		//The ActionMode is starting, add-button should not work.
+		mAddNewV.setVisibility(View.GONE);
+		//Start the ActionMode.
+		if (!getSupportActionBar().isShowing()) {
+			getSupportActionBar().show();
+		}
+		startSupportActionMode(this);
+		return false;
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -182,13 +223,14 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * Added a new entry of {@link com.timekeeping.data.Time} to database.
 	 */
 	private void addNewTime() {
+		mAddNewV.setVisibility(View.INVISIBLE);
 		RadialTimePickerDialog timePickerDialog = RadialTimePickerDialog.newInstance(this, 0, 0,
 				DateFormat.is24HourFormat(this));
 		timePickerDialog.show(getSupportFragmentManager(), null);
 	}
 
 	/**
-	 * Refresh the data on the {@link #mGridView}.
+	 * Refresh the data on the {@link #mGv}.
 	 */
 	private void refreshGrid() {
 		new ParallelTask<Void, List<Time>, List<Time>>() {
@@ -232,6 +274,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				if (time != null) {
 					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
 					refreshGrid();
+					mAddNewV.setVisibility(View.VISIBLE);
 				}
 			}
 		}.executeParallel(new Time(-1, hourOfDay, minute, -1, true));
@@ -245,7 +288,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		if (view.getId() == mGridView.getId()) {
+		if (view.getId() == mGv.getId()) {
 			if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
 				if (!getSupportActionBar().isShowing()) {
 					getSupportActionBar().show();
@@ -406,4 +449,66 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		}
 	}
 
+
+	@Override
+	public boolean onCreateActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
+		actionMode.getMenuInflater().inflate(ACTION_MODE_MENU, menu);
+		mActionMode = actionMode;
+		mGv.setOnItemLongClickListener(null);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
+		return false;
+	}
+
+	@Override
+	public boolean onActionItemClicked(final android.support.v7.view.ActionMode actionMode, MenuItem menuItem) {
+		switch (menuItem.getItemId()) {
+		case R.id.action_delete: {
+			new ParallelTask<Void, Void, LongSparseArray<Time>>() {
+				@Override
+				protected LongSparseArray<Time> doInBackground(Void... params) {
+					DB db = DB.getInstance(getApplication());
+					long key;
+					Time item;
+					LongSparseArray<Time> removedItems = mAdp.removeItems();
+					for (int i = 0; removedItems != null && i < removedItems.size(); i++) {
+						key = removedItems.keyAt(i);
+						item = removedItems.get(key);
+						db.removeTime(item);
+					}
+					return removedItems;
+				}
+
+				@Override
+				protected void onPostExecute(LongSparseArray<Time> result) {
+					super.onPostExecute(result);
+					if (result == null) {
+						if (mAdp != null) {
+							mAdp.notifyDataSetChanged();
+						}
+					}
+					mActionMode.finish();
+					mActionMode = null;
+				}
+			}.executeParallel();
+			break;
+		}
+		default:
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void onDestroyActionMode(android.support.v7.view.ActionMode actionMode) {
+		mActionMode = null;
+		if (mAdp != null) {
+			mAdp.actionModeEnd();
+		}
+		mGv.setOnItemLongClickListener(this);
+		mAddNewV.setVisibility(View.VISIBLE);
+	}
 }
