@@ -21,6 +21,12 @@ public final class Prefs extends BasicPrefs {
 	 */
 	private static final String KEY_EULA_SHOWN = "key_eula_shown";
 	/**
+	 * Storage. For last screen view, list or grid view.
+	 * <p/>
+	 * It should be a boolean, when {@code true}, it is a list-view.
+	 */
+	private static final String KEY_LAST_VIEW = "key_last_view";
+	/**
 	 * Created a DeviceData storage.
 	 *
 	 * @param context
@@ -65,4 +71,24 @@ public final class Prefs extends BasicPrefs {
 	public void setEULAOnceConfirmed(boolean isConfirmed) {
 		setBoolean(KEY_EULA_SHOWN, isConfirmed);
 	}
+
+	/**
+	 * Is last view before user closes App a list-view?
+	 *
+	 * @return {@code true} if a list-view, {@link false} is a grid-view.
+	 */
+	public boolean isLastAListView() {
+		return getBoolean(KEY_LAST_VIEW, false);
+	}
+
+	/**
+	 * Set last view before user closes App a list-view?
+	 *
+	 * @param isListView
+	 * 		{@code true} if a list-view, {@link false} is a grid-view.
+	 */
+	public void setLastAListView(boolean isListView) {
+		setBoolean(KEY_LAST_VIEW, isListView);
+	}
+
 }

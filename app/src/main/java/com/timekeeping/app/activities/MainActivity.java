@@ -117,7 +117,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * {@link Time} to edit.
 	 */
 	private Time mEditedTime;
-
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -181,7 +180,11 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		//Let all columns to equal.
 		mGv = (GridView) findViewById(R.id.schedule_gv);
 		int screenWidth = DeviceUtils.getScreenSize(this, 0).Width;
-		mGv.setColumnWidth(screenWidth / 3);
+		if (Prefs.getInstance(getApplication()).isLastAListView()) {
+			mGv.setColumnWidth(screenWidth / 2);
+		} else {
+			mGv.setColumnWidth(screenWidth / 3);
+		}
 		mGv.setOnScrollListener(this);
 
 		//Init speech-framework.
@@ -278,6 +281,20 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		switch (id) {
 		case R.id.action_about:
 			showDialogFragment(AboutDialogFragment.newInstance(this), null);
+			break;
+		case R.id.action_view_types:
+			Prefs prefs = Prefs.getInstance(getApplication());
+			int screenWidth = DeviceUtils.getScreenSize(this, 0).Width;
+			if (!prefs.isLastAListView()) {
+				//Current is grid, then switch to list.
+				mGv.setColumnWidth(screenWidth / 2);
+				item.setIcon(R.drawable.ic_grid);
+				prefs.setLastAListView(true);
+			} else {
+				mGv.setColumnWidth(screenWidth / 3);
+				item.setIcon(R.drawable.ic_list);
+				prefs.setLastAListView(false);
+			}
 			break;
 		}
 		return super.onOptionsItemSelected(item);

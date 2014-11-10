@@ -10,7 +10,7 @@
 
     <string name="lbl_delete">删除选项</string>
     <string name="lbl_share">分享</string>
-    <string name="lbl_view_types">界面</string>
+    <string name="lbl_view_types">改变界面</string>
     <string name="lbl_share_app_title">一个不错的应用: %s</string>
     <string name="lbl_about">关于</string>
 

@@ -1,6 +1,6 @@
 <resources>
     <style name="Time_TextView">
-        <item name="font">thin</item>
+        <item name="font">light</item>
         <item name="android:textColor">@color/common_black</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
