@@ -48,6 +48,7 @@ import com.timekeeping.adapters.ItemsGridViewListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AppListImpFragment;
 import com.timekeeping.app.services.TimekeepingService;
+import com.timekeeping.bus.AfterDeleteEvent;
 import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.bus.EditTimeEvent;
 import com.timekeeping.bus.SwitchOnOffTimeEvent;
@@ -59,6 +60,8 @@ import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.TypefaceSpan;
 import com.timekeeping.utils.Utils;
 import com.timekeeping.widget.FontTextView.Fonts;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * The {@link MainActivity}.
@@ -121,6 +124,18 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	//Subscribes, event-handlers
 	//------------------------------------------------
 
+	/**
+	 * Handler for {@link AfterDeleteEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link AfterDeleteEvent}.
+	 */
+	public void onEvent(AfterDeleteEvent e) {
+		ActionBar actionBar = getSupportActionBar();
+		if(actionBar != null) {
+			actionBar.show();
+		}
+	}
 
 	/**
 	 * Handler for {@link DeleteTimeEvent}.
@@ -143,6 +158,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			protected void onPostExecute(Time time) {
 				super.onPostExecute(time);
 				mAdp.removeItem(time);
+				EventBus.getDefault().post(new AfterDeleteEvent());
 			}
 		}.executeParallel(e.getTime());
 	}
@@ -258,7 +274,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		String text = getString(R.string.lbl_share_app_content, getString(R.string.tray_info));
 		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
 
-
+		MenuItem viewMi = menu.findItem(R.id.action_view_types);
+		viewMi.setIcon(Prefs.getInstance(getApplication()).isLastAListView() ? R.drawable.ic_grid : R.drawable.ic_list );
 		return true;
 	}
 
@@ -663,6 +680,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 					}
 					mActionMode.finish();
 					mActionMode = null;
+
+					EventBus.getDefault().post(new AfterDeleteEvent());
 				}
 			}.executeParallel();
 			break;
