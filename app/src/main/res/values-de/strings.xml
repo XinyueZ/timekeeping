@@ -8,6 +8,7 @@
     <string name="on_status">Zeitnahme um %1$s</string>
     <string name="off_status">Stoppe Zeitnahme um %1$s</string>
 
+    <string name="lbl_prefix">Es ist %1$s jetzt</string>
     <string name="lbl_view_types">Ansicht ändern</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>

@@ -15,6 +15,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.NotificationCompat;
 
+import com.chopping.application.LL;
 import com.timekeeping.R;
 import com.timekeeping.app.activities.MainActivity;
 import com.timekeeping.data.Time;
@@ -146,9 +147,14 @@ public final class TimekeepingService extends Service implements OnInitListener 
 			for (Time time : mTimes) {
 				if (time.getHour() == now.getHourOfDay() && time.getMinute() == now.getMinuteOfHour() &&
 						time.isOnOff() ) {
+					LL.d("time: " + time.getHour());
+					LL.d("minute: " + time.getMinute());
+					LL.d("now: " + now.getHourOfDay());
+					LL.d("now: " + now.getMinuteOfHour());
 					//Speak time.
 					if (mTextToSpeech != null) {
-						String timeToSpeak = Utils.formatTime(time.getHour(), time.getMinute(), true);
+						String timeToSpeak = getString(R.string.lbl_prefix, Utils.formatTime(time.getHour(), time.getMinute(), true));
+						LL.d("timeToSpeak: " + timeToSpeak);
 						//noinspection unchecked
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 							//No checked, need emulator or device to test here.

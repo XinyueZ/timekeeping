@@ -7,6 +7,7 @@
     <string name="on_status">启用%1$s的报时</string>
     <string name="off_status">暂停%1$s的报时</string>
 
+    <string name="lbl_prefix">现在是 %1$s</string>
     <string name="lbl_pause_all_items">暂停您的报时助手？</string>
     <string name="lbl_pause_yes">是</string>
     <string name="lbl_pause_no">不</string>

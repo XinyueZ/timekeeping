@@ -9,6 +9,7 @@
     <string name="on_status">Timekeeping at %1$s</string>
     <string name="off_status">Stop timekeeping at %1$s</string>
 
+    <string name="lbl_prefix">It\'s %1$s now</string>
     <string name="lbl_pause_all_items">Pause all?</string>
     <string name="lbl_pause_yes">Yes</string>
     <string name="lbl_pause_no">No</string>
