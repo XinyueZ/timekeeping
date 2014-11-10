@@ -3,12 +3,12 @@
 
     <string name="app_name">Timekeeping</string>
     <string name="application_name">Timekeeping</string>
-    <string name="status_on">ON</string>
-    <string name="status_off">OFF</string>
     <string name="accept_this_time">Accept this time to speak %1$s ?</string>
     <string name="accept">Yes</string>
     <string name="change">Change</string>
     <string name="tray_info">Speak time you\'ve wanted.</string>
+    <string name="on_status">ON!</string>
+    <string name="off_status">OFF!</string>
 
     <string name="lbl_delete">Delete Item</string>
     <string name="lbl_share">Share</string>

@@ -10,7 +10,7 @@ public final class SwitchOnOffTimeEvent extends  TimeEvent{
 	 * @param time
 	 * 		A {@link com.timekeeping.data.Time} object.
 	 */
-	protected SwitchOnOffTimeEvent(Time time) {
+	public SwitchOnOffTimeEvent(Time time) {
 		super(time);
 	}
 }

@@ -91,12 +91,10 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 		registerReceiver(mTickReceiver, mTickFilter);
 		registerReceiver(mUpdateReceiver, mUpdateFilter);
-	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
 		loadData();
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), new Intent(this,
 						MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK),
@@ -107,7 +105,7 @@ public final class TimekeepingService extends Service implements OnInitListener 
 						pendingIntent).setContentTitle(getString(R.string.application_name)).setContentText(getString(
 						R.string.tray_info));
 		startForeground((int) System.currentTimeMillis(), builder.build());
-		return super.onStartCommand(intent, flags, startId);
+
 	}
 
 	/**

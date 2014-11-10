@@ -15,6 +15,7 @@ import com.gc.materialdesign.views.ButtonFloat;
 import com.timekeeping.R;
 import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.bus.EditTimeEvent;
+import com.timekeeping.bus.SwitchOnOffTimeEvent;
 import com.timekeeping.data.Time;
 import com.timekeeping.utils.Utils;
 
@@ -96,6 +97,12 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 			@Override
 			public void onClick(View v) {
 				EventBus.getDefault().post(new EditTimeEvent(time));
+			}
+		});
+		vh.mOnOffBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EventBus.getDefault().post(new SwitchOnOffTimeEvent(time));
 			}
 		});
 		super.getView(position, convertView, parent);
