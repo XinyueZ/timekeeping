@@ -7,13 +7,17 @@ import android.content.res.Resources;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonFloat;
 import com.timekeeping.R;
+import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.data.Time;
 import com.timekeeping.utils.Utils;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -75,12 +79,18 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 		} else {
 			vh = (ViewHolder) convertView.getTag();
 		}
-		Time time = mItemList.get(position);
+		final Time time = mItemList.get(position);
 		vh.mTimeTv.setText(Utils.formatTime(time));
 
 		Resources resources = parent.getContext().getResources();
 		vh.mOnOffBtn.setDrawableIcon(resources.getDrawable(time.isOnOff() ? R.drawable.ic_off : R.drawable.ic_on));
 
+		vh.mDeleteBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EventBus.getDefault().post(new DeleteTimeEvent(time));
+			}
+		});
 		super.getView(position, convertView, parent);
 		return convertView;
 	}
@@ -196,15 +206,15 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 	 * <p/>
 	 * It calls <b>{@link #notifyDataSetChanged()}</b> internally.
 	 *
-	 * @param itemFound
+	 * @param item
 	 * 		The item that has been cached.
-	 * @param itemFound
+	 * @param item
 	 * 		The item to remove.
 	 */
-	public void removeItem(Time itemFound) {
-		if (itemFound != null) {
+	public void removeItem(Time item) {
+		if (item != null) {
 			for (Time i : mItemList) {
-				if (i.getId() == itemFound.getId()) {
+				if (i.getId() == item.getId()) {
 					mItemList.remove(i);
 					notifyDataSetChanged();
 					break;

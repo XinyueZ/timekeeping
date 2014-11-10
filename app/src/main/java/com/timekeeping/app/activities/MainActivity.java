@@ -39,6 +39,7 @@ import com.chopping.activities.BaseActivity;
 import com.chopping.application.BasicPrefs;
 import com.chopping.utils.DeviceUtils;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
+import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnDialogDismissListener;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnTimeSetListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -47,6 +48,7 @@ import com.timekeeping.adapters.ItemsGridViewListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AppListImpFragment;
 import com.timekeeping.app.services.TimekeepingService;
+import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
@@ -62,7 +64,7 @@ import com.timekeeping.widget.FontTextView.Fonts;
  * @author Xinyue Zhao
  */
 public class MainActivity extends BaseActivity implements OnInitListener, OnClickListener, OnTimeSetListener,
-		OnScrollListener, OnItemLongClickListener, Callback {
+		OnScrollListener, OnItemLongClickListener, Callback, OnDialogDismissListener {
 	/**
 	 * Main layout for this component.
 	 */
@@ -105,7 +107,37 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * The {@link android.support.v7.view.ActionMode}.
 	 */
 	private ActionMode mActionMode;
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
 
+
+	/**
+	 * Handler for {@link DeleteTimeEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link DeleteTimeEvent}.
+	 */
+	public void onEvent(DeleteTimeEvent e) {
+		new ParallelTask<Time, Time, Time>() {
+			@Override
+			protected Time doInBackground(Time... params) {
+				Time time = params[0];
+				if (time != null) {
+					DB.getInstance(getApplication()).removeTime(time);
+				}
+				return time;
+			}
+
+			@Override
+			protected void onPostExecute(Time time) {
+				super.onPostExecute(time);
+				mAdp.removeItem(time);
+			}
+		}.executeParallel(e.getTime());
+	}
+
+	//------------------------------------------------
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -137,16 +169,14 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 		//Customized the title of ActionBar with a right font.
 		SpannableString s = new SpannableString(getString(R.string.application_name));
-		s.setSpan(new TypefaceSpan(this, Fonts.FONT_LIGHT), 0, s.length(),
-				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		s.setSpan(new TypefaceSpan(this, Fonts.FONT_LIGHT), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 		// Update the action bar title with the TypefaceSpan instance
 		ActionBar actionBar = getSupportActionBar();
-		if(actionBar != null) {
+		if (actionBar != null) {
 			actionBar.setTitle(s);
 		}
 	}
-
 
 
 	@Override
@@ -241,6 +271,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		mAddNewV.setVisibility(View.INVISIBLE);
 		RadialTimePickerDialog timePickerDialog = RadialTimePickerDialog.newInstance(this, 0, 0,
 				DateFormat.is24HourFormat(this));
+		timePickerDialog.setOnDismissListener(this);
 		timePickerDialog.show(getSupportFragmentManager(), null);
 	}
 
@@ -289,7 +320,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				if (time != null) {
 					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
 					refreshGrid();
-					mAddNewV.setVisibility(View.VISIBLE);
 				}
 			}
 		}.executeParallel(new Time(-1, hourOfDay, minute, -1, true));
@@ -404,7 +434,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		TypedArray a = obtainStyledAttributes(abSzAttr);
 		mActionBarHeight = a.getDimensionPixelSize(0, -1);
 	}
-
 
 
 	/**
@@ -524,6 +553,11 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			mAdp.actionModeEnd();
 		}
 		mGv.setOnItemLongClickListener(this);
+		mAddNewV.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onDialogDismiss(DialogInterface dialoginterface) {
 		mAddNewV.setVisibility(View.VISIBLE);
 	}
 }
