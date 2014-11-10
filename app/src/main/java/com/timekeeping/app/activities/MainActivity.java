@@ -132,7 +132,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	public void onEvent(AfterDeleteEvent e) {
 		ActionBar actionBar = getSupportActionBar();
-		if(actionBar != null) {
+		if (actionBar != null) {
 			actionBar.show();
 		}
 	}
@@ -275,7 +275,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
 
 		MenuItem viewMi = menu.findItem(R.id.action_view_types);
-		viewMi.setIcon(Prefs.getInstance(getApplication()).isLastAListView() ? R.drawable.ic_grid : R.drawable.ic_list );
+		viewMi.setIcon(Prefs.getInstance(getApplication()).isLastAListView() ? R.drawable.ic_grid : R.drawable.ic_list);
 		return true;
 	}
 
@@ -377,7 +377,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		mEdit = true;
 		mEditedTime = timeToSet;
 		mEditedTime.setOnOff(!mEditedTime.isOnOff());
-		updateTime();
+		switchTimeOnOff();
 	}
 
 	/**
@@ -432,7 +432,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 							time.isOnOff() ? R.string.on_status : R.string.off_status);
 
 					ActionBar actionBar = getSupportActionBar();
-					if(actionBar != null) {
+					if (actionBar != null) {
 						actionBar.hide();
 					}
 				}
@@ -450,6 +450,36 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				DB db = DB.getInstance(getApplication());
 				boolean find = db.findTime(mEditedTime);
 				if (!find && db.updateTime(mEditedTime)) {
+					Time oldEntry = mAdp.findItem(mEditedTime);
+					return oldEntry;
+				} else {
+					return null;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Time oldEntry) {
+				super.onPostExecute(oldEntry);
+				if (oldEntry != null) {
+					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
+					mAdp.editItem(oldEntry, mEditedTime);
+					mEdit = false;
+
+					com.chopping.utils.Utils.showLongToast(getApplication(),
+							mEditedTime.isOnOff() ? R.string.on_status : R.string.off_status);
+				}
+			}
+		}.executeParallel();
+	}
+
+	/**
+	 * Edited and update a {@link com.timekeeping.data.Time} to database.
+	 */
+	private void switchTimeOnOff() {
+		new ParallelTask<Void, Time, Time>() {
+			@Override
+			protected Time doInBackground(Void... params) {
+				if (DB.getInstance(getApplication()).updateTime(mEditedTime)) {
 					Time oldEntry = mAdp.findItem(mEditedTime);
 					return oldEntry;
 				} else {
