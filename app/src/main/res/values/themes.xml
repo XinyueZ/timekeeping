@@ -10,12 +10,14 @@
         <item name="android:textColorPrimary">@color/common_white</item>
         <item name="android:dropDownListViewStyle">@style/OverflowDropDown</item>
         <item name="android:colorAccent">@color/common_indigo</item>
+        <item name="android:actionModeBackground">@color/common_mid_grey</item>
         <!-- Support library compatibility -->
         <item name="windowActionBarOverlay">true</item>
         <item name="colorPrimary">@color/common_indigo</item>
         <item name="colorPrimaryDark">@color/material_deep_teal_200</item>
         <item name="dropDownListViewStyle">@style/OverflowDropDown</item>
         <item name="colorAccent">@color/common_indigo</item>
+        <item name="actionModeBackground">@color/common_mid_grey</item>
     </style>
 
 
