@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
@@ -661,7 +662,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				}
 			};
 			mDrawerLayout.setDrawerListener(mDrawerToggle);
-			findViewById(R.id.drawer_header_v).getLayoutParams().height = mActionBarHeight;
+			findViewById(R.id.drawer_header_v).getLayoutParams().height = mActionBarHeight + mActionBarHeight / 2;
 		}
 	}
 
@@ -860,5 +861,15 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			}
 		});
 		mInterstitialAd.loadAd(adRequest);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		//System setting might be changed, ie. language.
+		Resources resources = getResources();
+		if(resources != null) {
+			resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
+		}
 	}
 }

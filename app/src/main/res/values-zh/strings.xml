@@ -3,7 +3,7 @@
     <string name="application_name">报时助手</string>
     <string name="accept">是</string>
     <string name="change">改变</string>
-    <string name="tray_info">报出您需要的时间</string>
+    <string name="tray_info">报出您要的时间</string>
     <string name="on_status">启用%1$s的报时</string>
     <string name="off_status">暂停%1$s的报时</string>
 
@@ -15,6 +15,7 @@
     <string name="lbl_share">分享</string>
     <string name="lbl_view_types">改变界面</string>
     <string name="lbl_share_app_title">一个不错的应用: %s</string>
+    <string name="lbl_share_app_content">%s \n\n下载: market://details?id=com.timekeeping</string>
     <string name="lbl_about">关于</string>
 
     <!-- Shown in the 'About' window of the app. -->
@@ -33,4 +34,5 @@
     <string name="btn_ok">@string/btn_confirm</string>
     <string name="btn_agree">同意</string>
     <string name="btn_not_agree">拒绝</string>
+    <string name="app_name">报时助手</string>
 </resources>

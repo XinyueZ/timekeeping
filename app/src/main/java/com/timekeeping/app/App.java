@@ -33,11 +33,14 @@
 package com.timekeeping.app;
 
 import android.app.Application;
+import android.content.Intent;
+import android.content.res.Configuration;
 
 import com.chopping.net.TaskHelper;
+import com.timekeeping.app.services.TimekeepingService;
 
 /**
- * This applicaiton.
+ * This application.
  *
  * @author Xinyue Zhao
  */
@@ -64,5 +67,11 @@ public final class App extends Application{
 		TaskHelper.init(this);
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
 
+		stopService(new Intent(this, TimekeepingService.class));
+		startService(new Intent(this, TimekeepingService.class));
+	}
 }

@@ -31,7 +31,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/common_black</item>
-        <item name="font">thin</item>
+        <item name="font">regular</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
 
     </style>
