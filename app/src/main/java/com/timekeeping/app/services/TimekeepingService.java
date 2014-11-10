@@ -99,8 +99,8 @@ public final class TimekeepingService extends Service implements OnInitListener 
 						MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK),
 				PendingIntent.FLAG_CANCEL_CURRENT);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setWhen(System.currentTimeMillis())
-				.setTicker(getString(R.string.application_name)).setAutoCancel(true).setSmallIcon(R.drawable.ic_tray)
-				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher)).setContentIntent(
+				.setTicker(getString(R.string.application_name)).setAutoCancel(true).setSmallIcon(R.drawable.ic_notify)
+				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_notify)).setContentIntent(
 						pendingIntent).setContentTitle(getString(R.string.application_name)).setContentText(getString(
 						R.string.tray_info));
 		startForeground((int) System.currentTimeMillis(), builder.build());
@@ -148,7 +148,7 @@ public final class TimekeepingService extends Service implements OnInitListener 
 						time.isOnOff() ) {
 					//Speak time.
 					if (mTextToSpeech != null) {
-						String timeToSpeak = Utils.formatTime(time.getHour(), time.getMinute(), false);
+						String timeToSpeak = Utils.formatTime(time.getHour(), time.getMinute(), true);
 						//noinspection unchecked
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 							//No checked, need emulator or device to test here.
