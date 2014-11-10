@@ -209,17 +209,6 @@ public final class AboutDialogFragment extends DialogFragment {
 	 */
 	public static class EulaConfirmationDialog extends DialogFragment {
 
-		/**
-		 * Initialize an {@link EulaConfirmationDialog}.
-		 *
-		 * @param context
-		 * 		A {@link android.content.Context} object.
-		 *
-		 * @return An instance of {@link  EulaConfirmationDialog}.
-		 */
-		public static DialogFragment newInstance(Context context) {
-			return (DialogFragment) Fragment.instantiate(context, EulaConfirmationDialog.class.getName());
-		}
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {

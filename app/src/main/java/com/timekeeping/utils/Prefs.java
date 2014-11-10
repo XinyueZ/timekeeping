@@ -30,6 +30,10 @@ public final class Prefs extends BasicPrefs {
 	 * Storage. Pause all items or not.
 	 */
 	private static final String KEY_PAUSE_ALL = "key_pause_all";
+	/**
+	 * Storage. Whether some default items have been set or not.
+	 */
+	private static final String KEY_DEFAULT_SET = "key_default_set";
 
 	/**
 	 * Created a DeviceData storage.
@@ -109,10 +113,25 @@ public final class Prefs extends BasicPrefs {
 	/**
 	 * To know whether all items have been paused or not.
 	 *
-	 * @return{@code true} if all items are paused.
+	 * @return {@code true} if all items are paused.
 	 */
 	public boolean areAllPaused() {
 		return getBoolean(KEY_PAUSE_ALL, false);
 	}
 
+	/**
+	 * To set that default items have been set.
+	 * @param hasSetDefault {@code true} if set.
+	 */
+	public void setHasSetDefault( boolean hasSetDefault ) {
+		setBoolean(KEY_DEFAULT_SET, hasSetDefault);
+	}
+
+	/**
+	 * To know whether default items have been set or not.
+	 * @return {@code true} if set.
+	 */
+	public boolean hasSetDefault() {
+		return getBoolean(KEY_DEFAULT_SET, false);
+	}
 }

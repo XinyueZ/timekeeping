@@ -49,6 +49,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.timekeeping.R;
 import com.timekeeping.adapters.ItemsGridViewListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
+import com.timekeeping.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
 import com.timekeeping.app.fragments.AppListImpFragment;
 import com.timekeeping.app.services.TimekeepingService;
 import com.timekeeping.bus.AfterDeleteEvent;
@@ -403,6 +404,38 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	}
 
 	/**
+	 * Insert default items first time.
+	 */
+	public void insertDefaults() {
+		if (Prefs.getInstance(getApplication()).isEULAOnceConfirmed()) {
+			new ParallelTask<Time, Time, Time>() {
+				@Override
+				protected Time doInBackground(Time... params) {
+					DB db = DB.getInstance(getApplication());
+					Time t = new Time(-1, 9, 0, -1, true);
+					db.addTime(t);
+					t = new Time(-1, 12, 0, -1, true);
+					db.addTime(t);
+					t = new Time(-1, 18, 0, -1, true);
+					db.addTime(t);
+					t = new Time(-1, 20, 0, -1, false);
+					db.addTime(t);
+					t = new Time(-1, 22, 30, -1, false);
+					db.addTime(t);
+					return null;
+				}
+
+				@Override
+				protected void onPostExecute(Time time) {
+					super.onPostExecute(time);
+					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
+					refreshGrid();
+				}
+			}.executeParallel();
+		}
+	}
+
+	/**
 	 * Insert a {@link com.timekeeping.data.Time} to database.
 	 *
 	 * @param hourOfDay
@@ -645,7 +678,14 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				isFound == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) {//Ignore update.
 			//The "End User License Agreement" must be confirmed before you use this application.
 			if (!Prefs.getInstance(getApplication()).isEULAOnceConfirmed()) {
-				showDialogFragment(AboutDialogFragment.EulaConfirmationDialog.newInstance(this), null);
+				DialogFragment dlg = new EulaConfirmationDialog() {
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						super.onDismiss(dialog);
+						insertDefaults();
+					}
+				};
+				showDialogFragment(dlg, null);
 			}
 		} else {
 			new AlertDialog.Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_play_service)

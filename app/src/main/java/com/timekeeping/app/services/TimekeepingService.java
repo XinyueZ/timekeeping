@@ -59,8 +59,6 @@ public final class TimekeepingService extends Service implements OnInitListener 
 			speak();
 		}
 	};
-
-
 	/**
 	 * Database has been updated, we need refresh list of {@link com.timekeeping.data.Time}s.
 	 */
@@ -142,11 +140,12 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	 * Speak now for the right time.
 	 */
 	private void speak() {
-		if(!Prefs.getInstance(getApplication()).areAllPaused()) {
+		Prefs prefs = Prefs.getInstance(getApplication());
+		if(!prefs.areAllPaused() && prefs.isEULAOnceConfirmed() ) {
 			DateTime now = DateTime.now();
 			for (Time time : mTimes) {
 				if (time.getHour() == now.getHourOfDay() && time.getMinute() == now.getMinuteOfHour() &&
-						time.isOnOff()) {
+						time.isOnOff() ) {
 					//Speak time.
 					if (mTextToSpeech != null) {
 						String timeToSpeak = Utils.formatTime(time.getHour(), time.getMinute(), false);
