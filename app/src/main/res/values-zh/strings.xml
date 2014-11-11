@@ -15,7 +15,7 @@
     <string name="lbl_share">分享</string>
     <string name="lbl_view_types">改变界面</string>
     <string name="lbl_share_app_title">一个不错的应用: %s</string>
-    <string name="lbl_share_app_content">%s \n\n下载: market://details?id=com.timekeeping</string>
+    <string name="lbl_share_app_content">%s \n\n下载: http://tinyurl.com/kr4qvdy</string>
     <string name="lbl_about">关于</string>
 
     <!-- Shown in the 'About' window of the app. -->

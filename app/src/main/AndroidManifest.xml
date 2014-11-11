@@ -28,10 +28,10 @@
 
         <activity
             android:name=".app.activities.MainActivity"
-            android:label="@string/application_name" >
+            android:screenOrientation="portrait"
+            android:label="@string/application_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-f
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

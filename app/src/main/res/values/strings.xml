@@ -9,7 +9,7 @@
     <string name="on_status">Timekeeping at %1$s</string>
     <string name="off_status">Stop timekeeping at %1$s</string>
 
-    <string name="lbl_prefix">It\'s %1$s now</string>
+    <string name="lbl_prefix">%1$s</string>
     <string name="lbl_pause_all_items">Pause all?</string>
     <string name="lbl_pause_yes">Yes</string>
     <string name="lbl_pause_no">No</string>
@@ -17,7 +17,7 @@
     <string name="lbl_share">Share</string>
     <string name="lbl_view_types">View switch</string>
     <string name="lbl_share_app_title">A good App you should have: %s</string>
-    <string name="lbl_share_app_content">%s \n\nDownload: market://details?id=com.timekeeping</string>
+    <string name="lbl_share_app_content">%s \n\nDownload: http://tinyurl.com/kr4qvdy</string>
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
     <string name="lbl_about">About</string>
 

@@ -12,7 +12,7 @@
     <string name="lbl_view_types">Ansicht ändern</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
-    <string name="lbl_share_app_content">%s \n\nLaden: market://details?id=com.timekeeping</string>
+    <string name="lbl_share_app_content">%s \n\nLaden: http://tinyurl.com/kr4qvdy</string>
     <string name="lbl_pause_all_items">Möchten Sie alle pausieren?</string>
     <string name="lbl_pause_yes">Ja</string>
     <string name="lbl_pause_no">Nein</string>
