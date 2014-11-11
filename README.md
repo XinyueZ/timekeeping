@@ -1,7 +1,7 @@
 Voice Clock
 ======
 
-Speak the hour and minute for your setting.
+Speak hour and minute for your setting.
 With new Android's design concept.
 Free, simple and easy to use if compare it with other same type applications, without any complex settings etc.
 Of cos, it needs more improvements and new features.
