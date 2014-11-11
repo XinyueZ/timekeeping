@@ -24,6 +24,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -203,6 +204,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
+
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+
 		getActionBarHeight();
 		initDrawer();
 
@@ -662,7 +667,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				}
 			};
 			mDrawerLayout.setDrawerListener(mDrawerToggle);
-			findViewById(R.id.drawer_header_v).getLayoutParams().height = mActionBarHeight + mActionBarHeight / 2;
+			findViewById(R.id.drawer_header_v).getLayoutParams().height =  mActionBarHeight / 2;
 		}
 	}
 

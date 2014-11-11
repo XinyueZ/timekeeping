@@ -3,40 +3,31 @@
 
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:colorPrimary">@color/common_indigo</item>
-        <item name="android:colorPrimaryDark">@color/primary_material_dark</item>
+        <item name="android:colorPrimaryDark">@color/common_blue</item>
         <item name="android:windowBackground">@color/background_material_light</item>
         <item name="android:textColorPrimary">@color/common_white</item>
-        <item name="android:dropDownListViewStyle">@style/OverflowDropDown</item>
         <item name="android:colorAccent">@color/common_indigo</item>
         <item name="android:actionModeBackground">@color/common_mid_grey</item>
         <!-- Support library compatibility -->
         <item name="windowActionBarOverlay">true</item>
         <item name="colorPrimary">@color/common_indigo</item>
-        <item name="colorPrimaryDark">@color/material_deep_teal_200</item>
-        <item name="dropDownListViewStyle">@style/OverflowDropDown</item>
+        <item name="colorPrimaryDark">@color/common_blue</item>
         <item name="colorAccent">@color/common_indigo</item>
         <item name="actionModeBackground">@color/common_mid_grey</item>
     </style>
 
 
-    <style name="AbStyle" parent="@style/Widget.AppCompat.ActionBar">
-        <!--<item name="android:icon">@null</item>-->
-        <!--<item name="android:background">@color/bg_actionbar</item>-->
+    <style name="AbStyle" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">?attr/colorPrimary</item>
         <item name="android:title">@string/application_name</item> 
         <!-- Support library compatibility -->
-        <!--<item name="icon">@null</item>-->
-        <!--<item name="background">@color/bg_actionbar</item> -->
-        <!--<item name="text">@string/application_name</item>-->
+        <item name="background">?attr/colorPrimary</item>
         <item name="title">@string/application_name</item> 
     </style>
 
- 
 
-    <!--Actionbar overflow menu divider-->
-    <style name="OverflowDropDown" parent="@style/Widget.AppCompat.ListView.DropDown">
-        <item name="android:dividerHeight">1dp</item>
-        <item name="android:background">@color/common_blue</item>
-    </style>
 </resources>

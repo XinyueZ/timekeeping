@@ -6,4 +6,4 @@
     android:padding="16dp"
     android:textSize="14sp"
     android:background="@color/common_white"
-    android:textColor="@color/common_black" />
+    android:textColor="@color/common_black"  />

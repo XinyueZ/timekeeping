@@ -6,53 +6,63 @@
     android:layout_height="match_parent"
     tools:context=".app.activities.MainActivity">
 
-
-    <LinearLayout
-        android:id="@id/error_content"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_main_horizontal_margin"
-        android:paddingRight="@dimen/activity_main_vertical_margin" >
+        android:layout_height="match_parent">
 
-
-        <FrameLayout
+        <LinearLayout
+            android:id="@id/error_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_main_horizontal_margin"
+            android:paddingRight="@dimen/activity_main_vertical_margin">
 
 
-            <GridView
-                android:id="@+id/schedule_gv"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:columnWidth="130dp"
-                android:numColumns="auto_fit"
-                android:stretchMode="columnWidth"
-                android:horizontalSpacing="0dp"
-                android:verticalSpacing="0dp"
-                android:gravity="center"
-                android:layoutAnimation="@anim/grid_wave_scale" />
-
-            <com.gc.materialdesign.views.ButtonFloat
-                android:id="@+id/add_new_time_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/common_blue"
-                android:layout_gravity="right|bottom"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                materialdesign:iconFloat="@drawable/ic_action_new" />
-
-        </FrameLayout>
+                android:layout_height="match_parent">
 
 
-    </LinearLayout>
+                <GridView
+                    android:id="@+id/schedule_gv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:columnWidth="130dp"
+                    android:numColumns="auto_fit"
+                    android:stretchMode="columnWidth"
+                    android:horizontalSpacing="0dp"
+                    android:verticalSpacing="0dp"
+                    android:gravity="center"
+                    android:layoutAnimation="@anim/grid_wave_scale" />
 
+                <com.gc.materialdesign.views.ButtonFloat
+                    android:id="@+id/add_new_time_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/common_blue"
+                    android:layout_gravity="right|bottom"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    materialdesign:iconFloat="@drawable/ic_action_new" />
+
+
+            </FrameLayout>
+
+
+        </LinearLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ActionBar_ToolBar" />
+
+    </FrameLayout>
 
     <com.chopping.utils.views.OneDirectionScrollView
         android:layout_width="250dp"
         android:layout_gravity="left"
         android:scrollbars="none"
+        android:layout_marginTop="?attr/actionBarSize"
         android:background="@android:color/white"
         android:layout_height="match_parent">
 
@@ -62,6 +72,7 @@
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content">
+
             <View
                 android:id="@+id/drawer_header_v"
                 android:layout_width="match_parent"
@@ -80,4 +91,5 @@
 
         </LinearLayout>
     </com.chopping.utils.views.OneDirectionScrollView>
+
 </android.support.v4.widget.DrawerLayout>
