@@ -135,6 +135,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	/** The interstitial ad. */
 	private InterstitialAd mInterstitialAd;
+	/**
+	 * The "ActionBar".
+	 */
+	private Toolbar mToolbar;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -229,8 +233,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		}
 		setContentView(LAYOUT);
 
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(mToolbar);
 
 		getActionBarHeight();
 		initDrawer();
@@ -605,29 +609,19 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (view.getId() == mGv.getId()) {
-			if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-				if (!getSupportActionBar().isShowing()) {
-					getSupportActionBar().show();
-				}
-				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
-				animator.translationY(0).setDuration(500);
-			} else if (scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-				if (getSupportActionBar().isShowing()) {
-					getSupportActionBar().hide();
-				}
-				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
-				animator.translationY(mActionBarHeight * 4).setDuration(500);
-			}
-
 			final int currentFirstVisibleItem = view.getFirstVisiblePosition();
-			if (currentFirstVisibleItem > mLastFirstVisibleItem) {
-				if (getSupportActionBar().isShowing()) {
-					getSupportActionBar().hide();
-				}
-			} else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
-				if (!getSupportActionBar().isShowing()) {
-					getSupportActionBar().show();
-				}
+			if (currentFirstVisibleItem > mLastFirstVisibleItem) {//View to up.
+				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
+				animator.translationY(mActionBarHeight * 4).setDuration(800);
+
+				animator = ViewPropertyAnimator.animate(mToolbar);
+				animator.translationY(-mActionBarHeight * 4).setDuration(800);
+			} else if (currentFirstVisibleItem < mLastFirstVisibleItem) { //View to down.
+				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
+				animator.translationY(0).setDuration(800);
+
+				animator = ViewPropertyAnimator.animate(mToolbar);
+				animator.translationY(0).setDuration(800);
 			}
 			mLastFirstVisibleItem = currentFirstVisibleItem;
 		}
@@ -781,6 +775,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		actionMode.getMenuInflater().inflate(ACTION_MODE_MENU, menu);
 		mActionMode = actionMode;
 		mGv.setOnItemLongClickListener(null);
+		mToolbar.setVisibility(View.GONE);
 		return true;
 	}
 
@@ -838,6 +833,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		}
 		mGv.setOnItemLongClickListener(this);
 		mAddNewV.setVisibility(View.VISIBLE);
+
+		mToolbar.setVisibility(View.VISIBLE);
 	}
 
 	@Override
@@ -901,4 +898,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
 		}
 	}
+
+
 }
