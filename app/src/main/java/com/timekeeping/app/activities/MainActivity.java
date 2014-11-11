@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
@@ -33,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -200,9 +202,31 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 
 	//------------------------------------------------
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			if (Build.VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN) {
+			} else {
+				View decorView = getWindow().getDecorView();
+				int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN   ;
+				decorView.setSystemUiVisibility(uiOptions);
+			}
+		}
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (Build.VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN) {
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+					WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		} else {
+			View decorView = getWindow().getDecorView();
+			int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN   ;
+			decorView.setSystemUiVisibility(uiOptions);
+		}
 		setContentView(LAYOUT);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
