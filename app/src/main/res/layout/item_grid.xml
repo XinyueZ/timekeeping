@@ -5,6 +5,7 @@
     android:id="@+id/cv"
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_height"
+    android:foreground="@android:color/transparent"
     card_view:cardElevation="1dp"
     card_view:cardMaxElevation="1dp"
     card_view:cardCornerRadius="0dp">

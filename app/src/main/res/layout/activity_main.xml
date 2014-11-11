@@ -34,6 +34,7 @@
                     android:horizontalSpacing="0dp"
                     android:verticalSpacing="0dp"
                     android:gravity="center"
+                    android:cacheColorHint="@android:color/transparent"
                     android:layoutAnimation="@anim/grid_wave_scale" />
 
                 <com.gc.materialdesign.views.ButtonFloat
