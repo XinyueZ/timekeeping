@@ -47,4 +47,13 @@
         <item name="android:background">?attr/colorPrimary</item>
         <item name="background">?attr/colorPrimary</item>
     </style>
+
+    <style name="AddNew_Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/common_blue</item>
+        <item name="android:layout_gravity">right|bottom</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+    </style>
 </resources>
