@@ -39,6 +39,8 @@
 
                 <com.gc.materialdesign.views.ButtonFloat
                     android:id="@+id/add_new_time_btn"
+                    android:background="@color/common_indigo"
+                    materialdesign:animate="true"
                     materialdesign:iconFloat="@drawable/ic_action_new"
                     style="@style/AddNew_Button" />
 
