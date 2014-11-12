@@ -4,14 +4,14 @@ import java.util.List;
 
 import android.support.v4.util.LongSparseArray;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 
 import com.chopping.application.LL;
+import com.gc.materialdesign.views.CheckBox;
+import com.gc.materialdesign.views.CheckBox.OnCheckListener;
 import com.timekeeping.R;
+import com.timekeeping.data.IActionModeSupport;
 
 
 /**
@@ -20,12 +20,8 @@ import com.timekeeping.R;
  *
  * @author Xinyue Zhao
  */
-public abstract class BaseActionModeListAdapter<T> extends BaseAdapter implements
-		OnClickListener {
-	/**
-	 * Items that will be removed.
-	 */
-	private LongSparseArray<T> mToRmvItems;
+public abstract class BaseActionModeListAdapter<T extends IActionModeSupport> extends BaseAdapter {
+
 	/**
 	 * {@code true} if the the {@link android.widget.ListView} is under the ActionMode;
 	 */
@@ -51,16 +47,20 @@ public abstract class BaseActionModeListAdapter<T> extends BaseAdapter implement
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolderActionMode vh = (ViewHolderActionMode) convertView.getTag();
-		T item = (T) getItem(position);
+		final  T item = (T) getItem(position);
 		if (vh.mDeleteCb != null) {
 			vh.mDeleteCb.setVisibility(mActionMode ? View.VISIBLE : View.GONE);
 			if(!mActionMode) {
 				vh.mDeleteCb.setChecked(false);
 			} else {
-				vh.mDeleteCb.setChecked(mToRmvItems.indexOfKey(getItemKey(item)) > 0);
+				vh.mDeleteCb.setChecked(item.isChecked());
 			}
-			vh.mDeleteCb.setTag(item);
-			vh.mDeleteCb.setOnClickListener(this);
+			vh.mDeleteCb.setOncheckListener(new OnCheckListener() {
+				@Override
+				public void onCheck(boolean check) {
+					item.setCheck(check);
+				}
+			});
 		} else {
 			LL.e("For ActionMode, a checkbox with id: delete_cb must be provided.");
 		}
@@ -71,7 +71,6 @@ public abstract class BaseActionModeListAdapter<T> extends BaseAdapter implement
 	 * The {@link android.widget.ListView} begins in ActionMode.
 	 */
 	public void actionModeBegin() {
-		mToRmvItems = new LongSparseArray<T>();
 		mActionMode = true;
 		notifyDataSetChanged();
 	}
@@ -80,10 +79,6 @@ public abstract class BaseActionModeListAdapter<T> extends BaseAdapter implement
 	 * The {@link android.widget.ListView} ends from ActionMode.
 	 */
 	public void actionModeEnd() {
-		if (mToRmvItems != null) {
-			mToRmvItems.clear();
-		}
-		mToRmvItems = null;
 		mActionMode = false;
 		notifyDataSetChanged();
 	}
@@ -95,31 +90,23 @@ public abstract class BaseActionModeListAdapter<T> extends BaseAdapter implement
 	 * @return Data items that have been removed from cache. Return {@code null} when no removal happened.
 	 */
 	public LongSparseArray<T> removeItems() {
-		if (mToRmvItems != null) {
-			long key = 0;
-			T item;
-			List<T> ds = getDataSource();
-			for (int i = 0; i < mToRmvItems.size(); i++) {
-				key = mToRmvItems.keyAt(i);
-				item = mToRmvItems.get(key);
-				ds.remove(item);
-			}
-			return mToRmvItems;
-		}
-		return null;
-	}
+		LongSparseArray<T> itemsToRmv = new LongSparseArray<T>();
 
-	@Override
-	public void onClick(View v) {
-		CompoundButton buttonView = (CompoundButton) v;
-		if (mToRmvItems != null) {
-			T item = (T) buttonView.getTag();
-			if (buttonView.isChecked()) {
-				mToRmvItems.put(getItemKey(item), item);
-			} else {
-				mToRmvItems.remove(getItemKey(item));
+		List<T> ds = getDataSource();
+		for (T t : ds) {
+			if (t.isChecked()) {
+				itemsToRmv.put(getItemKey(t), t);
 			}
 		}
+
+		long key;
+		T item; ;
+		for (int i = 0; i < itemsToRmv.size(); i++) {
+			key = itemsToRmv.keyAt(i);
+			item = itemsToRmv.get(key);
+			ds.remove(item);
+		}
+		return itemsToRmv;
 	}
 
 
@@ -134,8 +121,7 @@ public abstract class BaseActionModeListAdapter<T> extends BaseAdapter implement
 	/**
 	 * Get the key of item which will be moved.
 	 *
-	 * @param item
-	 * 		Item that should gives key for {@link #mToRmvItems}.
+	 * @param item;
 	 *
 	 * @return The key.
 	 */

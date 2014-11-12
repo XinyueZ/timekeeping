@@ -272,7 +272,7 @@ public final class ItemsGridViewListAdapter extends BaseActionModeListAdapter<Ti
 
 		protected ViewHolder(View convertView) {
 			super(convertView);
-			mCv = (View) convertView.findViewById(R.id.cv_content);
+			mCv =   convertView.findViewById(R.id.cv_content);
 			mTimeTv = (TextView) convertView.findViewById(R.id.time_tv);
 			mEditBtn = (ButtonFloat) convertView.findViewById(R.id.edit_btn);
 			mOnOffBtn = (ButtonFloat) convertView.findViewById(R.id.on_off_btn);

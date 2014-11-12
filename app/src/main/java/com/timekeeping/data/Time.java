@@ -3,7 +3,7 @@ package com.timekeeping.data;
 /**
  * Structure of a time instance.
  */
-public final class Time {
+public final class Time implements IActionModeSupport {
 	/**
 	 * Id of the item, might be retrieved from database.
 	 */
@@ -24,6 +24,10 @@ public final class Time {
 	 * {@code true=on}, {@code false=off}.
 	 */
 	private boolean mOnOff;
+	/**
+	 * Whether item is checked to delete or not.
+	 */
+	private boolean mCheck;
 
 	/**
 	 * Instantiates a new Time.
@@ -144,5 +148,15 @@ public final class Time {
 	 */
 	public void setOnOff(boolean onOff) {
 		mOnOff = onOff;
+	}
+
+	@Override
+	public void setCheck(boolean check) {
+		mCheck = check;
+	}
+
+	@Override
+	public boolean isChecked() {
+		return mCheck;
 	}
 }

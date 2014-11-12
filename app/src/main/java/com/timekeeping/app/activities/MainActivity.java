@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
@@ -34,7 +33,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -71,6 +69,7 @@ import com.timekeeping.utils.ParallelTask;
 import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.TypefaceSpan;
 import com.timekeeping.utils.Utils;
+import com.timekeeping.utils.uihelper.SystemUiHelper;
 import com.timekeeping.widget.FontTextView.Fonts;
 
 import de.greenrobot.event.EventBus;
@@ -207,30 +206,20 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	//------------------------------------------------
 
+	private SystemUiHelper mSystemUiHelper;
+
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		if (hasFocus) {
-			if (Build.VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN) {
-			} else {
-				View decorView = getWindow().getDecorView();
-				int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN   ;
-				decorView.setSystemUiVisibility(uiOptions);
-			}
-		}
+		mSystemUiHelper.hide();
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (Build.VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN) {
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		} else {
-			View decorView = getWindow().getDecorView();
-			int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN   ;
-			decorView.setSystemUiVisibility(uiOptions);
-		}
+		mSystemUiHelper = new SystemUiHelper( 	this, SystemUiHelper.LEVEL_IMMERSIVE,     0);
+
+		mSystemUiHelper.hide();
 		setContentView(LAYOUT);
 
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -611,20 +600,35 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		if (view.getId() == mGv.getId()) {
 			final int currentFirstVisibleItem = view.getFirstVisiblePosition();
 			if (currentFirstVisibleItem > mLastFirstVisibleItem) {//View to up.
-				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
-				animator.translationY(mActionBarHeight * 4).setDuration(800);
-
-				animator = ViewPropertyAnimator.animate(mToolbar);
-				animator.translationY(-mActionBarHeight * 4).setDuration(800);
+				hideMainUI();
 			} else if (currentFirstVisibleItem < mLastFirstVisibleItem) { //View to down.
-				ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
-				animator.translationY(0).setDuration(800);
-
-				animator = ViewPropertyAnimator.animate(mToolbar);
-				animator.translationY(0).setDuration(800);
+				showMainUI();
 			}
 			mLastFirstVisibleItem = currentFirstVisibleItem;
+			mSystemUiHelper.hide();
 		}
+	}
+
+	/**
+	 * Dismiss actionbar, and add-new-btn.
+	 */
+	private void hideMainUI() {
+		ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
+		animator.translationY(mActionBarHeight * 4).setDuration(400);
+
+		animator = ViewPropertyAnimator.animate(mToolbar);
+		animator.translationY(-mActionBarHeight * 4).setDuration(400);
+	}
+
+	/**
+	 * Show actionbar, and add-new-btn.
+	 */
+	private void showMainUI() {
+		ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
+		animator.translationY(0).setDuration(400);
+
+		animator = ViewPropertyAnimator.animate(mToolbar);
+		animator.translationY(0).setDuration(400);
 	}
 
 
@@ -677,11 +681,9 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.application_name,
 					R.string.app_name) {
 				@Override
-				public void onDrawerSlide(View drawerView, float slideOffset) {
-					super.onDrawerSlide(drawerView, slideOffset);
-					if (!getSupportActionBar().isShowing()) {
-						getSupportActionBar().show();
-					}
+				public void onDrawerOpened(View drawerView) {
+					super.onDrawerOpened(drawerView);
+					showMainUI();
 				}
 			};
 			mDrawerLayout.setDrawerListener(mDrawerToggle);
