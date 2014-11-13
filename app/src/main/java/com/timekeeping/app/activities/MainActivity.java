@@ -132,12 +132,22 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	private Time mEditedTime;
 
-	/** The interstitial ad. */
+	/**
+	 * The interstitial ad.
+	 */
 	private InterstitialAd mInterstitialAd;
 	/**
 	 * The "ActionBar".
 	 */
 	private Toolbar mToolbar;
+	/**
+	 * The uiHelper classes from <a href="https://gist.github.com/chrisbanes/73de18faffca571f7292">Chris Banes</a>
+	 */
+	private SystemUiHelper mSystemUiHelper;
+	/**
+	 * Flag that is {@code true} if the statusbar will show first time.
+	 */
+	private boolean mFistTimeHide = true;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -206,7 +216,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	//------------------------------------------------
 
-	private SystemUiHelper mSystemUiHelper;
+
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -214,18 +224,55 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		mSystemUiHelper.hide();
 	}
 
+	/**
+	 * To get height of statusbar.
+	 *
+	 * @return The height of statusbar.
+	 */
+	private int getStatusBarHeight() {
+		int result = 0;
+		int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+		if (resourceId > 0) {
+			result = getResources().getDimensionPixelSize(resourceId);
+		}
+		return result;
+	}
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mSystemUiHelper = new SystemUiHelper( 	this, SystemUiHelper.LEVEL_IMMERSIVE,     0);
+		mSystemUiHelper = new SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE, 0);
 
 		mSystemUiHelper.hide();
 		setContentView(LAYOUT);
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			View decorView = getWindow().getDecorView();
+			decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+				@Override
+				public void onSystemUiVisibilityChange(int visibility) {
+					// Note that system bars will only be "visible" if none of the
+					// LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+					if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+						// The system bars are visible.
+						animToolActionBar(getStatusBarHeight());
+					} else {
+						if (mFistTimeHide) {
+							mFistTimeHide = false;
+							return;
+						}
+						// The system bars are NOT visible.
+						animToolActionBar(0);
+					}
+				}
+			});
+		}
+
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 
-		getActionBarHeight();
+		calcActionBarHeight();
 		initDrawer();
 
 		//Let all columns to equal.
@@ -600,9 +647,9 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		if (view.getId() == mGv.getId()) {
 			final int currentFirstVisibleItem = view.getFirstVisiblePosition();
 			if (currentFirstVisibleItem > mLastFirstVisibleItem) {//View to up.
-				hideMainUI();
+				animHideMainUI();
 			} else if (currentFirstVisibleItem < mLastFirstVisibleItem) { //View to down.
-				showMainUI();
+				animShowMainUI();
 			}
 			mLastFirstVisibleItem = currentFirstVisibleItem;
 			mSystemUiHelper.hide();
@@ -612,23 +659,32 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	/**
 	 * Dismiss actionbar, and add-new-btn.
 	 */
-	private void hideMainUI() {
+	private void animHideMainUI() {
 		ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
 		animator.translationY(mActionBarHeight * 4).setDuration(400);
 
-		animator = ViewPropertyAnimator.animate(mToolbar);
-		animator.translationY(-mActionBarHeight * 4).setDuration(400);
+		animToolActionBar(-mActionBarHeight * 4);
 	}
 
 	/**
 	 * Show actionbar, and add-new-btn.
 	 */
-	private void showMainUI() {
+	private void animShowMainUI() {
 		ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mAddNewV);
 		animator.translationY(0).setDuration(400);
 
-		animator = ViewPropertyAnimator.animate(mToolbar);
-		animator.translationY(0).setDuration(400);
+		animToolActionBar(0);
+	}
+
+	/**
+	 * Animation and moving actionbar(toolbar).
+	 *
+	 * @param value
+	 * 		The property value of animation.
+	 */
+	private void animToolActionBar(float value) {
+		ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mToolbar);
+		animator.translationY(value).setDuration(400);
 	}
 
 
@@ -683,11 +739,11 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				@Override
 				public void onDrawerOpened(View drawerView) {
 					super.onDrawerOpened(drawerView);
-					showMainUI();
+					animShowMainUI();
 				}
 			};
 			mDrawerLayout.setDrawerListener(mDrawerToggle);
-			findViewById(R.id.drawer_header_v).getLayoutParams().height =  mActionBarHeight / 2;
+			findViewById(R.id.drawer_header_v).getLayoutParams().height = mActionBarHeight / 2;
 		}
 	}
 
@@ -695,7 +751,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	/**
 	 * Calculate height of actionbar.
 	 */
-	private void getActionBarHeight() {
+	private void calcActionBarHeight() {
 		int[] abSzAttr;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			abSzAttr = new int[] { android.R.attr.actionBarSize };
@@ -864,7 +920,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	}
 
 	/**
-	 *  Invoke displayInterstitial() when you are ready to display an interstitial.
+	 * Invoke displayInterstitial() when you are ready to display an interstitial.
 	 */
 	public void displayInterstitial() {
 		if (mInterstitialAd.isLoaded()) {
@@ -881,7 +937,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		// Create ad request.
 		AdRequest adRequest = new AdRequest.Builder().build();
 		// Begin loading your interstitial.
-		mInterstitialAd.setAdListener(new AdListener(){
+		mInterstitialAd.setAdListener(new AdListener() {
 			@Override
 			public void onAdLoaded() {
 				super.onAdLoaded();
@@ -896,7 +952,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		super.onConfigurationChanged(newConfig);
 		//System setting might be changed, ie. language.
 		Resources resources = getResources();
-		if(resources != null) {
+		if (resources != null) {
 			resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
 		}
 	}
