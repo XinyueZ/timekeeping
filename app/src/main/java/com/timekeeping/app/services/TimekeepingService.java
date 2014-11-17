@@ -10,12 +10,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.Engine;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
 
-import com.chopping.application.LL;
 import com.timekeeping.R;
 import com.timekeeping.app.activities.MainActivity;
 import com.timekeeping.data.Time;
@@ -37,6 +43,14 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	 * Action when database has been updated.
 	 */
 	public static final String ACTION_UPDATE = "com.timekeeping.app.action.UPDATE";
+	/**
+	 * wakelock
+	 */
+	private static final String          WAKELOCK_KEY                 = "TIMEKEEPING_SERVICE";
+	/**
+	 * Wake-Up device.
+	 */
+	private WakeLock mWakeLock;
 	/**
 	 * Retrieved data list from {@link com.timekeeping.database.DB}.
 	 */
@@ -117,6 +131,35 @@ public final class TimekeepingService extends Service implements OnInitListener 
 			protected Void doInBackground(Void... params) {
 				mTimes = DB.getInstance(getApplication()).getTimes(Sort.DESC);
 				mTextToSpeech = new TextToSpeech(getApplication(), TimekeepingService.this);
+				if (Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+					mTextToSpeech.setOnUtteranceProgressListener( new UtteranceProgressListener() {
+						@Override
+						public void onStart(String utteranceId) {
+
+						}
+
+						@Override
+						public void onDone(String utteranceId) {
+							if(mWakeLock != null && mWakeLock.isHeld()) {
+								mWakeLock.release();
+							}
+						}
+
+						@Override
+						public void onError(String utteranceId) {
+
+						}
+					});
+				} else {
+					mTextToSpeech.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
+						@Override
+						public void onUtteranceCompleted(String utteranceId) {
+							if(mWakeLock != null && mWakeLock.isHeld()) {
+								mWakeLock.release();
+							}
+						}
+					});
+				}
 				return null;
 			}
 		}.executeParallel();
@@ -147,18 +190,19 @@ public final class TimekeepingService extends Service implements OnInitListener 
 			for (Time time : mTimes) {
 				if (time.getHour() == now.getHourOfDay() && time.getMinute() == now.getMinuteOfHour() &&
 						time.isOnOff() ) {
-					LL.d("time: " + time.getHour());
-					LL.d("minute: " + time.getMinute());
-					LL.d("now: " + now.getHourOfDay());
-					LL.d("now: " + now.getMinuteOfHour());
+					if(mWakeLock == null) {
+						PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+						mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_KEY);
+					}
+					mWakeLock.acquire();
 					//Speak time.
 					if (mTextToSpeech != null) {
 						String timeToSpeak = getString(R.string.lbl_prefix, Utils.formatTime(time.getHour(), time.getMinute(), true));
-						LL.d("timeToSpeak: " + timeToSpeak);
 						//noinspection unchecked
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-							//No checked, need emulator or device to test here.
-							mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+							Bundle args = new Bundle();
+							args.putString(Engine.KEY_PARAM_UTTERANCE_ID, "com.svox.pico");
+							mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, args, null);
 						} else {
 							mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null);
 						}
