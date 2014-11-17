@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
@@ -247,7 +248,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		mSystemUiHelper.hide();
 		setContentView(LAYOUT);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && Build.VERSION.SDK_INT  < VERSION_CODES.LOLLIPOP) {
 			View decorView = getWindow().getDecorView();
 			decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
 				@Override
