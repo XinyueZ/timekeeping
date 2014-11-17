@@ -31,8 +31,8 @@
                     android:columnWidth="130dp"
                     android:numColumns="auto_fit"
                     android:stretchMode="columnWidth"
-                    android:horizontalSpacing="0dp"
-                    android:verticalSpacing="0dp"
+                    android:horizontalSpacing="2dp"
+                    android:verticalSpacing="2dp"
                     android:gravity="center"
                     android:cacheColorHint="@android:color/transparent"
                     android:layoutAnimation="@anim/grid_wave_scale" />
