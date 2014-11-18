@@ -38,16 +38,32 @@
             </intent-filter>
         </activity>
 
+        <!--Event handler for changing system packages, for external links-->
+        <receiver
+            android:name="com.chopping.application.InstalledAppReceiver"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+
         <!-- Include the AdActivity configChanges and theme. -->
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
 
+        <!--Service runs back to listen every tick.-->
         <service
             android:name=".app.services.TimekeepingService"
             android:enabled="true"
             android:exported="false" />
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9"/>
     </application>
 
 </manifest>

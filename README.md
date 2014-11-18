@@ -1,6 +1,7 @@
 Voice Clock
 ======
 
+You can call this sample application like 有声时钟，报时钟, 报时助手, voice you time, speaking time,  talking clock, speaking clock, etc.
 Speak hour and minute for your setting.
 With new Android's design concept.
 Free, simple and easy to use if compare it with other same type applications, without any complex settings etc.

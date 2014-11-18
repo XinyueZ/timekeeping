@@ -1,5 +1,6 @@
 package com.timekeeping.app.activities;
 
+import com.crashlytics.android.Crashlytics;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -243,6 +244,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Crashlytics.start(this);
 		mSystemUiHelper = new SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE, 0);
 
 		mSystemUiHelper.hide();
