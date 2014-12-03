@@ -1,6 +1,5 @@
 package com.timekeeping.app.activities;
 
-import com.crashlytics.android.Crashlytics;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -43,7 +42,9 @@ import android.widget.GridView;
 
 import com.chopping.activities.BaseActivity;
 import com.chopping.application.BasicPrefs;
+import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.utils.DeviceUtils;
+import com.crashlytics.android.Crashlytics;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnDialogDismissListener;
 import com.doomonafireball.betterpickers.radialtimepicker.RadialTimePickerDialog.OnTimeSetListener;
@@ -62,6 +63,8 @@ import com.timekeeping.app.fragments.AppListImpFragment;
 import com.timekeeping.app.services.TimekeepingService;
 import com.timekeeping.bus.AfterDeleteEvent;
 import com.timekeeping.bus.DeleteTimeEvent;
+import com.timekeeping.bus.EULAConfirmedEvent;
+import com.timekeeping.bus.EULARejectEvent;
 import com.timekeeping.bus.EditTimeEvent;
 import com.timekeeping.bus.SwitchOnOffTimeEvent;
 import com.timekeeping.data.Time;
@@ -135,10 +138,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	private Time mEditedTime;
 
 	/**
-	 * The interstitial ad.
-	 */
-	private InterstitialAd mInterstitialAd;
-	/**
 	 * The "ActionBar".
 	 */
 	private Toolbar mToolbar;
@@ -150,10 +149,32 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * Flag that is {@code true} if the statusbar will show first time.
 	 */
 	private boolean mFistTimeHide = true;
-
+	/**
+	 * The interstitial ad.
+	 */
+	private InterstitialAd mInterstitialAd;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+	/**
+	 * Handler for {@link  EULARejectEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link  EULARejectEvent}.
+	 */
+	public void onEvent(EULARejectEvent e) {
+		finish();
+	}
+
+	/**
+	 * Handler for {@link EULAConfirmedEvent}
+	 *
+	 * @param e
+	 * 		Event {@link  EULAConfirmedEvent}.
+	 */
+	public void onEvent(EULAConfirmedEvent e) {
+		makeAds();
+	}
 
 	/**
 	 * Handler for {@link AfterDeleteEvent}.
@@ -215,6 +236,16 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		setTimeOnOff(e.getTime());
 	}
 
+
+	/**
+	 * Handler for {@link }.
+	 *
+	 * @param e
+	 * 		Event {@link}.
+	 */
+	public void onEvent(CloseDrawerEvent e) {
+		mDrawerLayout.closeDrawers();
+	}
 
 	//------------------------------------------------
 
@@ -934,6 +965,15 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		makeAds();
+
+	}
+
+	/**
+	 * Make an Admob.
+	 *
+	 */
+	private void makeAds() {
 		// Create an ad.
 		mInterstitialAd = new InterstitialAd(this);
 		mInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id));
@@ -959,6 +999,4 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
 		}
 	}
-
-
 }
