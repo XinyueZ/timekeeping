@@ -25,13 +25,12 @@ android {
         applicationId "com.timekeeping"
         minSdkVersion 10
         targetSdkVersion 21
-        versionCode 9
-        versionName "1.0.8"
+        versionCode 10
+        versionName "1.0.9"
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -55,11 +54,12 @@ dependencies {
     compile 'com.crashlytics.android:crashlytics:1.+'
 }
 
+
 // Rename final apks
-android.applicationVariants.all { variant ->
-    def apk = variant.outputFile
-    def newName = apk.name
-            .replace("_Android", "")
-            .replace(".apk", "-${android.defaultConfig.versionName}${buildNumber}.apk")
-    variant.outputFile = new File(apk.parent, newName)
+android.applicationVariants.all {  variant ->
+    variant.outputs.each  { output ->
+        output.outputFile = new File(
+                output.outputFile.parent, output.outputFile.name.replace("_Android", "")
+                .replace(".apk", "-${android.defaultConfig.versionName}${buildNumber}.apk"))
+    }
 }
