@@ -66,27 +66,27 @@
                 android:layout_gravity="bottom|center_horizontal"
                 android:orientation="horizontal">
 
-                <ImageButton
+                <View
                     android:id="@+id/edit_btn"
                     style="@style/Grid_ButtonFloatSmall"
                     android:onClick="@{handler.editTimeEvent}"
-                    android:src="@drawable/ic_edit"
+                    android:background="@drawable/ic_edit"
                     android:visibility="@{adp.isActionMode() ? View.INVISIBLE : View.VISIBLE}" />
 
 
-                <ImageButton
+                <View
                     android:id="@+id/on_off_btn"
                     style="@style/Grid_ButtonFloatSmall"
                     android:onClick="@{handler.switchOnOffTimeEvent}"
-                    android:src="@drawable/ic_on"
+                    android:background="@drawable/ic_on"
                     android:visibility="@{adp.isActionMode() ? View.INVISIBLE : View.VISIBLE}" />
 
 
-                <ImageButton
+                <View
                     android:id="@+id/delete_btn"
                     style="@style/Grid_ButtonFloatSmall"
                     android:onClick="@{handler.deleteTimeEvent}"
-                    android:src="@drawable/ic_delete"
+                    android:background="@drawable/ic_delete"
                     android:visibility="@{adp.isActionMode() ? View.INVISIBLE : View.VISIBLE}" />
 
             </LinearLayout>

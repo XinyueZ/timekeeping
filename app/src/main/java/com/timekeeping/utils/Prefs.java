@@ -25,13 +25,10 @@ public final class Prefs extends BasicPrefs {
 	 */
 	private static final String KEY_PAUSE_ALL = "key_pause_all";
 	/**
-	 * Storage. Whether some default items have been set or not.
-	 */
-	private static final String KEY_DEFAULT_SET = "key_default_set";
-	/**
 	 * Storage. Whether data has been initialized.
 	 */
 	private static final String KEY_INIT_DATA = "key_init_data";
+	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
 
 	/**
 	 * Created a DeviceData storage.
@@ -99,21 +96,7 @@ public final class Prefs extends BasicPrefs {
 		return getBoolean(KEY_PAUSE_ALL, false);
 	}
 
-	/**
-	 * To set that default items have been set.
-	 * @param hasSetDefault {@code true} if set.
-	 */
-	public void setHasSetDefault( boolean hasSetDefault ) {
-		setBoolean(KEY_DEFAULT_SET, hasSetDefault);
-	}
 
-	/**
-	 * To know whether default items have been set or not.
-	 * @return {@code true} if set.
-	 */
-	public boolean hasSetDefault() {
-		return getBoolean(KEY_DEFAULT_SET, false);
-	}
 
 	/**
 	 * Set whether data has been initialized.
@@ -126,5 +109,12 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public boolean hasInitData() {
 		return getBoolean(KEY_INIT_DATA, false);
+	}
+
+	public void setShownDetailsTimes(int times) {
+		setInt(KEY_SHOWN_DETAILS_TIMES, times);
+	}
+	public int getShownDetailsTimes() {
+		return getInt(KEY_SHOWN_DETAILS_TIMES, 1);
 	}
 }

@@ -20,12 +20,15 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.os.AsyncTaskCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -39,7 +42,6 @@ import android.view.ViewGroup;
 import com.chopping.activities.BaseActivity;
 import com.chopping.application.BasicPrefs;
 import com.chopping.bus.CloseDrawerEvent;
-import com.chopping.utils.DeviceUtils;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment.OnDialogDismissListener;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment.OnTimeSetListener;
@@ -137,7 +139,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		Event {@link  EULAConfirmedEvent}.
 	 */
 	public void onEvent(EULAConfirmedEvent e) {
-		makeAds();
+
 	}
 
 
@@ -279,7 +281,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	//------------------------------------------------
 
 
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(MENU_MAIN, menu);
@@ -387,7 +388,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			}
 		});
 	}
-
 
 
 	/**
@@ -624,7 +624,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	@Override
 	public void onDialogDismiss(DialogInterface dialoginterface) {
-		mBinding.addNewTimeBtn.setVisibility(View.VISIBLE);
+		mBinding.addNewTimeBtn.show();
 	}
 
 	/**
@@ -636,25 +636,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		}
 	}
 
-	/**
-	 * Make an Admob.
-	 */
-	private void makeAds() {
-		// Create an ad.
-		mInterstitialAd = new InterstitialAd(this);
-		mInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id));
-		// Create ad request.
-		AdRequest adRequest = new AdRequest.Builder().build();
-		// Begin loading your interstitial.
-		mInterstitialAd.setAdListener(new AdListener() {
-			@Override
-			public void onAdLoaded() {
-				super.onAdLoaded();
-				displayInterstitial();
-			}
-		});
-		mInterstitialAd.loadAd(adRequest);
-	}
 
 	/**
 	 * Select items on view when opened action-mode.
@@ -674,6 +655,34 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		}
 	}
 
+	private void initGrid() {
+		mBinding.scheduleGv.setLayoutManager(new GridLayoutManager(this, 2));
+		mBinding.scheduleGv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				float y = ViewCompat.getY(recyclerView);
+				if (y < dy) {
+					if (mBinding.addNewTimeBtn.isShown()) {
+						mBinding.addNewTimeBtn.hide();
+					}
+				} else {
+					if (!mBinding.addNewTimeBtn.isShown()) {
+						mBinding.addNewTimeBtn.show();
+					}
+				}
+			}
+
+		});
+		mBinding.setAdapter(new TimeKeepingListAdapter(null));
+		refreshGrid();
+	}
+
+	private void initBar() {
+		SpannableString s = new SpannableString(getString(R.string.application_name));
+		s.setSpan(new TypefaceSpan(this, Fonts.FONT_LIGHT), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		setSupportActionBar(mBinding.toolbar);
+		mBinding.toolbar.setTitle(s);
+	}
 
 	/**
 	 * Show single instance of {@link MainActivity}
@@ -687,37 +696,57 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		ActivityCompat.startActivity(cxt, intent, null);
 	}
 
+	@Override
+	public void onBackPressed() {
+		if (mBinding.drawerLayout.isDrawerOpen(GravityCompat.START) || mBinding.drawerLayout.isDrawerOpen(
+				GravityCompat.END)) {
+			mBinding.drawerLayout.closeDrawers();
+		} else {
+			super.onBackPressed();
+		}
+	}
+
+
+	private void initAds() {
+		Prefs prefs = Prefs.getInstance(getApplication());
+		int curTime = prefs.getShownDetailsTimes();
+		int adsTimes = 10;
+		if (curTime % adsTimes == 0) {
+			// Create an ad.
+			mInterstitialAd = new InterstitialAd(this);
+			mInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id));
+			// Create ad request.
+			AdRequest adRequest = new AdRequest.Builder().build();
+			// Begin loading your interstitial.
+			mInterstitialAd.setAdListener(new AdListener() {
+				@Override
+				public void onAdLoaded() {
+					super.onAdLoaded();
+					displayInterstitial();
+				}
+			});
+			mInterstitialAd.loadAd(adRequest);
+		}
+		curTime++;
+		prefs.setShownDetailsTimes(curTime);
+	}
+
+
+	private void initComponents() {
+		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
+		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
+		//FAB
+		mBinding.addNewTimeBtn.setOnClickListener(this);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
-		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
-
-		setSupportActionBar(mBinding.toolbar);
+		initComponents();
+		initBar();
 		initDrawer();
-
-		//Add new item.
-		mBinding.addNewTimeBtn.setOnClickListener(this);
-
-		//Let all columns to equal.
-		//Adapter for grid and dummy data.
-		mBinding.scheduleGv.setLayoutManager(new GridLayoutManager(this, 2));
-		int screenWidth = DeviceUtils.getScreenSize(this, 0).Width;
-		mBinding.setAdapter( new TimeKeepingListAdapter(null, 150, screenWidth));
-		refreshGrid();
-
-
-		//Customized the title of ActionBar with a right font.
-		SpannableString s = new SpannableString(getString(R.string.application_name));
-		s.setSpan(new TypefaceSpan(this, Fonts.FONT_LIGHT), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-		// Update the action bar title with the TypefaceSpan instance
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setTitle(s);
-		}
+		initGrid();
+		initAds();
 	}
 
 	@Override
@@ -728,12 +757,5 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		}
 
 		checkPlayService();
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		makeAds();
-
 	}
 }

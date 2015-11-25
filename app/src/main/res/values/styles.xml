@@ -21,9 +21,8 @@
     </style>
 
     <style name="Grid_ButtonFloatSmall">
-        <item name="android:background">@color/common_transparent</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">@dimen/size_small_float_btn</item>
+        <item name="android:layout_height">@dimen/size_small_float_btn</item>
         <item name="android:layout_marginRight">@dimen/padding_small_float_btn</item>
         <item name="android:layout_marginBottom">@dimen/padding_small_float_btn</item>
     </style>
@@ -66,8 +65,8 @@
 
     <style name="BoxCardView">
         <item name="contentPadding">0dp</item>
-        <item name="cardElevation">5dp</item>
-        <item name="cardMaxElevation">8dp</item>
+        <item name="cardElevation">3dp</item>
+        <item name="cardMaxElevation">3dp</item>
         <item name="cardUseCompatPadding">true</item>
         <item name="cardCornerRadius">0dp</item>
     </style>

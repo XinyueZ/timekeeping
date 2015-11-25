@@ -33,13 +33,9 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	 * Data-source.
 	 */
 	private List<Time> mVisibleData;
-	private int mScreenWidth;
-	private int mColCount;
 
 
-	public TimeKeepingListAdapter(List<Time> data, int colCount, int screenWidth) {
-		mColCount = colCount;
-		mScreenWidth = screenWidth;
+	public TimeKeepingListAdapter(List<Time> data ) {
 		setData(data);
 	}
 
