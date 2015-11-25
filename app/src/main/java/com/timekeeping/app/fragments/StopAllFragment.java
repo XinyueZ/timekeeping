@@ -35,7 +35,6 @@ public final class StopAllFragment extends BaseFragment implements OnCheckedChan
 		setErrorHandlerAvailable(false);
 
 		SwitchCompat cb = (SwitchCompat) view.findViewById(R.id.pause_resume_cb);
-		cb.setShowText(true);
 		cb.setChecked(Prefs.getInstance(getActivity().getApplication()).areAllPaused());
 		cb.setOnCheckedChangeListener(this);
 	}

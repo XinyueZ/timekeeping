@@ -8,4 +8,10 @@
     <color name="common_black">#000000</color>
     <color name="common_grey">#B0BEC5</color>
     <color name="common_mid_grey">#607D8B</color>
+    <color name="common_transparent">@android:color/transparent</color>
+
+
+    <color name="primary_color">@color/common_blue</color>
+    <color name="primary_dark_color">@color/common_indigo</color>
+    <color name="primary_accent">@color/common_indigo</color>
 </resources>

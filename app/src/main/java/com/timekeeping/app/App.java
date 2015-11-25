@@ -32,38 +32,28 @@
 
 package com.timekeeping.app;
 
-import android.app.Application;
-import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.multidex.MultiDexApplication;
 
 import com.chopping.net.TaskHelper;
-import com.timekeeping.app.services.TimekeepingService;
+import com.crashlytics.android.Crashlytics;
+import com.facebook.stetho.Stetho;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * This application.
  *
  * @author Xinyue Zhao
  */
-public final class App extends Application{
-	/**
-	 * Instance of this application.
-	 */
-	private static App sIns;
-
-
-	/**
-	 * To get application's instance.
-	 *
-	 * @return The instance of the application.
-	 */
-	public static App getInstance() {
-		return sIns;
-	}
+public final class App extends MultiDexApplication {
 
 	@Override
 	public void onCreate() {
-		sIns = this;
 		super.onCreate();
+		Fabric.with(this, new Crashlytics());
+		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
 		TaskHelper.init(this);
 	}
 
@@ -71,7 +61,7 @@ public final class App extends Application{
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 
-		stopService(new Intent(this, TimekeepingService.class));
-		startService(new Intent(this, TimekeepingService.class));
+//		stopService(new Intent(this, TimekeepingService.class));
+//		startService(new Intent(this, TimekeepingService.class));
 	}
 }

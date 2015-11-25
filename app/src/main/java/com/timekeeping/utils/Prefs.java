@@ -21,12 +21,6 @@ public final class Prefs extends BasicPrefs {
 	 */
 	private static final String KEY_EULA_SHOWN = "key_eula_shown";
 	/**
-	 * Storage. For last screen view, list or grid view.
-	 * <p/>
-	 * It should be a boolean, when {@code true}, it is a list-view.
-	 */
-	private static final String KEY_LAST_VIEW = "key_last_view";
-	/**
 	 * Storage. Pause all items or not.
 	 */
 	private static final String KEY_PAUSE_ALL = "key_pause_all";
@@ -34,6 +28,10 @@ public final class Prefs extends BasicPrefs {
 	 * Storage. Whether some default items have been set or not.
 	 */
 	private static final String KEY_DEFAULT_SET = "key_default_set";
+	/**
+	 * Storage. Whether data has been initialized.
+	 */
+	private static final String KEY_INIT_DATA = "key_init_data";
 
 	/**
 	 * Created a DeviceData storage.
@@ -81,24 +79,6 @@ public final class Prefs extends BasicPrefs {
 		setBoolean(KEY_EULA_SHOWN, isConfirmed);
 	}
 
-	/**
-	 * Is last view before user closes App a list-view?
-	 *
-	 * @return {@code true} if a list-view, {@link false} is a grid-view.
-	 */
-	public boolean isLastAListView() {
-		return getBoolean(KEY_LAST_VIEW, false);
-	}
-
-	/**
-	 * Set last view before user closes App a list-view?
-	 *
-	 * @param isListView
-	 * 		{@code true} if a list-view, {@link false} is a grid-view.
-	 */
-	public void setLastAListView(boolean isListView) {
-		setBoolean(KEY_LAST_VIEW, isListView);
-	}
 
 	/**
 	 * Set storage for the status of "pause all" or not.
@@ -133,5 +113,18 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public boolean hasSetDefault() {
 		return getBoolean(KEY_DEFAULT_SET, false);
+	}
+
+	/**
+	 * Set whether data has been initialized.
+	 */
+	public void setInitData(boolean init) {
+		  setBoolean(KEY_INIT_DATA, init);
+	}
+	/**
+	 * Whether data has been initialized.
+	 */
+	public boolean hasInitData() {
+		return getBoolean(KEY_INIT_DATA, false);
 	}
 }

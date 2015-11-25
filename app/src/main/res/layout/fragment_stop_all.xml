@@ -18,18 +18,11 @@
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/pause_resume_cb"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:thumb="@drawable/switch_thumb"
-        android:textOff="@string/lbl_pause_no"
-        android:textOn="@string/lbl_pause_yes"
+        android:layout_height="wrap_content"
         android:enabled="true"
         android:layout_gravity="right"
-        sc:track="@drawable/switch_track_holo_light"
-        sc:switchTextAppearance="@style/TextAppearance.Holo.Light.Widget.Switch"
-        sc:thumbTextPadding="20dip"
-        sc:switchMinWidth="100dip"
-        sc:switchPadding="20dip"
-        android:layout_marginTop="@dimen/drawer_main_horizontal_margin"/>
+        android:layout_marginTop="@dimen/drawer_main_horizontal_margin"
+        sc:showText="false"/>
 
 
 </LinearLayout>

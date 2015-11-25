@@ -4,25 +4,34 @@
         <item name="android:textColor">@color/common_black</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_centerInParent">true</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
+    </style>
+
+
+    <style name="Buttons">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
     </style>
 
     <style name="Grid_ButtonFloatSmall">
-        <item name="android:layout_width">@dimen/size_small_float_btn</item>
-        <item name="android:layout_height">@dimen/size_small_float_btn</item>
-        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:background">@color/common_transparent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">@dimen/padding_small_float_btn</item>
         <item name="android:layout_marginBottom">@dimen/padding_small_float_btn</item>
     </style>
 
     <style name="Grid_Item_DeleteBtn">
-        <item name="android:visibility">invisible</item>
-        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:background">@color/common_transparent</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_alignParentLeft">true</item>
-        <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_margin">@dimen/grid_item_delete_btn_margin</item>
     </style>
 
@@ -54,4 +63,13 @@
         <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
         <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
     </style>
+
+    <style name="BoxCardView">
+        <item name="contentPadding">0dp</item>
+        <item name="cardElevation">5dp</item>
+        <item name="cardMaxElevation">8dp</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="cardCornerRadius">0dp</item>
+    </style>
+
 </resources>

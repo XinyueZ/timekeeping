@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -21,13 +22,13 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.os.AsyncTaskCompat;
 
 import com.timekeeping.R;
 import com.timekeeping.app.activities.MainActivity;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
-import com.timekeeping.utils.ParallelTask;
 import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.Utils;
 
@@ -126,7 +127,7 @@ public final class TimekeepingService extends Service implements OnInitListener 
 	 * Load all {@link com.timekeeping.data.Time}s from database.
 	 */
 	private void loadData() {
-		new ParallelTask<Void, Void, Void>() {
+		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				mTimes = DB.getInstance(getApplication()).getTimes(Sort.DESC);
@@ -162,7 +163,7 @@ public final class TimekeepingService extends Service implements OnInitListener 
 				}
 				return null;
 			}
-		}.executeParallel();
+		});
 	}
 
 	@Override

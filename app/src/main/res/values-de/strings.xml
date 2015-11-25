@@ -9,7 +9,6 @@
     <string name="off_status">Stoppe Zeitnahme um %1$s</string>
 
     <string name="lbl_prefix">Es ist %1$s jetzt</string>
-    <string name="lbl_view_types">Ansicht ändern</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
     <string name="lbl_share_app_content">%s \n\nLaden: http://tinyurl.com/kr4qvdy</string>
@@ -28,4 +27,6 @@
         weiter.</string>
     <string name="btn_not_agree">Stimmt nicht zu.</string>
     <string name="btn_agree">Stimmt zu</string>
+    <string name="msg_permission_prompt">Ohne Berechtigung von "Write External Storage" kann die App nicht weiter gehen…</string>
+
 </resources>
