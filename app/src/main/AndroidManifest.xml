@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.timekeeping">
+<manifest package="com.timekeeping"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- The hour and minute chooser needs it. -->
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -12,20 +12,21 @@
     <!-- Download for new update version, configuration of application needs etc. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
+        android:name=".app.App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/application_name"
         android:theme="@style/AppTheme"
-        tools:replace="android:label"
-        android:name=".app.App">
+        tools:replace="android:label">
 
-        <!--This meta-data tag is required to use Google Play Services.-->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+        <!--This meta-data tag is required to use Google Play Services.--><meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".app.activities.SplashActivity"
@@ -39,14 +40,14 @@
         </activity>
         <activity
             android:name=".app.activities.MainActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/application_name"/>
+            android:label="@string/application_name"
+            android:screenOrientation="portrait" />
 
         <!--Event handler for changing system packages, for external links-->
         <receiver
             android:name="com.chopping.application.InstalledAppReceiver"
-            android:exported="false"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
@@ -62,12 +63,29 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
 
-        <!--Service runs back to listen every tick.-->
+
         <service
-            android:name=".app.services.TimekeepingService"
+            android:name=".app.AppGuardService"
             android:enabled="true"
-            android:exported="false" />
-        <meta-data android:name="com.crashlytics.ApiKey" android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9"/>
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".app.BootReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9" />
     </application>
 
 </manifest>

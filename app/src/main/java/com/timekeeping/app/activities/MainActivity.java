@@ -55,7 +55,6 @@ import com.timekeeping.app.adapters.TimeKeepingListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
 import com.timekeeping.app.fragments.AppListImpFragment;
-import com.timekeeping.app.services.TimekeepingService;
 import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.bus.EULAConfirmedEvent;
 import com.timekeeping.bus.EULARejectEvent;
@@ -416,7 +415,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			protected void onPostExecute(Time time) {
 				super.onPostExecute(time);
 				if (time != null) {
-					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
 					refreshGrid();
 					showStatusMessage(time);
 					mBinding.scheduleGv.getLayoutManager().scrollToPosition(0);
@@ -446,7 +444,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			protected void onPostExecute(Time oldEntry) {
 				super.onPostExecute(oldEntry);
 				if (oldEntry != null) {
-					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
 					mBinding.getAdapter().editItem(oldEntry, mEditedTime);
 					mEdit = false;
 					showStatusMessage(mEditedTime);
@@ -474,7 +471,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			protected void onPostExecute(Time oldEntry) {
 				super.onPostExecute(oldEntry);
 				if (oldEntry != null) {
-					sendBroadcast(new Intent(TimekeepingService.ACTION_UPDATE));
 					mBinding.getAdapter().editItem(oldEntry, mEditedTime);
 					mEdit = false;
 

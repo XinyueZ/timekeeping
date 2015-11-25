@@ -8,6 +8,7 @@
     <string name="on_status">Zeitnahme um %1$s</string>
     <string name="off_status">Stoppe Zeitnahme um %1$s</string>
 
+
     <string name="lbl_prefix">Es ist %1$s jetzt</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
@@ -17,16 +18,18 @@
     <string name="lbl_pause_no">Nein</string>
     <string name="lbl_delete">Item löschen</string>
     <string name="lbl_about">Über mich</string>
+    <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
+        weiter.</string>
+
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_cancel">Abbrechen</string>
     <string name="btn_close">Schließen</string>
     <string name="btn_ok">Ok</string>
-
-    <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
-        weiter.</string>
     <string name="btn_not_agree">Stimmt nicht zu.</string>
     <string name="btn_agree">Stimmt zu</string>
-    <string name="msg_permission_prompt">Ohne Berechtigung von "Write External Storage" kann die App nicht weiter gehen…</string>
+    <string name="btn_app_rating">App bewerten</string>
 
+    <string name="msg_permission_prompt">Ohne Berechtigung von "Write External Storage" kann die App nicht weiter gehen…</string>
+    <string name="msg_voice_clock">Es ist %1$s</string>
 </resources>

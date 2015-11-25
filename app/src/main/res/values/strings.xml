@@ -44,9 +44,9 @@
     <string name="btn_ok">Ok</string>
     <string name="btn_agree">I agree.</string>
     <string name="btn_not_agree">I do not agree.</string>
+    <string name="btn_app_rating">App rating</string>
 
     <string name="ad_unit_id">ca-app-pub-9133982521997162/8826039731</string>
-
     <string name="msg_permission_prompt">Without "Write External Storage" the App can\'t work…</string>
-
+    <string name="msg_voice_clock">It is %1$s</string>
 </resources>

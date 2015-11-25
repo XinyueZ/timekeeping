@@ -5,6 +5,7 @@
     tools:context=".app.activities.MainActivity">
     <item
         android:id="@+id/action_delete"
-        android:icon="@android:drawable/ic_menu_delete" />
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/lbl_delete" />
 
 </menu>

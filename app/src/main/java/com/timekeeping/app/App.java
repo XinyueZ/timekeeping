@@ -32,12 +32,14 @@
 
 package com.timekeeping.app;
 
-import android.content.res.Configuration;
+import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
 import com.chopping.net.TaskHelper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -55,13 +57,33 @@ public final class App extends MultiDexApplication {
 		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
 				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
 		TaskHelper.init(this);
+		 startAppGuardService(this);
 	}
 
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
 
-//		stopService(new Intent(this, TimekeepingService.class));
-//		startService(new Intent(this, TimekeepingService.class));
+
+	/**
+	 * A background service that for automatically sync.
+	 */
+	private static void startAppGuardService(Context cxt) {
+		GcmNetworkManager mgr = GcmNetworkManager.getInstance(cxt);
+		try {
+			mgr.cancelAllTasks(AppGuardService.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		long periodSecs = 1;
+		long flexSecs = 1;
+		String tag = System.currentTimeMillis() + "";
+		PeriodicTask periodic = new PeriodicTask.Builder()
+				.setService(AppGuardService.class)
+				.setPeriod(periodSecs)
+				.setFlex(flexSecs)
+				.setTag(tag)
+				.setPersisted(true)
+				.setRequiredNetwork(com.google.android.gms.gcm.Task.NETWORK_STATE_ANY)
+				.setRequiresCharging(false)
+				.build();
+		mgr.schedule(periodic);
 	}
 }

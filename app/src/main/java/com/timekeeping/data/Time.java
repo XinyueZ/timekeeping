@@ -3,7 +3,7 @@ package com.timekeeping.data;
 /**
  * Structure of a time instance.
  */
-public final class Time implements IActionModeSupport {
+public final class Time  {
 	/**
 	 * Id of the item, might be retrieved from database.
 	 */
@@ -150,13 +150,4 @@ public final class Time implements IActionModeSupport {
 		mOnOff = onOff;
 	}
 
-	@Override
-	public void setCheck(boolean check) {
-		mCheck = check;
-	}
-
-	@Override
-	public boolean isChecked() {
-		return mCheck;
-	}
 }

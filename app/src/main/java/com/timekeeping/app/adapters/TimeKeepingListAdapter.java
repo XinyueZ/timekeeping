@@ -9,7 +9,6 @@ import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 
 import com.timekeeping.BR;
@@ -35,7 +34,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	private List<Time> mVisibleData;
 
 
-	public TimeKeepingListAdapter(List<Time> data ) {
+	public TimeKeepingListAdapter(List<Time> data) {
 		setData(data);
 	}
 
@@ -75,19 +74,10 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	public void onBindViewHolder(final ViewHolder holder, final int position) {
 		final Time entry = mVisibleData.get(position);
 		holder.mBinding.setVariable(BR.time, entry);
-		holder.mBinding.setVariable(BR.handler, new GridItemHandler(position, entry));
+		holder.mBinding.setVariable(BR.adapter, this);
+		holder.mBinding.setVariable(BR.handler, new GridItemHandler(this, position, entry));
 		holder.mBinding.executePendingBindings();
-		holder.mCardView.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				if (!isActionMode()) {
-					EventBus.getDefault().post(new StartActionModeEvent());
-				}
-				return true;
-			}
-		});
 	}
-
 
 
 	/**
@@ -203,10 +193,6 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	}
 
 
-
-
-
-
 	/**
 	 * ViewHolder for the list.
 	 */
@@ -222,14 +208,25 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	}
 
 
-	public static final class GridItemHandler  {
+	public static final class GridItemHandler {
+		private SelectableAdapter mAdapter;
 		private int mPosition;
 		private Time mTime;
 
-		public GridItemHandler(int position, Time time) {
+		public GridItemHandler(SelectableAdapter adapter, int position, Time time) {
+			mAdapter = adapter;
 			mPosition = position;
 			mTime = time;
 		}
+
+		public boolean startActionModeEvent(View view) {
+			if (!mAdapter.isActionMode()) {
+				EventBus.getDefault().post(new StartActionModeEvent());
+			}
+
+			return true;
+		}
+
 		public void selectItemEvent(View view) {
 			EventBus.getDefault().post(new SelectItemEvent(mPosition));
 		}
