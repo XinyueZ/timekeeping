@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.Engine;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.text.TextUtils;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
@@ -79,10 +80,15 @@ public final class AppGuardService extends GcmTaskService {
 							String timeToSpeak = getString(R.string.lbl_prefix, timeText);
 							String taskToSpeak = time.getTask();
 							//noinspection unchecked
-							if(mTextToSpeech != null && time.isOnOff()) {
-								AppGuardService.this.doSpeak(String.format("%s,%s", timeToSpeak, taskToSpeak));
+							if (mTextToSpeech != null && time.isOnOff()) {
+								AppGuardService.this.doSpeak(
+										!TextUtils.isEmpty(taskToSpeak) ?
+										String.format("%s,%s", timeToSpeak, taskToSpeak) : timeToSpeak);
+
+								AppGuardService.notify(getApplication(),
+										!TextUtils.isEmpty(taskToSpeak) ?
+										String.format("%s: %s", timeText, taskToSpeak) : timeText);
 							}
-							AppGuardService.notify(getApplication(),String.format("%s: %s", timeText, taskToSpeak)  );
 						}
 					});
 				}
