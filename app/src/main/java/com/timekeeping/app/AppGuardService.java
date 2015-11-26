@@ -3,7 +3,6 @@ package com.timekeeping.app;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -81,15 +80,9 @@ public final class AppGuardService extends GcmTaskService {
 							String taskToSpeak = time.getTask();
 							//noinspection unchecked
 							if(mTextToSpeech != null && time.isOnOff()) {
-								AppGuardService.this.doSpeak(timeToSpeak);
-								try {
-									TimeUnit.SECONDS.sleep(2);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-								AppGuardService.this.doSpeak(taskToSpeak);
+								AppGuardService.this.doSpeak(String.format("%s,%s", timeToSpeak, taskToSpeak));
 							}
-							AppGuardService.notify(getApplication(), timeText);
+							AppGuardService.notify(getApplication(),String.format("%s: %s", timeText, taskToSpeak)  );
 						}
 					});
 				}

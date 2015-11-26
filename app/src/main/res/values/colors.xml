@@ -8,6 +8,7 @@
     <color name="common_black">#000000</color>
     <color name="common_grey">#B0BEC5</color>
     <color name="common_mid_grey">#607D8B</color>
+    <color name="common_dark_grey">#878787</color>
     <color name="common_transparent">@android:color/transparent</color>
 
 
