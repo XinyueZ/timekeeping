@@ -1,28 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sc="http://schemas.android.com/apk/res-auto"
-    android:paddingRight="@dimen/drawer_main_horizontal_margin"
-    android:paddingLeft="@dimen/drawer_main_horizontal_margin"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".app.fragments.StopAllFragment">
 
+    <data class="StopAllBinding">
+            <variable
+                name="isChecked"
+                type="boolean"/>
+    </data>
 
-    <com.timekeeping.widget.FontTextView
-        style="@style/Drawer_TextView"
-        android:text="@string/lbl_pause_all_items" />
+    <RelativeLayout
+        android:id="@+id/stop_all_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary_color"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/drawer_main_horizontal_margin"
+        android:paddingRight="@dimen/drawer_main_horizontal_margin"
+        >
 
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/pause_resume_cb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="true"
-        android:layout_gravity="right"
-        android:layout_marginTop="@dimen/drawer_main_horizontal_margin"
-        sc:showText="false"/>
+        <ImageView
+            android:id="@+id/current_switch_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@{isChecked ? @drawable/ic_pause : @drawable/ic_play}"
+            android:background="@color/common_transparent" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/pause_resume_cb"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/current_switch_iv"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/drawer_main_horizontal_margin"
+            android:enabled="true"
+            sc:showText="false" />
 
 
-</LinearLayout>
+    </RelativeLayout>
+</layout>

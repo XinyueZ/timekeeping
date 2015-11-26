@@ -61,39 +61,16 @@
         </android.support.design.widget.CoordinatorLayout>
 
 
-        <ScrollView
-            android:layout_width="250dp"
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:background="@android:color/white"
-            android:scrollbars="none">
-
-
-            <LinearLayout
-                android:id="@+id/drawer_menu_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <View
-                    android:id="@+id/drawer_header_v"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <fragment
-                    android:name="com.timekeeping.app.fragments.StopAllFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <FrameLayout
-                    android:id="@+id/app_list_fl"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-
-            </LinearLayout>
-        </ScrollView>
+            android:layout_gravity="start"
+            android:background="@color/common_white"
+            android:fitsSystemWindows="true"
+            android:theme="@style/NavDrawerItem"
+            app:itemIconTint="@color/primary_dark_color"
+            app:itemTextColor="@color/primary_dark_color" />
 
     </android.support.v4.widget.DrawerLayout>
 </layout>

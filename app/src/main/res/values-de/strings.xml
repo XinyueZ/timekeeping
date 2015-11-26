@@ -13,9 +13,6 @@
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
     <string name="lbl_share_app_content">%s \n\nLaden: http://tinyurl.com/kr4qvdy</string>
-    <string name="lbl_pause_all_items">Möchten Sie alle pausieren?</string>
-    <string name="lbl_pause_yes">Ja</string>
-    <string name="lbl_pause_no">Nein</string>
     <string name="lbl_delete">Item löschen</string>
     <string name="lbl_about">Über mich</string>
     <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
@@ -32,4 +29,6 @@
 
     <string name="msg_permission_prompt">Ohne Berechtigung von "Write External Storage" kann die App nicht weiter gehen…</string>
     <string name="msg_voice_clock">Es ist %1$s</string>
+    <string name="msg_pause_all">Alle pausieren</string>
+    <string name="msg_play_all">Jetzt geht weiter.</string>
 </resources>

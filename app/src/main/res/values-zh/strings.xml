@@ -9,9 +9,6 @@
     <string name="off_status">暂停%1$s的报时</string>
 
     <string name="lbl_prefix">现在是 %1$s</string>
-    <string name="lbl_pause_all_items">暂停您的报时助手？</string>
-    <string name="lbl_pause_yes">是</string>
-    <string name="lbl_pause_no">不</string>
     <string name="lbl_delete">删除选项</string>
     <string name="lbl_share">分享</string>
     <string name="lbl_share_app_title">一个不错的应用: %s</string>
@@ -39,5 +36,6 @@
 
     <string name="msg_permission_prompt">没有－写入存储－的权限，应用无法运行…</string>
     <string name="msg_voice_clock">现在是 %1$s</string>
-
+    <string name="msg_pause_all">暂停使用</string>
+    <string name="msg_play_all">继续使用</string>
 </resources>

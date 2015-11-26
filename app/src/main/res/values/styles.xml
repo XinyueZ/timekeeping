@@ -1,4 +1,5 @@
 <resources>
+
     <style name="Time_TextView">
         <item name="font">light</item>
         <item name="android:textColor">@color/common_black</item>
@@ -65,4 +66,8 @@
         <item name="cardCornerRadius">1dp</item>
     </style>
 
+    <style name="NavDrawerItem" parent="@style/Theme.AppCompat.Light">
+        <item name="android:textColor">@color/primary_color</item>
+        <item name="android:textColorSecondary">@color/primary_color</item>
+    </style>
 </resources>

@@ -54,7 +54,6 @@ import com.timekeeping.R;
 import com.timekeeping.app.adapters.TimeKeepingListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
-import com.timekeeping.app.fragments.AppListImpFragment;
 import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.bus.EULAConfirmedEvent;
 import com.timekeeping.bus.EULARejectEvent;
@@ -507,22 +506,21 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	@Override
 	protected void onAppConfigLoaded() {
 		super.onAppConfigLoaded();
-		showAppList();
+		addDrawerHeader();
 	}
 
 	@Override
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
-		showAppList();
+		addDrawerHeader();
 	}
 
-	/**
-	 * Show all external applications links.
-	 */
-	private void showAppList() {
-		getSupportFragmentManager().beginTransaction().replace(R.id.app_list_fl, AppListImpFragment.newInstance(this))
-				.commit();
+	private void addDrawerHeader() {
+		if (mBinding.navView.getHeaderCount() == 0) {
+			mBinding.navView.addHeaderView(getLayoutInflater().inflate(R.layout.nav_header, mBinding.navView, false));
+		}
 	}
+
 
 	@Override
 	protected BasicPrefs getPrefs() {
@@ -546,8 +544,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			mBinding.drawerLayout.setDrawerListener(mDrawerToggle =
 					new ActionBarDrawerToggle(this, mBinding.drawerLayout, R.string.application_name,
 							R.string.application_name));
-			findViewById(R.id.drawer_header_v).getLayoutParams().height = com.chopping.utils.Utils.getActionBarHeight(
-					getApplication()) / 2;
 		}
 	}
 
