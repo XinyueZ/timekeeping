@@ -648,7 +648,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	}
 
 	private void initGrid() {
-		mBinding.scheduleGv.setLayoutManager(new GridLayoutManager(this, 2));
+		mBinding.scheduleGv.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.card_count)));
 		mBinding.scheduleGv.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

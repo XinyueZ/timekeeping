@@ -2,4 +2,5 @@
 <resources>
 
     <item name="delete_cb" type="id" />
+    <integer name="card_count">2</integer>
 </resources>
