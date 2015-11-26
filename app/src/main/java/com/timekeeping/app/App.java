@@ -62,10 +62,8 @@ public final class App extends MultiDexApplication {
 
 
 
-	/**
-	 * A background service that for automatically sync.
-	 */
-	private static void startAppGuardService(Context cxt) {
+
+	public static void startAppGuardService(Context cxt) {
 		GcmNetworkManager mgr = GcmNetworkManager.getInstance(cxt);
 		try {
 			mgr.cancelAllTasks(AppGuardService.class);
@@ -85,5 +83,9 @@ public final class App extends MultiDexApplication {
 				.setRequiresCharging(false)
 				.build();
 		mgr.schedule(periodic);
+	}
+
+	public static void stopAppGuardService(Context cxt) {
+
 	}
 }
