@@ -5,19 +5,19 @@
     <string name="accept">Ja</string>
     <string name="change">Änderen</string>
     <string name="tray_info">Spreche die Zeit, die Sie möchten.</string>
-    <string name="on_status">Zeitnahme um %1$s</string>
+    <string name="on_status">Erinnere dich an mich um %1$s</string>
     <string name="off_status">Stoppe Zeitnahme um %1$s</string>
 
 
     <string name="lbl_prefix">Es ist %1$s jetzt</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
-    <string name="lbl_share_app_content">%s \n\nLaden: http://tinyurl.com/kr4qvdy</string>
+    <string name="lbl_share_app_content">%s \n\nHerunterladen:\nhttp://tinyurl.com/kr4qvdy</string>
     <string name="lbl_delete">Item löschen</string>
-    <string name="lbl_about">Über mich</string>
+    <string name="lbl_about">About</string>
     <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
         weiter.</string>
-
+    <string name="lbl_comment">Komment</string>
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_cancel">Abbrechen</string>

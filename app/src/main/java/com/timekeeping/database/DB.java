@@ -98,6 +98,7 @@ public final class DB {
 			v.put(TimeTbl.HOUR, item.getHour());
 			v.put(TimeTbl.MINUTE, item.getMinute());
 			v.put(TimeTbl.ONOFF, item.isOnOff() ? 1 : 0);
+			v.put(TimeTbl.TASK, item.getTask());
 			v.put(TimeTbl.EDIT_TIME, System.currentTimeMillis());
 			rowId = mDB.insert(TimeTbl.TABLE_NAME, null, v);
 			item.setId(rowId);
@@ -128,6 +129,7 @@ public final class DB {
 			v.put(TimeTbl.HOUR, item.getHour());
 			v.put(TimeTbl.MINUTE, item.getMinute());
 			v.put(TimeTbl.ONOFF, item.isOnOff() ? 1 : 0);
+			v.put(TimeTbl.TASK, item.getTask());
 			v.put(TimeTbl.EDIT_TIME, System.currentTimeMillis());
 			String[] args = new String[] { item.getId() + "" };
 			rowId = mDB.update(TimeTbl.TABLE_NAME, v, TimeTbl.ID + " = ?", args);
@@ -221,7 +223,7 @@ public final class DB {
 			while (c.moveToNext()) {
 				item = new Time(c.getLong(c.getColumnIndex(TimeTbl.ID)), c.getInt(c.getColumnIndex(TimeTbl.HOUR)),
 						c.getInt(c.getColumnIndex(TimeTbl.MINUTE)), c.getLong(c.getColumnIndex(TimeTbl.EDIT_TIME)),
-						c.getInt(c.getColumnIndex(TimeTbl.ONOFF)) == 1);
+						c.getInt(c.getColumnIndex(TimeTbl.ONOFF)) == 1, c.getString(c.getColumnIndex(TimeTbl.TASK)));
 				list.add(item);
 			}
 		} finally {

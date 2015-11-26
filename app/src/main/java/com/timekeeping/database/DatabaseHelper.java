@@ -17,7 +17,7 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 	/**
 	 * Init version of DB.
 	 */
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	/**
 	 * Constructor of {@link DatabaseHelper}.
@@ -36,5 +36,8 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		if (newVersion > oldVersion) {
+			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.TASK + " TEXT DEFAULT \"\"");
+		}
 	}
 }

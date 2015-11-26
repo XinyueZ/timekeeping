@@ -1,6 +1,5 @@
 package com.timekeeping.app.adapters;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.view.ViewGroup;
 import com.timekeeping.BR;
 import com.timekeeping.R;
 import com.timekeeping.bus.DeleteTimeEvent;
+import com.timekeeping.bus.EditTaskEvent;
 import com.timekeeping.bus.EditTimeEvent;
 import com.timekeeping.bus.SelectItemEvent;
 import com.timekeeping.bus.StartActionModeEvent;
@@ -81,29 +81,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	}
 
 
-	/**
-	 * Get the index of the item whose "id" equals to {@code item} in the data-list.
-	 *
-	 * @param item
-	 * 		The item to search.
-	 *
-	 * @return The index(position) of the item. If not found <b>return -1</b>.
-	 */
-	public int getItemPosition(Time item) {
-		if (mVisibleData == null) {
-			return -1;
-		}
-		int index = -1;
-		int pos = 0;
-		for (Time i : mVisibleData) {
-			if (i.getId() == item.getId()) {
-				index = pos;
-				break;
-			}
-			pos++;
-		}
-		return index;
-	}
+
 
 
 	/**
@@ -129,24 +107,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	}
 
 
-	/**
-	 * Add item into cached data of this {@link android.widget.Adapter}.
-	 * <p/>
-	 * It calls <b>{@link #notifyDataSetChanged()}</b> internally.
-	 * <p/>
-	 * It will also create an internal {@link java.util.LinkedList} when there's no cache {@link java.util.List}
-	 * initialized.
-	 *
-	 * @param item
-	 * 		The item to add.
-	 */
-	public void addItem(Time item) {
-		if (mVisibleData == null) {
-			mVisibleData = new LinkedList<>();
-		}
-		mVisibleData.add(item);
-		notifyDataSetChanged();
-	}
+
 
 
 	/**
@@ -164,6 +125,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 		oldEntry.setHour(newEntry.getHour());
 		oldEntry.setMinute(newEntry.getMinute());
 		oldEntry.setOnOff(newEntry.isOnOff());
+		oldEntry.setTask(newEntry.getTask());
 		oldEntry.setEditTime(newEntry.getEditTime());
 		notifyDataSetChanged();
 	}
@@ -203,18 +165,18 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 
 		ViewHolder(ViewDataBinding binding) {
 			super(binding.getRoot());
-			mCb = binding.getRoot().findViewById(R.id.item_cb);
+			mCb = binding.getRoot().findViewById(R.id.item_iv);
 			mBinding = binding;
 		}
 	}
 
 
 	public static final class GridItemHandler {
-		private SelectableAdapter mAdapter;
+		private TimeKeepingListAdapter mAdapter;
 		private int mPosition;
 		private Time mTime;
 
-		public GridItemHandler(SelectableAdapter adapter, int position, Time time) {
+		public GridItemHandler(TimeKeepingListAdapter adapter, int position, Time time) {
 			mAdapter = adapter;
 			mPosition = position;
 			mTime = time;
@@ -226,6 +188,10 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 			}
 
 			return true;
+		}
+
+		public void editTaskEvent(View view) {
+			EventBus.getDefault().post(new EditTaskEvent(mAdapter.getData().get(mPosition)));
 		}
 
 		public void selectItemEvent(View view) {

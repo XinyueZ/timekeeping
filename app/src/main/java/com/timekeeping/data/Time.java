@@ -1,9 +1,11 @@
 package com.timekeeping.data;
 
+import java.io.Serializable;
+
 /**
  * Structure of a time instance.
  */
-public final class Time  {
+public final class Time  implements Serializable{
 	/**
 	 * Id of the item, might be retrieved from database.
 	 */
@@ -25,9 +27,9 @@ public final class Time  {
 	 */
 	private boolean mOnOff;
 	/**
-	 * Whether item is checked to delete or not.
+	 * Task for this time point.
 	 */
-	private boolean mCheck;
+	private String mTask;
 
 	/**
 	 * Instantiates a new Time.
@@ -49,6 +51,11 @@ public final class Time  {
 		mMinute = minute;
 		mEditTime = editTime;
 		mOnOff = onOff;
+	}
+
+	public Time(long id, int hour, int minute, long editTime, boolean onOff, String task) {
+		this(  id,   hour,   minute,   editTime,   onOff);
+		mTask = task;
 	}
 
 	/**
@@ -150,4 +157,17 @@ public final class Time  {
 		mOnOff = onOff;
 	}
 
+	/**
+	 * Task for this time point.
+	 */
+	public String getTask() {
+		return mTask;
+	}
+
+	/**
+	 * Set task for this time point.
+	 */
+	public void setTask(String task) {
+		mTask = task;
+	}
 }

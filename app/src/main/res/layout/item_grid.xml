@@ -39,8 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="@{adapter.isActionMode()}"
-        app:onClickListener="@{adapter.isActionMode() ?   handler.selectItemEvent : null}"
         android:longClickable="@{!adapter.isActionMode()}"
+        app:onClickListener="@{adapter.isActionMode() ?   handler.selectItemEvent : null}"
         app:onLongClickListener="@{!adapter.isActionMode() ?   handler.startActionModeEvent : null}"
         card_view:cardBackgroundColor="@{adapter.isActionMode() ? @color/common_grey : (time.isOnOff() ? @color/common_white : @color/common_grey)}">
 
@@ -50,10 +50,33 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/item_cb"
-                style="@style/Grid_Item_DeleteBtn"
-                android:layout_gravity="top|end"  />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <com.timekeeping.widget.MaterialRippleLayout
+                    android:id="@+id/edit_task_btn"
+                    style="@style/MaterialRippleLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:onClick="@{handler.editTaskEvent}"
+                    android:background="@color/common_transparent">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/common_transparent"
+                        android:src="@drawable/ic_task"  />
+                </com.timekeeping.widget.MaterialRippleLayout>
+
+                <ImageView
+                    android:id="@+id/item_iv"
+                    style="@style/Grid_Item_DeleteBtn"
+                    android:layout_gravity="end" />
+            </FrameLayout>
 
             <com.timekeeping.widget.FontTextView
                 android:id="@+id/time_tv"

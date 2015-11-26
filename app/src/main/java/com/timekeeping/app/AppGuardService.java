@@ -3,8 +3,10 @@ package com.timekeeping.app;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -36,15 +38,18 @@ public final class AppGuardService extends GcmTaskService {
 	@Override
 	public int onRunTask(TaskParams taskParams) {
 		synchronized (AppGuardService.TAG) {
+			Prefs prefs = Prefs.getInstance(getApplication());
 			Calendar calendar = Calendar.getInstance();
-			int hour = calendar.get(Calendar.HOUR_OF_DAY);
-			int min = calendar.get(Calendar.MINUTE);
-			if (hour == sLastHour && min == sLastMin) {
-				return GcmNetworkManager.RESULT_SUCCESS;
+			if (!prefs.areAllPaused() && prefs.isEULAOnceConfirmed()) {
+				int hour = calendar.get(Calendar.HOUR_OF_DAY);
+				int min = calendar.get(Calendar.MINUTE);
+				if (hour == sLastHour && min == sLastMin) {
+					return GcmNetworkManager.RESULT_SUCCESS;
+				}
+				sLastHour = hour;
+				sLastMin = min;
+				speak(hour, min);
 			}
-			sLastHour = hour;
-			sLastMin = min;
-			speak(hour, min);
 		}
 		return GcmNetworkManager.RESULT_SUCCESS;
 	}
@@ -63,25 +68,42 @@ public final class AppGuardService extends GcmTaskService {
 			for (final Time time : times) {
 				if (time.getHour() == hour && time.getMinute() == minute &&
 						time.isOnOff()) {
+					AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+					int amStreamMusicMaxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+					am.setStreamVolume(AudioManager.STREAM_MUSIC, amStreamMusicMaxVol, 0);
+
 					//Speak time.
 					mTextToSpeech = new TextToSpeech(getApplication(), new OnInitListener() {
 						@Override
 						public void onInit(int status) {
 							String timeText = Utils.formatTime(hour, minute, true);
 							String timeToSpeak = getString(R.string.lbl_prefix, timeText);
+							String taskToSpeak = time.getTask();
 							//noinspection unchecked
-							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-								Bundle args = new Bundle();
-								args.putString(Engine.KEY_PARAM_UTTERANCE_ID, "com.svox.pico");
-								mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, args, null);
-							} else {
-								mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null);
+							if(mTextToSpeech != null && time.isOnOff()) {
+								AppGuardService.this.doSpeak(timeToSpeak);
+								try {
+									TimeUnit.SECONDS.sleep(2);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								AppGuardService.this.doSpeak(taskToSpeak);
 							}
 							AppGuardService.notify(getApplication(), timeText);
 						}
 					});
 				}
 			}
+		}
+	}
+
+	private void doSpeak(String timeToSpeak) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Bundle args = new Bundle();
+			args.putString(Engine.KEY_PARAM_UTTERANCE_ID, "com.svox.pico");
+			mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, args, null);
+		} else {
+			mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
 }

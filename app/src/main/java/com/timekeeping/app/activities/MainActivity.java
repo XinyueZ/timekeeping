@@ -51,13 +51,17 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.timekeeping.R;
+import com.timekeeping.app.App;
 import com.timekeeping.app.adapters.TimeKeepingListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
+import com.timekeeping.app.fragments.CommentFragment;
 import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.bus.EULAConfirmedEvent;
 import com.timekeeping.bus.EULARejectEvent;
+import com.timekeeping.bus.EditTaskEvent;
 import com.timekeeping.bus.EditTimeEvent;
+import com.timekeeping.bus.SavedTaskEvent;
 import com.timekeeping.bus.SelectItemEvent;
 import com.timekeeping.bus.StartActionModeEvent;
 import com.timekeeping.bus.SwitchOnOffTimeEvent;
@@ -276,6 +280,28 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			}
 		});
 	}
+
+	/**
+	 * Handler for {@link com.timekeeping.bus.EditTaskEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.timekeeping.bus.EditTaskEvent}.
+	 */
+	public void onEvent(EditTaskEvent e) {
+		showDialogFragment(CommentFragment.newInstance(App.Instance, e.getTime()), null);
+	}
+
+
+	/**
+	 * Handler for {@link com.timekeeping.bus.SavedTaskEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.timekeeping.bus.SavedTaskEvent}.
+	 */
+	public void onEvent(SavedTaskEvent e) {
+		mEditedTime = e.getTime();
+		updateTask();
+	}
 	//------------------------------------------------
 
 
@@ -427,7 +453,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * Edited and update a {@link com.timekeeping.data.Time} to database.
 	 */
 	private void updateTime() {
-		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Time, Time>() {
+		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Time>() {
 			@Override
 			protected Time doInBackground(Void... params) {
 				DB db = DB.getInstance(getApplication());
@@ -450,6 +476,38 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			}
 		});
 	}
+
+
+
+	/**
+	 * Edited and update a {@link com.timekeeping.data.Time}'s comment/task to database.
+	 */
+	private void updateTask() {
+		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Time>() {
+			@Override
+			protected Time doInBackground(Void... params) {
+				DB db = DB.getInstance(getApplication());
+				boolean find = db.findTime(mEditedTime);
+				if (find && db.updateTime(mEditedTime)) {
+					return mBinding.getAdapter().findItem(mEditedTime);
+				} else {
+					return null;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Time oldEntry) {
+				super.onPostExecute(oldEntry);
+				if (oldEntry != null) {
+					mBinding.getAdapter().editItem(oldEntry, mEditedTime);
+					mEdit = false;
+					showStatusMessage(mEditedTime);
+				}
+			}
+		});
+	}
+
+
 
 
 	/**
@@ -750,4 +808,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 		checkPlayService();
 	}
+
+
 }

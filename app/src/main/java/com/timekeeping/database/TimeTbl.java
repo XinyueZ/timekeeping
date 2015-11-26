@@ -10,6 +10,7 @@ interface TimeTbl {
 	static final String HOUR = "_hour";
 	static final String MINUTE = "_minute";
 	static final String ONOFF = "_on_off";
+	static final String TASK = "_task";
 	static final String EDIT_TIME = "_edited_time";
 	static final String TABLE_NAME = "time";
 
@@ -19,7 +20,12 @@ interface TimeTbl {
 	 * Init new table since {@link DatabaseHelper#DATABASE_VERSION} = {@code 1}.
 	 */
 	static final String SQL_CREATE =
-			"CREATE TABLE " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY, " +
-					HOUR + " INTEGER, " + MINUTE + " INTEGER, " +  ONOFF + " INTEGER, " + EDIT_TIME + " INTEGER" +
+			"CREATE TABLE " + TABLE_NAME + " (" +
+					ID + " INTEGER PRIMARY KEY, " +
+					HOUR + " INTEGER, " +
+					MINUTE + " INTEGER, " +
+					ONOFF + " INTEGER, " +
+					TASK + " TEXT  DEFAULT \"\", " +
+					EDIT_TIME + " INTEGER" +
 					");";
 }
