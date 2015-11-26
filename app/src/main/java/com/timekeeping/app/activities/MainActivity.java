@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		Event {@link  EULARejectEvent}.
 	 */
 	public void onEvent(EULARejectEvent e) {
-		finish();
+		ActivityCompat.finishAfterTransition(this);
 	}
 
 	/**

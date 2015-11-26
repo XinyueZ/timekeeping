@@ -73,6 +73,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	@Override
 	public void onBindViewHolder(final ViewHolder holder, final int position) {
 		final Time entry = mVisibleData.get(position);
+		holder.mCb.setVisibility(!isActionMode() ?   View.INVISIBLE : isSelected(position) ? View.VISIBLE :View.INVISIBLE );
 		holder.mBinding.setVariable(BR.time, entry);
 		holder.mBinding.setVariable(BR.adapter, this);
 		holder.mBinding.setVariable(BR.handler, new GridItemHandler(this, position, entry));
@@ -198,11 +199,11 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	 */
 	static class ViewHolder extends RecyclerView.ViewHolder {
 		private ViewDataBinding mBinding;
-		private View mCardView;
+		private View mCb;
 
 		ViewHolder(ViewDataBinding binding) {
 			super(binding.getRoot());
-			mCardView = binding.getRoot().findViewById(R.id.item_cv);
+			mCb = binding.getRoot().findViewById(R.id.item_cb);
 			mBinding = binding;
 		}
 	}

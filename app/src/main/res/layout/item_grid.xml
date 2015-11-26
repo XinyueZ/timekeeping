@@ -50,12 +50,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <CheckBox
+            <ImageView
                 android:id="@+id/item_cb"
                 style="@style/Grid_Item_DeleteBtn"
-                android:layout_gravity="top|end"
-                android:checked="true"
-                android:visibility="@{!adapter.isActionMode() ?   View.INVISIBLE : adapter.isSelected(position) ? View.VISIBLE :View.INVISIBLE }" />
+                android:layout_gravity="top|end"  />
 
             <com.timekeeping.widget.FontTextView
                 android:id="@+id/time_tv"
