@@ -40,6 +40,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
+import com.timekeeping.utils.Prefs;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -49,7 +50,14 @@ import io.fabric.sdk.android.Fabric;
  * @author Xinyue Zhao
  */
 public final class App extends MultiDexApplication {
+	/**
+	 * Application's instance.
+	 */
+	public static App Instance;
 
+	{
+		Instance = this;
+	}
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -64,28 +72,23 @@ public final class App extends MultiDexApplication {
 
 
 	public static void startAppGuardService(Context cxt) {
-		GcmNetworkManager mgr = GcmNetworkManager.getInstance(cxt);
-		try {
-			mgr.cancelAllTasks(AppGuardService.class);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(!Prefs.getInstance(cxt).areAllPaused()) {
+			GcmNetworkManager mgr = GcmNetworkManager.getInstance(cxt);
+			try {
+				mgr.cancelAllTasks(AppGuardService.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			long periodSecs = 1;
+			long flexSecs = 1;
+			String tag = System.currentTimeMillis() + "";
+			PeriodicTask periodic = new PeriodicTask.Builder().setService(AppGuardService.class).setPeriod(periodSecs)
+					.setFlex(flexSecs).setTag(tag).setPersisted(true).setRequiredNetwork(com.google.android.gms.gcm.Task.NETWORK_STATE_ANY).setRequiresCharging(false).build();
+			mgr.schedule(periodic);
 		}
-		long periodSecs = 1;
-		long flexSecs = 1;
-		String tag = System.currentTimeMillis() + "";
-		PeriodicTask periodic = new PeriodicTask.Builder()
-				.setService(AppGuardService.class)
-				.setPeriod(periodSecs)
-				.setFlex(flexSecs)
-				.setTag(tag)
-				.setPersisted(true)
-				.setRequiredNetwork(com.google.android.gms.gcm.Task.NETWORK_STATE_ANY)
-				.setRequiresCharging(false)
-				.build();
-		mgr.schedule(periodic);
 	}
 
 	public static void stopAppGuardService(Context cxt) {
-
+		GcmNetworkManager.getInstance(cxt).cancelAllTasks(AppGuardService.class);
 	}
 }

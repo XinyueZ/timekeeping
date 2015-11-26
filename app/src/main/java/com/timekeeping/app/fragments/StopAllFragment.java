@@ -12,6 +12,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.chopping.application.BasicPrefs;
 import com.chopping.fragments.BaseFragment;
 import com.timekeeping.R;
+import com.timekeeping.app.App;
 import com.timekeeping.databinding.StopAllBinding;
 import com.timekeeping.utils.Prefs;
 
@@ -38,7 +39,7 @@ public final class StopAllFragment extends BaseFragment implements OnCheckedChan
 		super.onViewCreated(view, savedInstanceState);
 		setErrorHandlerAvailable(false);
 
-		boolean paused = Prefs.getInstance(getActivity().getApplication()).areAllPaused();
+		boolean paused = Prefs.getInstance(App.Instance).areAllPaused();
 		mBinding = DataBindingUtil.bind(view.findViewById(R.id.stop_all_rl));
 		mBinding.setIsChecked(paused);
 		mBinding.pauseResumeCb.setChecked(paused);
@@ -55,7 +56,11 @@ public final class StopAllFragment extends BaseFragment implements OnCheckedChan
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		Prefs.getInstance(getActivity().getApplication()).setPauseAll(isChecked);
 		mBinding.setIsChecked(isChecked);
-
 		Snackbar.make(mBinding.stopAllRl, isChecked ? R.string.msg_pause_all : R.string.msg_play_all, Snackbar.LENGTH_LONG).show();
+		if(isChecked) {
+			App.stopAppGuardService(App.Instance);
+		} else {
+			App.startAppGuardService(App.Instance);
+		}
 	}
 }

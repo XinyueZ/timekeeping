@@ -1,6 +1,5 @@
 package com.timekeeping.utils;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.chopping.application.BasicPrefs;
@@ -48,7 +47,7 @@ public final class Prefs extends BasicPrefs {
 	 *
 	 * @return The {@link Prefs} singleton.
 	 */
-	public static Prefs getInstance(Application cxt) {
+	public static Prefs getInstance(Context cxt) {
 		if (sInstance == null) {
 			sInstance = new Prefs(cxt);
 		}
