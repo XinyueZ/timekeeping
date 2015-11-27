@@ -9,7 +9,7 @@
     <string name="off_status">Stoppe Erinnerung um %1$s</string>
 
 
-    <string name="lbl_prefix">Es ist die Zeit %1$s .</string>
+    <string name="lbl_prefix">Es ist %1$s .</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
     <string name="lbl_share_app_content">%s \n\nHerunterladen:\nhttp://tinyurl.com/kr4qvdy</string>
