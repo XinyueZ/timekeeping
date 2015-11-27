@@ -58,6 +58,8 @@ public final class AppGuardService extends GcmTaskService {
 				sLastHour = hour;
 				sLastMin = min;
 				speak(hour, min, dayOfWeek);
+			} else {
+				stopSelf();
 			}
 		}
 		return GcmNetworkManager.RESULT_SUCCESS;
@@ -75,11 +77,10 @@ public final class AppGuardService extends GcmTaskService {
 		Prefs prefs = Prefs.getInstance(getApplication());
 		if (!prefs.areAllPaused() && prefs.isEULAOnceConfirmed()) {
 			for (final Time time : times) {
-				if (	time.getHour() == hour &&
+				if (time.getHour() == hour &&
 						time.getMinute() == minute &&
-						(time.getWeekDays().contains(dayOfWeek + "") || TextUtils.isEmpty(time.getWeekDays()) ) &&
-						time.isOnOff()
-					) {
+						(time.getWeekDays().contains(dayOfWeek + "") || TextUtils.isEmpty(time.getWeekDays())) &&
+						time.isOnOff()) {
 					prepareSpeak();
 
 					//Speak time.
@@ -95,16 +96,19 @@ public final class AppGuardService extends GcmTaskService {
 								String timeToSpeak = getString(R.string.lbl_prefix, timeText);
 								String taskToSpeak = time.getTask();
 								//noinspection unchecked
-								if (mTextToSpeech != null && time.isOnOff()) {
+								if (mTextToSpeech != null) {
 									AppGuardService.this.doSpeak(!TextUtils.isEmpty(taskToSpeak) ?
 											String.format("%s,%s", timeToSpeak, taskToSpeak) : timeToSpeak);
 
 									AppGuardService.notify(getApplication(), !TextUtils.isEmpty(taskToSpeak) ?
 											String.format("%s: %s", timeText, taskToSpeak) : timeText);
+								} else {
+									doneSpeak();
 								}
 							} else {
 								wakeUpIntent.putExtra(WakeUpReceiver.EXTRAS_IF_ERROR, true);
 								sendBroadcast(wakeUpIntent);
+								doneSpeak();
 							}
 						}
 					});
@@ -158,7 +162,9 @@ public final class AppGuardService extends GcmTaskService {
 		if (mWakeLock != null && mWakeLock.isHeld()) {
 			mWakeLock.release();
 		}
-		mTextToSpeech.shutdown();
+		if (mTextToSpeech != null) {
+			mTextToSpeech.shutdown();
+		}
 		stopSelf();
 	}
 
