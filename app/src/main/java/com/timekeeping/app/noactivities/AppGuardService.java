@@ -51,12 +51,13 @@ public final class AppGuardService extends GcmTaskService {
 			if (!prefs.areAllPaused() && prefs.isEULAOnceConfirmed()) {
 				int hour = calendar.get(Calendar.HOUR_OF_DAY);
 				int min = calendar.get(Calendar.MINUTE);
+				int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1; //Android: sunday == 1, this app: sunday==0;
 				if (hour == sLastHour && min == sLastMin) {
 					return GcmNetworkManager.RESULT_SUCCESS;
 				}
 				sLastHour = hour;
 				sLastMin = min;
-				speak(hour, min);
+				speak(hour, min, dayOfWeek);
 			}
 		}
 		return GcmNetworkManager.RESULT_SUCCESS;
@@ -69,13 +70,16 @@ public final class AppGuardService extends GcmTaskService {
 	}
 
 
-	private void speak(final int hour, final int minute) {
+	private void speak(final int hour, final int minute, final int dayOfWeek) {
 		List<Time> times = DB.getInstance(getApplication()).getTimes(Sort.DESC);
 		Prefs prefs = Prefs.getInstance(getApplication());
 		if (!prefs.areAllPaused() && prefs.isEULAOnceConfirmed()) {
 			for (final Time time : times) {
-				if (time.getHour() == hour && time.getMinute() == minute &&
-						time.isOnOff()) {
+				if (	time.getHour() == hour &&
+						time.getMinute() == minute &&
+						(time.getWeekDays().contains(dayOfWeek + "") || TextUtils.isEmpty(time.getWeekDays()) ) &&
+						time.isOnOff()
+					) {
 					prepareSpeak();
 
 					//Speak time.
@@ -141,7 +145,7 @@ public final class AppGuardService extends GcmTaskService {
 		}
 		mWakeLock.acquire();
 		try {
-			TimeUnit.SECONDS.sleep(15);
+			TimeUnit.SECONDS.sleep(10);
 		} catch (InterruptedException e) {
 			//Ignore...
 		}

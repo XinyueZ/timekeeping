@@ -62,6 +62,7 @@ import com.timekeeping.bus.EULARejectEvent;
 import com.timekeeping.bus.EditTaskEvent;
 import com.timekeeping.bus.EditTimeEvent;
 import com.timekeeping.bus.SavedTaskEvent;
+import com.timekeeping.bus.SavedWeekDaysEvent;
 import com.timekeeping.bus.SelectItemEvent;
 import com.timekeeping.bus.StartActionModeEvent;
 import com.timekeeping.bus.SwitchOnOffTimeEvent;
@@ -230,6 +231,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				mBinding.errorContent.setStatusBarBackgroundColor(R.color.primary_dark_color);
 				mBinding.getAdapter().setActionMode(true);
 				mBinding.getAdapter().notifyDataSetChanged();
+				mBinding.addNewTimeBtn.hide();
 				return true;
 			}
 
@@ -277,6 +279,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				mBinding.getAdapter().clearSelection();
 				mBinding.getAdapter().setActionMode(false);
 				mBinding.getAdapter().notifyDataSetChanged();
+				mBinding.addNewTimeBtn.show();
 			}
 		});
 	}
@@ -300,7 +303,18 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	public void onEvent(SavedTaskEvent e) {
 		mEditedTime = e.getTime();
-		updateTask();
+		updateOthers();
+	}
+
+	/**
+	 * Handler for {@link com.timekeeping.bus.SavedWeekDaysEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.timekeeping.bus.SavedWeekDaysEvent}.
+	 */
+	public void onEvent(SavedWeekDaysEvent e) {
+		mEditedTime = e.getTime();
+		updateOthers();
 	}
 	//------------------------------------------------
 
@@ -478,11 +492,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	}
 
 
-
 	/**
 	 * Edited and update a {@link com.timekeeping.data.Time}'s comment/task to database.
 	 */
-	private void updateTask() {
+	private void updateOthers() {
 		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Time>() {
 			@Override
 			protected Time doInBackground(Void... params) {
@@ -506,8 +519,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			}
 		});
 	}
-
-
 
 
 	/**
@@ -706,7 +717,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	}
 
 	private void initGrid() {
-		mBinding.scheduleGv.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.card_count)));
+		mBinding.scheduleGv.setLayoutManager(
+				new GridLayoutManager(this, getResources().getInteger(R.integer.card_count)));
 		mBinding.scheduleGv.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -717,6 +729,9 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 					}
 				} else {
 					if (!mBinding.addNewTimeBtn.isShown()) {
+						if (mBinding.getAdapter() != null && mBinding.getAdapter().isActionMode()) {
+							return;
+						}
 						mBinding.addNewTimeBtn.show();
 					}
 				}

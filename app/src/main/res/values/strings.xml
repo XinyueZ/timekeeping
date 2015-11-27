@@ -50,4 +50,12 @@
     <string name="msg_pause_all">Pause all</string>
     <string name="msg_play_all">Speech works again.</string>
 
+
+    <string name="week_day_0">Sunday</string>
+    <string name="week_day_1">Monday</string>
+    <string name="week_day_2">Tuesday</string>
+    <string name="week_day_3">Wednesday</string>
+    <string name="week_day_4">Thursday</string>
+    <string name="week_day_5">Friday</string>
+    <string name="week_day_6">Saturday</string>
 </resources>

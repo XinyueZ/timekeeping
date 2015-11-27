@@ -8,7 +8,7 @@
     <string name="on_status">启用%1$s的报时</string>
     <string name="off_status">暂停%1$s的报时</string>
 
-    <string name="lbl_prefix">现在是 %1$s</string>
+    <string name="lbl_prefix">当前时间是 %1$s 。</string>
     <string name="lbl_delete">删除选项</string>
     <string name="lbl_share">分享</string>
     <string name="lbl_share_app_title">一个不错的应用: %s</string>
@@ -39,4 +39,12 @@
     <string name="msg_voice_clock">现在是 %1$s</string>
     <string name="msg_pause_all">暂停使用</string>
     <string name="msg_play_all">继续使用</string>
+
+    <string name="week_day_0">星期日</string>
+    <string name="week_day_1">星期一</string>
+    <string name="week_day_2">星期二</string>
+    <string name="week_day_3">星期三</string>
+    <string name="week_day_4">星期四</string>
+    <string name="week_day_5">星期五</string>
+    <string name="week_day_6">星期六</string>
 </resources>

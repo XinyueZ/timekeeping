@@ -6,10 +6,10 @@
     <string name="change">Änderen</string>
     <string name="tray_info">Spreche die Zeit, die Sie möchten.</string>
     <string name="on_status">Erinnere dich an mich um %1$s</string>
-    <string name="off_status">Stoppe Zeitnahme um %1$s</string>
+    <string name="off_status">Stoppe Erinnerung um %1$s</string>
 
 
-    <string name="lbl_prefix">Es ist %1$s jetzt</string>
+    <string name="lbl_prefix">Es ist die Zeit %1$s .</string>
     <string name="lbl_share">Teile</string>
     <string name="lbl_share_app_title">Eine gute App: %s</string>
     <string name="lbl_share_app_content">%s \n\nHerunterladen:\nhttp://tinyurl.com/kr4qvdy</string>
@@ -31,4 +31,12 @@
     <string name="msg_voice_clock">Es ist %1$s</string>
     <string name="msg_pause_all">Alle pausieren</string>
     <string name="msg_play_all">Jetzt geht weiter.</string>
+
+    <string name="week_day_0">Sonntag</string>
+    <string name="week_day_1">Montag</string>
+    <string name="week_day_2">Dienstag</string>
+    <string name="week_day_3">Mittwoch</string>
+    <string name="week_day_4">Donnerstag</string>
+    <string name="week_day_5">Freitag</string>
+    <string name="week_day_6">Samstag</string>
 </resources>

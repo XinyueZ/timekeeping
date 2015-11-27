@@ -33,7 +33,7 @@ public final class Time  implements Serializable{
 	/**
 	 * Selected week-days to fire event.
 	 */
-	private String mWeekDays;
+	private String mWeekDays="0,1,2,3,4,5,6,";
 
 	/**
 	 * Instantiates a new Time.

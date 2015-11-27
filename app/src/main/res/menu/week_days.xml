@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/action_week_day_0"
+            android:checkable="true"
+            android:title="@string/week_day_0"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_week_day_1"
+            android:checkable="true"
+            android:title="@string/week_day_1"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_week_day_2"
+            android:checkable="true"
+            android:title="@string/week_day_2"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_week_day_3"
+            android:checkable="true"
+            android:title="@string/week_day_3"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_week_day_4"
+            android:checkable="true"
+            android:title="@string/week_day_4"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_week_day_5"
+            android:checkable="true"
+            android:title="@string/week_day_5"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_week_day_6"
+            android:checkable="true"
+            android:title="@string/week_day_6"
+            app:showAsAction="never" />
+    </group>
+</menu>
