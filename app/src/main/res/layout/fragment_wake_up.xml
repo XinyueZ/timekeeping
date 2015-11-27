@@ -55,6 +55,10 @@
             style="@style/Time_TextView"
             android:layout_gravity="center"
             android:gravity="center"
+            android:inputType="textMultiLine"
+            android:maxLines="2"
+            android:minLines="2"
+            android:ellipsize="end"
             android:text='@{TextUtils.isEmpty(time.getTask()) ? Utils.formatTime(time) : TextUtils.concat(Utils.formatTime(time), "\n" ,time.getTask())}' />
 
         <!--

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,7 @@ public final class WakeUpFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				MainActivity.showInstance(getActivity());
+				ActivityCompat.finishAfterTransition(getActivity());
 			}
 		});
 	}
