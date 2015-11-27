@@ -9,9 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.timekeeping.R;
+import com.timekeeping.app.activities.MainActivity;
 import com.timekeeping.data.Time;
 import com.timekeeping.databinding.WakeUpBinding;
 
@@ -46,6 +48,12 @@ public final class WakeUpFragment extends Fragment {
 		mBinding = DataBindingUtil.bind(view.findViewById(R.id.wake_up_ll));
 		mBinding.setTime((Time) args.getSerializable(EXTRAS_TIME));
 		mBinding.setIfError(args.getBoolean(EXTRAS_IF_ERROR));
+		mBinding.wakeUpLl.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MainActivity.showInstance(getActivity());
+			}
+		});
 	}
 
 

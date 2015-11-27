@@ -27,7 +27,7 @@ interface TimeTbl {
 					MINUTE + " INTEGER, " +
 					ONOFF + " INTEGER, " +
 					TASK + " TEXT  DEFAULT \"\", " +
-					WEEK_DAYS + " TEXT  DEFAULT \"\", " +
+					WEEK_DAYS + " TEXT  DEFAULT \"0,1,2,3,4,5,6,\", " +
 					EDIT_TIME + " INTEGER" +
 					");";
 }

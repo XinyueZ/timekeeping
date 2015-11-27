@@ -39,10 +39,10 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 		switch (oldVersion) {
 		case 1:
 			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.TASK + " TEXT DEFAULT \"\"");
-			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"\"");
+			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"0,1,2,3,4,5,6,\"");
 			break;
 		case 2:
-			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"\"");
+			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"0,1,2,3,4,5,6,\"");
 			break;
 		}
 	}
