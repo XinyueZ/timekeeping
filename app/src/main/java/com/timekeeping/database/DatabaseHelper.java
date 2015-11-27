@@ -17,7 +17,7 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 	/**
 	 * Init version of DB.
 	 */
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 
 	/**
 	 * Constructor of {@link DatabaseHelper}.
@@ -36,8 +36,14 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (newVersion > oldVersion) {
+		switch (oldVersion) {
+		case 1:
 			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.TASK + " TEXT DEFAULT \"\"");
+			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"\"");
+			break;
+		case 2:
+			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"\"");
+			break;
 		}
 	}
 }

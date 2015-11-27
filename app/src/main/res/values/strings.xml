@@ -49,4 +49,5 @@
     <string name="msg_voice_clock">It is %1$s</string>
     <string name="msg_pause_all">Pause all</string>
     <string name="msg_play_all">Speech works again.</string>
+
 </resources>

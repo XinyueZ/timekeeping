@@ -11,6 +11,7 @@ interface TimeTbl {
 	static final String MINUTE = "_minute";
 	static final String ONOFF = "_on_off";
 	static final String TASK = "_task";
+	static final String WEEK_DAYS = "_week_days";
 	static final String EDIT_TIME = "_edited_time";
 	static final String TABLE_NAME = "time";
 
@@ -26,6 +27,7 @@ interface TimeTbl {
 					MINUTE + " INTEGER, " +
 					ONOFF + " INTEGER, " +
 					TASK + " TEXT  DEFAULT \"\", " +
+					WEEK_DAYS + " TEXT  DEFAULT \"\", " +
 					EDIT_TIME + " INTEGER" +
 					");";
 }

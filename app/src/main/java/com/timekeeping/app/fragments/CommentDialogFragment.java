@@ -20,13 +20,13 @@ import com.timekeeping.data.Time;
 
 import de.greenrobot.event.EventBus;
 
-public final class CommentFragment extends DialogFragment {
-	private static final String EXTRAS_TIME = CommentFragment.class.getName() + ".EXTRAS.time";
+public final class CommentDialogFragment extends DialogFragment {
+	private static final String EXTRAS_TIME = CommentDialogFragment.class.getName() + ".EXTRAS.time";
 
 	public static DialogFragment newInstance(Context context, Time time) {
 		Bundle args = new Bundle();
 		args.putSerializable(EXTRAS_TIME, (Serializable) time);
-		return (DialogFragment) CommentFragment.instantiate(context, CommentFragment.class.getName(), args);
+		return (DialogFragment) CommentDialogFragment.instantiate(context, CommentDialogFragment.class.getName(), args);
 	}
 
 	@Override

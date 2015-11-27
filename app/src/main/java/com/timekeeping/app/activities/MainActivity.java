@@ -55,7 +55,7 @@ import com.timekeeping.app.App;
 import com.timekeeping.app.adapters.TimeKeepingListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
-import com.timekeeping.app.fragments.CommentFragment;
+import com.timekeeping.app.fragments.CommentDialogFragment;
 import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.bus.EULAConfirmedEvent;
 import com.timekeeping.bus.EULARejectEvent;
@@ -288,7 +288,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		Event {@link com.timekeeping.bus.EditTaskEvent}.
 	 */
 	public void onEvent(EditTaskEvent e) {
-		showDialogFragment(CommentFragment.newInstance(App.Instance, e.getTime()), null);
+		showDialogFragment(CommentDialogFragment.newInstance(App.Instance, e.getTime()), null);
 	}
 
 

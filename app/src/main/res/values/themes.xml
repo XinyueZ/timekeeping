@@ -37,6 +37,10 @@
 
     <style name="AppTheme" parent="AppTheme.Base" />
 
+    <style name="AppTheme.Transparent" parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@color/common_transparent</item>
+    </style>
+
     <!--Actionbar overflow menu divider-->
     <style name="OverflowDropDown" parent="@style/Widget.AppCompat.ListView.DropDown">
         <item name="android:dividerHeight">1dp</item>

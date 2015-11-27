@@ -30,6 +30,10 @@ public final class Time  implements Serializable{
 	 * Task for this time point.
 	 */
 	private String mTask;
+	/**
+	 * Selected week-days to fire event.
+	 */
+	private String mWeekDays;
 
 	/**
 	 * Instantiates a new Time.
@@ -56,6 +60,12 @@ public final class Time  implements Serializable{
 	public Time(long id, int hour, int minute, long editTime, boolean onOff, String task) {
 		this(  id,   hour,   minute,   editTime,   onOff);
 		mTask = task;
+	}
+
+
+	public Time(long id, int hour, int minute, long editTime, boolean onOff, String task, String weekDays) {
+		this(  id,   hour,   minute,   editTime,   onOff,   task);
+		mWeekDays = weekDays;
 	}
 
 	/**
@@ -169,5 +179,14 @@ public final class Time  implements Serializable{
 	 */
 	public void setTask(String task) {
 		mTask = task;
+	}
+
+
+	public String getWeekDays() {
+		return mWeekDays;
+	}
+
+	public void setWeekDays(String weekDays) {
+		mWeekDays = weekDays;
 	}
 }

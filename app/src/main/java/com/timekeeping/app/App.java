@@ -40,6 +40,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
+import com.timekeeping.app.noactivities.AppGuardService;
 import com.timekeeping.utils.Prefs;
 
 import io.fabric.sdk.android.Fabric;

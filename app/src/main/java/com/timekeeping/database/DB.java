@@ -33,7 +33,7 @@ public final class DB {
 	/**
 	 * Helper class that create, delete, update tables of database.
 	 */
-	private  DatabaseHelper mDatabaseHelper;
+	private DatabaseHelper mDatabaseHelper;
 	/**
 	 * The database object.
 	 */
@@ -68,7 +68,7 @@ public final class DB {
 	 * Open database.
 	 */
 	public synchronized void open() {
-		mDatabaseHelper = new  DatabaseHelper(mContext);
+		mDatabaseHelper = new DatabaseHelper(mContext);
 		mDB = mDatabaseHelper.getWritableDatabase();
 	}
 
@@ -99,6 +99,7 @@ public final class DB {
 			v.put(TimeTbl.MINUTE, item.getMinute());
 			v.put(TimeTbl.ONOFF, item.isOnOff() ? 1 : 0);
 			v.put(TimeTbl.TASK, item.getTask());
+			v.put(TimeTbl.WEEK_DAYS, item.getWeekDays());
 			v.put(TimeTbl.EDIT_TIME, System.currentTimeMillis());
 			rowId = mDB.insert(TimeTbl.TABLE_NAME, null, v);
 			item.setId(rowId);
@@ -130,6 +131,7 @@ public final class DB {
 			v.put(TimeTbl.MINUTE, item.getMinute());
 			v.put(TimeTbl.ONOFF, item.isOnOff() ? 1 : 0);
 			v.put(TimeTbl.TASK, item.getTask());
+			v.put(TimeTbl.WEEK_DAYS, item.getWeekDays());
 			v.put(TimeTbl.EDIT_TIME, System.currentTimeMillis());
 			String[] args = new String[] { item.getId() + "" };
 			rowId = mDB.update(TimeTbl.TABLE_NAME, v, TimeTbl.ID + " = ?", args);
@@ -223,7 +225,8 @@ public final class DB {
 			while (c.moveToNext()) {
 				item = new Time(c.getLong(c.getColumnIndex(TimeTbl.ID)), c.getInt(c.getColumnIndex(TimeTbl.HOUR)),
 						c.getInt(c.getColumnIndex(TimeTbl.MINUTE)), c.getLong(c.getColumnIndex(TimeTbl.EDIT_TIME)),
-						c.getInt(c.getColumnIndex(TimeTbl.ONOFF)) == 1, c.getString(c.getColumnIndex(TimeTbl.TASK)));
+						c.getInt(c.getColumnIndex(TimeTbl.ONOFF)) == 1, c.getString(c.getColumnIndex(TimeTbl.TASK)),
+						c.getString(c.getColumnIndex(TimeTbl.WEEK_DAYS)));
 				list.add(item);
 			}
 		} finally {
@@ -236,11 +239,15 @@ public final class DB {
 	}
 
 	/**
-	 * To check whether the {@link com.timekeeping.data.Time} with hour and minute is in DB or not. To prevent from storing duplicated item.
-	 * @param item The item to check.
+	 * To check whether the {@link com.timekeeping.data.Time} with hour and minute is in DB or not. To prevent from
+	 * storing duplicated item.
+	 *
+	 * @param item
+	 * 		The item to check.
+	 *
 	 * @return {@link true} if find.
 	 */
-	public boolean findTime(Time item ) {
+	public boolean findTime(Time item) {
 		if (mDB == null || !mDB.isOpen()) {
 			open();
 		}
@@ -248,11 +255,12 @@ public final class DB {
 		try {
 			String whereClause = TimeTbl.HOUR + "=? AND " + TimeTbl.MINUTE + "=?";
 			String[] whereArgs = new String[] { String.valueOf(item.getHour()), String.valueOf(item.getMinute()) };
-			Cursor c = mDB.query(TimeTbl.TABLE_NAME, new String[] { TimeTbl.ID }, whereClause, whereArgs, null, null, null);
+			Cursor c = mDB.query(TimeTbl.TABLE_NAME, new String[] { TimeTbl.ID }, whereClause, whereArgs, null, null,
+					null);
 			success = c.getCount() >= 1;
 		} finally {
 			close();
 		}
-		return success ;
+		return success;
 	}
 }
