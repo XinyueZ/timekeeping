@@ -40,7 +40,7 @@ public final class TextToSpeechUtils {
 		} else {
 			HashMap<String, String> map = new HashMap<>();
 			map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, id);
-			tts.speak(timeToSpeak, TextToSpeech.QUEUE_ADD, null);
+			tts.speak(timeToSpeak, TextToSpeech.QUEUE_ADD, map);
 		}
 	}
 
