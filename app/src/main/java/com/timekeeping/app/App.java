@@ -66,7 +66,7 @@ public final class App extends MultiDexApplication {
 		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
 				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
 		TaskHelper.init(this);
-		 startAppGuardService(this);
+		startAppGuardService(this);
 	}
 
 

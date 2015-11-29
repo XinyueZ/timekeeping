@@ -3,18 +3,14 @@ package com.timekeeping.app.noactivities;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.Engine;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.speech.tts.UtteranceProgressListener;
@@ -24,11 +20,13 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 import com.timekeeping.R;
+import com.timekeeping.app.App;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
 import com.timekeeping.database.DB.Sort;
 import com.timekeeping.utils.NotifyUtils;
 import com.timekeeping.utils.Prefs;
+import com.timekeeping.utils.TextToSpeechUtils;
 import com.timekeeping.utils.Utils;
 
 public final class AppGuardService extends GcmTaskService {
@@ -68,7 +66,7 @@ public final class AppGuardService extends GcmTaskService {
 	private static void notify(Context cxt, String time) {
 		NotifyUtils.notifyWithoutBigImage(cxt, NOTIFY_ID, cxt.getString(R.string.application_name),
 				cxt.getString(R.string.msg_voice_clock, time), R.drawable.ic_voice_clock_notify,
-				NotifyUtils.getAppHome(cxt));
+				NotifyUtils.getAppHome(cxt), Prefs.getInstance(App.Instance).getVolume() == 0);
 	}
 
 
@@ -82,6 +80,11 @@ public final class AppGuardService extends GcmTaskService {
 						(time.getWeekDays().contains(dayOfWeek + "") || TextUtils.isEmpty(time.getWeekDays())) &&
 						time.isOnOff()) {
 					prepareSpeak();
+
+					Intent wakeUpIntent = new Intent(WakeUpReceiver.ACTION_WAKE_UP);
+					wakeUpIntent.putExtra(WakeUpReceiver.EXTRAS_TIME, time);
+					wakeUpIntent.putExtra(WakeUpReceiver.EXTRAS_IF_ERROR, false);
+					sendBroadcast(wakeUpIntent);
 
 					//Speak time.
 					mTextToSpeech = new TextToSpeech(getApplication(), new OnInitListener() {
@@ -97,7 +100,7 @@ public final class AppGuardService extends GcmTaskService {
 								String taskToSpeak = time.getTask();
 								//noinspection unchecked
 								if (mTextToSpeech != null) {
-									AppGuardService.this.doSpeak(!TextUtils.isEmpty(taskToSpeak) ?
+									TextToSpeechUtils.doSpeak(mTextToSpeech, !TextUtils.isEmpty(taskToSpeak) ?
 											String.format("%s,%s", timeToSpeak, taskToSpeak) : timeToSpeak);
 
 									AppGuardService.notify(getApplication(), !TextUtils.isEmpty(taskToSpeak) ?
@@ -148,33 +151,14 @@ public final class AppGuardService extends GcmTaskService {
 			mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 		}
 		mWakeLock.acquire();
-		try {
-			TimeUnit.SECONDS.sleep(10);
-		} catch (InterruptedException e) {
-			//Ignore...
-		}
-		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		int amStreamMusicMaxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		am.setStreamVolume(AudioManager.STREAM_MUSIC, amStreamMusicMaxVol, 0);
+		TextToSpeechUtils.prepareSpeak(getApplication(),Prefs.getInstance(getApplication()).getVolume());
 	}
 
 	private void doneSpeak() {
+		TextToSpeechUtils.doneSpeak(mTextToSpeech);
+		stopSelf();
 		if (mWakeLock != null && mWakeLock.isHeld()) {
 			mWakeLock.release();
-		}
-		if (mTextToSpeech != null) {
-			mTextToSpeech.shutdown();
-		}
-		stopSelf();
-	}
-
-	private void doSpeak(String timeToSpeak) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Bundle args = new Bundle();
-			args.putString(Engine.KEY_PARAM_UTTERANCE_ID, "com.svox.pico");
-			mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, args, null);
-		} else {
-			mTextToSpeech.speak(timeToSpeak, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
 }

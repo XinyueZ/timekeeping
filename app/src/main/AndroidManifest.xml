@@ -42,6 +42,12 @@
             android:label="@string/application_name"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".app.activities.WakeUpActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Transparent" />
+
         <!-- Event handler for changing system packages, for external links -->
         <receiver
             android:name="com.chopping.application.InstalledAppReceiver"
@@ -66,10 +72,6 @@
             android:name="com.crashlytics.ApiKey"
             android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9" />
 
-        <activity
-            android:name=".app.activities.WakeUpActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Transparent" />
 
         <receiver
             android:name=".app.noactivities.WakeUpReceiver"

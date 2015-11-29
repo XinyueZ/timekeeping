@@ -28,6 +28,8 @@ public final class Prefs extends BasicPrefs {
 	 */
 	private static final String KEY_INIT_DATA = "key_init_data";
 	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
+	private static final String KEY_VOLUME = "key.volume";
+	private static final String KEY_WELCOME = "key.welcome";
 
 	/**
 	 * Created a DeviceData storage.
@@ -115,5 +117,21 @@ public final class Prefs extends BasicPrefs {
 	}
 	public int getShownDetailsTimes() {
 		return getInt(KEY_SHOWN_DETAILS_TIMES, 1);
+	}
+
+	public void setVolume(int vol) {
+		setInt(KEY_VOLUME, vol);
+	}
+
+	public int getVolume() {
+		return getInt(KEY_VOLUME, 1);
+	}
+
+	public void setWelcomed(boolean welcomed) {
+		setBoolean(KEY_WELCOME, welcomed);
+	}
+
+	public boolean isWelcomed() {
+		return getBoolean(KEY_WELCOME, false);
 	}
 }

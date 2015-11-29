@@ -8,6 +8,7 @@
     <string name="tray_info">Speak time you\'ve wanted.</string>
     <string name="on_status">Timekeeping at %1$s</string>
     <string name="off_status">Stop timekeeping at %1$s</string>
+    <string name="welcome">Welcome, thank you for using!</string>
 
     <string name="lbl_prefix">%1$s</string>
     <string name="lbl_delete">Delete Item</string>
@@ -17,6 +18,10 @@
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
     <string name="lbl_about">About</string>
     <string name="lbl_comment">Comment</string>
+    <string name="lbl_vol">Volume</string>
+    <string name="lbl_vol_0">Vibration only</string>
+    <string name="lbl_vol_1">Medium</string>
+    <string name="lbl_vol_2">Sharp</string>
 
     <string name="play_service_url">market://details?id=com.google.android.gms</string>
 
@@ -49,6 +54,7 @@
     <string name="msg_voice_clock">It is %1$s</string>
     <string name="msg_pause_all">Pause all</string>
     <string name="msg_play_all">Speech works again.</string>
+    <string name="msg_app_cant_be_used">Sorry! Some fatal error happened, you can not go on.</string>
 
 
     <string name="week_day_0">Sunday</string>
@@ -58,4 +64,11 @@
     <string name="week_day_4">Thursday</string>
     <string name="week_day_5">Friday</string>
     <string name="week_day_6">Saturday</string>
+
+
+    <string-array name="volumes">
+        <item>@string/lbl_vol_0</item>
+        <item>@string/lbl_vol_1</item>
+        <item>@string/lbl_vol_2</item>
+    </string-array>
 </resources>

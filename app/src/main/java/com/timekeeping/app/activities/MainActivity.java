@@ -56,6 +56,7 @@ import com.timekeeping.app.adapters.TimeKeepingListAdapter;
 import com.timekeeping.app.fragments.AboutDialogFragment;
 import com.timekeeping.app.fragments.AboutDialogFragment.EulaConfirmationDialog;
 import com.timekeeping.app.fragments.CommentDialogFragment;
+import com.timekeeping.app.fragments.VolumeDialogFragment;
 import com.timekeeping.bus.DeleteTimeEvent;
 import com.timekeeping.bus.EULAConfirmedEvent;
 import com.timekeeping.bus.EULARejectEvent;
@@ -331,6 +332,27 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		String text = getString(R.string.lbl_share_app_content, getString(R.string.tray_info));
 		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
 
+		MenuItem volMi = menu.findItem(R.id.action_volume);
+		int volume = Prefs.getInstance(getApplication()).getVolume();
+		String[] labels = getResources().getStringArray(R.array.volumes);
+		String label;
+		int icon;
+		switch (volume) {
+		case 0:
+			label = labels[0];
+			icon = R.drawable.ic_volume_vibration;
+			break;
+		case 2:
+			label = labels[2];
+			icon = R.drawable.ic_volume_sharp;
+			break;
+		default:
+			label = labels[1];
+			icon = R.drawable.ic_volume_medium;
+			break;
+		}
+		volMi.setIcon(icon);
+		volMi.setTitle(label);
 		return true;
 	}
 
@@ -343,6 +365,9 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		switch (id) {
 		case R.id.action_about:
 			showDialogFragment(AboutDialogFragment.newInstance(this), null);
+			break;
+		case R.id.action_volume:
+			showDialogFragment(VolumeDialogFragment.newInstance(this), null);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -485,7 +510,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				if (oldEntry != null) {
 					mBinding.getAdapter().editItem(oldEntry, mEditedTime);
 					mEdit = false;
-					showStatusMessage(mEditedTime);
 				}
 			}
 		});
@@ -514,7 +538,6 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				if (oldEntry != null) {
 					mBinding.getAdapter().editItem(oldEntry, mEditedTime);
 					mEdit = false;
-					showStatusMessage(mEditedTime);
 				}
 			}
 		});

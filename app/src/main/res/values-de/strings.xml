@@ -7,7 +7,7 @@
     <string name="tray_info">Spreche die Zeit, die Sie möchten.</string>
     <string name="on_status">Erinnere dich an mich um %1$s</string>
     <string name="off_status">Stoppe Erinnerung um %1$s</string>
-
+    <string name="welcome">Willkommen, danke sehr!</string>
 
     <string name="lbl_prefix">Es ist %1$s .</string>
     <string name="lbl_share">Teile</string>
@@ -18,6 +18,10 @@
     <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
         weiter.</string>
     <string name="lbl_comment">Komment</string>
+    <string name="lbl_vol">Ton</string>
+    <string name="lbl_vol_0">Nur mit Vibration</string>
+    <string name="lbl_vol_1">Medium</string>
+    <string name="lbl_vol_2">Laut</string>
 
     <string name="btn_confirm">Sicher</string>
     <string name="btn_cancel">Abbrechen</string>
@@ -31,6 +35,7 @@
     <string name="msg_voice_clock">Es ist %1$s</string>
     <string name="msg_pause_all">Alle pausieren</string>
     <string name="msg_play_all">Jetzt geht weiter.</string>
+    <string name="msg_app_cant_be_used">Sorry! Einige Fehler tauchen auf, wir können nicht weiter gehen.</string>
 
     <string name="week_day_0">Sonntag</string>
     <string name="week_day_1">Montag</string>
@@ -39,4 +44,5 @@
     <string name="week_day_4">Donnerstag</string>
     <string name="week_day_5">Freitag</string>
     <string name="week_day_6">Samstag</string>
+
 </resources>
