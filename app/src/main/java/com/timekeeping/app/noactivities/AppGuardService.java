@@ -156,7 +156,7 @@ public final class AppGuardService extends GcmTaskService {
 
 	private void doneSpeak() {
 		TextToSpeechUtils.doneSpeak(mTextToSpeech);
-		stopSelf();
+
 		if (mWakeLock != null && mWakeLock.isHeld()) {
 			mWakeLock.release();
 		}
