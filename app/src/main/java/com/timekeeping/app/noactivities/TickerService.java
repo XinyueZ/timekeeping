@@ -14,6 +14,7 @@ import com.timekeeping.utils.NotifyUtils;
 public class TickerService extends Service {
 	private static final int ONGOING_NOTIFICATION_ID = 0x57;
 	private static final String TAG = "TickerService";
+	private boolean mReg = false;
 	private IntentFilter mTickerFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
 
 	private BroadcastReceiver mTickerReceiver = new BroadcastReceiver() {
@@ -34,17 +35,14 @@ public class TickerService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Notification notification = NotifyUtils.buildNotifyWithoutBigImage(
-				this,
-				ONGOING_NOTIFICATION_ID,
-				getString(R.string.application_name),
-				getString(R.string.tray_info),
-				R.drawable.ic_tray,
-				NotifyUtils.getAppHome(this),
-				true
-		);
-		startForeground(ONGOING_NOTIFICATION_ID, notification);
-		registerReceiver(mTickerReceiver, mTickerFilter);
+		if (!mReg) {
+			Notification notification = NotifyUtils.buildNotifyWithoutBigImage(this, ONGOING_NOTIFICATION_ID,
+					getString(R.string.application_name), getString(R.string.tray_info), R.drawable.ic_tray,
+					NotifyUtils.getAppHome(this), true);
+			startForeground(ONGOING_NOTIFICATION_ID, notification);
+			registerReceiver(mTickerReceiver, mTickerFilter);
+			mReg = true;
+		}
 		return START_STICKY;
 	}
 
@@ -55,6 +53,7 @@ public class TickerService extends Service {
 		if (mTickerReceiver != null) {
 			unregisterReceiver(mTickerReceiver);
 			mTickerReceiver = null;
+			mReg = false;
 		}
 	}
 }
