@@ -5,8 +5,8 @@
     <string name="application_name">Voice Clock</string>
     <string name="accept">Yes</string>
     <string name="change">Change</string>
-    <string name="tray_info">Speak time you\'ve wanted.</string>
-    <string name="on_status">Timekeeping at %1$s</string>
+    <string name="tray_info">Remind you later.</string>
+    <string name="on_status">Remind you at %1$s .</string>
     <string name="off_status">Stop timekeeping at %1$s</string>
     <string name="welcome">Welcome, thank you for using!</string>
 

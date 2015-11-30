@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.timekeeping"
+<manifest package="com.timekeeping"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -41,7 +40,6 @@
             android:name=".app.activities.MainActivity"
             android:label="@string/application_name"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".app.activities.WakeUpActivity"
             android:excludeFromRecents="true"
@@ -67,11 +65,9 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
 
-
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9" />
-
 
         <receiver
             android:name=".app.noactivities.WakeUpReceiver"
@@ -81,7 +77,6 @@
                 <action android:name="WakeUpReceiver.ACTION.wake.up" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".app.noactivities.BootReceiver"
             android:enabled="true">
@@ -90,16 +85,14 @@
             </intent-filter>
         </receiver>
 
-
         <service
             android:name=".app.noactivities.AppGuardService"
             android:enabled="true"
-            android:exported="true"
-            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
-            <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
-            </intent-filter>
-        </service>
+            android:exported="true" />
+        <service
+            android:name=".app.noactivities.TickerService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

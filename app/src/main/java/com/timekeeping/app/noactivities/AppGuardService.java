@@ -4,6 +4,7 @@ package com.timekeeping.app.noactivities;
 import java.util.Calendar;
 import java.util.List;
 
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -16,9 +17,6 @@ import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.speech.tts.UtteranceProgressListener;
 import android.text.TextUtils;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.GcmTaskService;
-import com.google.android.gms.gcm.TaskParams;
 import com.timekeeping.R;
 import com.timekeeping.app.App;
 import com.timekeeping.data.Time;
@@ -29,11 +27,9 @@ import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.TextToSpeechUtils;
 import com.timekeeping.utils.Utils;
 
-public final class AppGuardService extends GcmTaskService {
+public final class AppGuardService extends IntentService {
 	private static final String TAG = "AppGuardService";
 	private static final int NOTIFY_ID = 0x07;
-	private static int sLastHour = -1;
-	private static int sLastMin = -1;
 	/**
 	 * Speak text.
 	 */
@@ -41,27 +37,23 @@ public final class AppGuardService extends GcmTaskService {
 
 	private WakeLock mWakeLock;
 
-	@Override
-	public int onRunTask(TaskParams taskParams) {
-		synchronized (AppGuardService.TAG) {
-			Prefs prefs = Prefs.getInstance(getApplication());
-			Calendar calendar = Calendar.getInstance();
-			if (!prefs.areAllPaused() && prefs.isEULAOnceConfirmed()) {
-				int hour = calendar.get(Calendar.HOUR_OF_DAY);
-				int min = calendar.get(Calendar.MINUTE);
-				int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1; //Android: sunday == 1, this app: sunday==0;
-				if (hour == sLastHour && min == sLastMin) {
-					return GcmNetworkManager.RESULT_SUCCESS;
-				}
-				sLastHour = hour;
-				sLastMin = min;
-				speak(hour, min, dayOfWeek);
-			} else {
-				stopSelf();
-			}
-		}
-		return GcmNetworkManager.RESULT_SUCCESS;
+	public AppGuardService() {
+		super(TAG);
 	}
+
+	@Override
+	protected void onHandleIntent(Intent intent) {
+		Prefs prefs = Prefs.getInstance(getApplication());
+		Calendar calendar = Calendar.getInstance();
+		if (!prefs.areAllPaused() && prefs.isEULAOnceConfirmed()) {
+			int hour = calendar.get(Calendar.HOUR_OF_DAY);
+			int min = calendar.get(Calendar.MINUTE);
+			int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1; //Android: sunday == 1, this app: sunday==0;
+
+			speak(hour, min, dayOfWeek);
+		}
+	}
+
 
 	private static void notify(Context cxt, String time) {
 		NotifyUtils.notifyWithoutBigImage(cxt, NOTIFY_ID, cxt.getString(R.string.application_name),
@@ -81,10 +73,6 @@ public final class AppGuardService extends GcmTaskService {
 						time.isOnOff()) {
 					prepareSpeak();
 
-					Intent wakeUpIntent = new Intent(WakeUpReceiver.ACTION_WAKE_UP);
-					wakeUpIntent.putExtra(WakeUpReceiver.EXTRAS_TIME, time);
-					wakeUpIntent.putExtra(WakeUpReceiver.EXTRAS_IF_ERROR, false);
-					sendBroadcast(wakeUpIntent);
 
 					//Speak time.
 					mTextToSpeech = new TextToSpeech(getApplication(), new OnInitListener() {
@@ -148,17 +136,20 @@ public final class AppGuardService extends GcmTaskService {
 	private void prepareSpeak() {
 		if (mWakeLock == null) {
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+			boolean largerThan17 = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1;
+			mWakeLock = pm.newWakeLock(largerThan17 ? PowerManager.PARTIAL_WAKE_LOCK : PowerManager.FULL_WAKE_LOCK,
+					TAG);
 		}
 		mWakeLock.acquire();
-		TextToSpeechUtils.prepareSpeak(getApplication(),Prefs.getInstance(getApplication()).getVolume());
+		TextToSpeechUtils.prepareSpeak(getApplication(), Prefs.getInstance(getApplication()).getVolume());
 	}
 
 	private void doneSpeak() {
 		TextToSpeechUtils.doneSpeak(mTextToSpeech);
 
-		if (mWakeLock != null && mWakeLock.isHeld()) {
+		if (mWakeLock != null) {
 			mWakeLock.release();
+			mWakeLock = null;
 		}
 	}
 }

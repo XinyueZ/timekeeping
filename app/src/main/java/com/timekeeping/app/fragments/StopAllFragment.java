@@ -58,9 +58,9 @@ public final class StopAllFragment extends BaseFragment implements OnCheckedChan
 		mBinding.setIsChecked(isChecked);
 		Snackbar.make(mBinding.stopAllRl, isChecked ? R.string.msg_pause_all : R.string.msg_play_all, Snackbar.LENGTH_LONG).show();
 		if(isChecked) {
-			App.stopAppGuardService(App.Instance);
+			App.stopAppGuardService();
 		} else {
-			App.startAppGuardService(App.Instance);
+			App.startAppGuardService();
 		}
 	}
 }

@@ -79,6 +79,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	@Override
 	public void onBindViewHolder(final ViewHolder holder, final int position) {
 		final Time entry = mVisibleData.get(position);
+		holder.mOnOffV.setBackgroundResource(entry.isOnOff() ? R.drawable.ic_on:R.drawable.ic_off);
 		holder.mCb.setVisibility(
 				!isActionMode() ? View.INVISIBLE : isSelected(position) ? View.VISIBLE : View.INVISIBLE);
 		holder.mBinding.setVariable(BR.time, entry);
@@ -162,10 +163,12 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	 */
 	static class ViewHolder extends RecyclerView.ViewHolder {
 		private ViewDataBinding mBinding;
+		private View mOnOffV;
 		private View mCb;
 
 		ViewHolder(ViewDataBinding binding) {
 			super(binding.getRoot());
+			mOnOffV = binding.getRoot().findViewById(R.id.on_off_btn);
 			mCb = binding.getRoot().findViewById(R.id.item_iv);
 			View menuHolder = binding.getRoot().findViewById(R.id.week_days_btn);
 			PopupMenu menuPopup = new PopupMenu(binding.getRoot().getContext(), menuHolder);

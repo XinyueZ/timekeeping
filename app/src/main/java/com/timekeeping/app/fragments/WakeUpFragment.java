@@ -5,6 +5,7 @@ import java.io.Serializable;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ public final class WakeUpFragment extends Fragment {
 	private static final String EXTRAS_TIME = WakeUpFragment.class.getName() + ".EXTRAS.time";
 	private static final String EXTRAS_IF_ERROR = WakeUpFragment.class.getName() + ".EXTRAS.if.error";
 	private WakeUpBinding mBinding;
+	private int mCountDown = 5;
 
 	public static WakeUpFragment newInstance(Context context, Time time, boolean ifError) {
 		Bundle args = new Bundle();
@@ -56,7 +58,33 @@ public final class WakeUpFragment extends Fragment {
 				ActivityCompat.finishAfterTransition(getActivity());
 			}
 		});
+
+
+		sHandler.postDelayed(mDismissTask, 1000);
 	}
 
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		if (mDismissTask != null) {
+			sHandler.removeCallbacks(mDismissTask);
+		}
+	}
 
+	private static final Handler sHandler = new Handler();
+
+	private Runnable mDismissTask = new Runnable() {
+		@Override
+		public void run() {
+			if (mCountDown == 0) {
+				mDismissTask = null;
+				ActivityCompat.finishAfterTransition(getActivity());
+			} else {
+				mCountDown--;
+				mBinding.countdownTv.setText(mCountDown + "");
+				sHandler.postDelayed(mDismissTask, 1000);
+			}
+		}
+
+	};
 }

@@ -4,7 +4,7 @@
     <string name="application_name">报时助手</string>
     <string name="accept">是</string>
     <string name="change">改变</string>
-    <string name="tray_info">报出您要的时间</string>
+    <string name="tray_info">帮你报时</string>
     <string name="on_status">启用%1$s的报时</string>
     <string name="off_status">暂停%1$s的报时</string>
     <string name="welcome">欢迎使用，谢谢！</string>

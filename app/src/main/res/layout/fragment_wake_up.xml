@@ -49,6 +49,13 @@
                 android:paddingLeft="35dp"
                 android:src="@drawable/ic_if_error"
                 android:visibility="@{ifError ? View.VISIBLE : View.INVISIBLE}" />
+
+            <TextView
+                android:id="@+id/countdown_tv" android:text="5s"
+                android:textColor="@color/common_black"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_width="wrap_content" android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_height="wrap_content" />
         </FrameLayout>
 
         <com.timekeeping.widget.FontTextView

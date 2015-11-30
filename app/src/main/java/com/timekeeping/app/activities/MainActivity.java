@@ -266,7 +266,9 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 					protected void onPostExecute(Void result) {
 						super.onPostExecute(result);
 						mBinding.getAdapter().notifyDataSetChanged();
-						mActionMode.finish();
+						if (mActionMode != null) {
+							mActionMode.finish();
+						}
 					}
 				}, mBinding.getAdapter().getSelectedItems());
 				return true;

@@ -5,6 +5,8 @@ import java.io.Serializable;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +21,7 @@ public class WakeUpActivity extends AppCompatActivity {
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int LAYOUT =  R.layout.activity_wake_up;
+	private static final int LAYOUT = R.layout.activity_wake_up;
 	private static final String EXTRAS_TIME = WakeUpFragment.class.getName() + ".EXTRAS.time";
 	private static final String EXTRAS_IF_ERROR = WakeUpFragment.class.getName() + ".EXTRAS.if.error";
 
@@ -40,8 +42,8 @@ public class WakeUpActivity extends AppCompatActivity {
 
 	private void handleIntent(Intent intent) {
 		FragmentManager frgMgr = getSupportFragmentManager();
-		WakeUpFragment frg = WakeUpFragment.newInstance(this,
-				(Time) intent.getSerializableExtra(EXTRAS_TIME), intent.getBooleanExtra(EXTRAS_IF_ERROR, false));
+		WakeUpFragment frg = WakeUpFragment.newInstance(this, (Time) intent.getSerializableExtra(EXTRAS_TIME),
+				intent.getBooleanExtra(EXTRAS_IF_ERROR, false));
 		frgMgr.beginTransaction().replace(R.id.wake_up_fl, frg, frg.getClass().getSimpleName()).commit();
 		frgMgr.executePendingTransactions();
 	}
@@ -56,13 +58,16 @@ public class WakeUpActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
-				WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-				WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-				WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON, WindowManager.LayoutParams.FLAG_FULLSCREEN |
-				WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-				WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-				WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+		boolean largerThan17 = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1;
+		if (largerThan17) {
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
+					WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+					WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+					WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON, WindowManager.LayoutParams.FLAG_FULLSCREEN |
+					WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+					WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+					WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+		}
 
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
