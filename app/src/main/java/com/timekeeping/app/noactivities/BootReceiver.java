@@ -13,7 +13,7 @@ import com.timekeeping.app.App;
  */
 public final class BootReceiver extends BroadcastReceiver {
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive( Context context, Intent intent ) {
 		App.startAppGuardService();
 	}
 }

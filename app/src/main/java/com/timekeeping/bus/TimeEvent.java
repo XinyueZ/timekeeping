@@ -19,7 +19,7 @@ public abstract class TimeEvent {
 	 * @param time
 	 * 		A {@link com.timekeeping.data.Time} object.
 	 */
-	protected TimeEvent(Time time) {
+	protected TimeEvent( Time time ) {
 		mTime = time;
 	}
 

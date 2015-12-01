@@ -81,12 +81,11 @@ import com.timekeeping.widget.FontTextView.Fonts;
  *
  * @author Xinyue Zhao
  */
-public class MainActivity extends BaseActivity implements OnInitListener, OnClickListener, OnTimeSetListener,
-		OnDialogDismissListener {
+public class MainActivity extends BaseActivity implements OnInitListener, OnClickListener, OnTimeSetListener, OnDialogDismissListener {
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int LAYOUT = R.layout.activity_main;
+	private static final int LAYOUT           = R.layout.activity_main;
 	/**
 	 * Menu for the Action-Mode.
 	 */
@@ -104,23 +103,23 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	/**
 	 * The {@link android.support.v7.view.ActionMode}.
 	 */
-	private ActionMode mActionMode;
+	private ActionMode            mActionMode;
 	/**
 	 * Edit a item  or  not.
 	 */
-	private boolean mEdit;
+	private boolean               mEdit;
 	/**
 	 * {@link Time} to edit.
 	 */
-	private Time mEditedTime;
+	private Time                  mEditedTime;
 	/**
 	 * The interstitial ad.
 	 */
-	private InterstitialAd mInterstitialAd;
+	private InterstitialAd        mInterstitialAd;
 	/**
 	 * Data-binding.
 	 */
-	private MainBinding mBinding;
+	private MainBinding           mBinding;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -132,8 +131,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link  EULARejectEvent}.
 	 */
-	public void onEvent(EULARejectEvent e) {
-		ActivityCompat.finishAfterTransition(this);
+	public void onEvent( EULARejectEvent e ) {
+		ActivityCompat.finishAfterTransition( this );
 	}
 
 	/**
@@ -142,7 +141,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link  EULAConfirmedEvent}.
 	 */
-	public void onEvent(EULAConfirmedEvent e) {
+	public void onEvent( EULAConfirmedEvent e ) {
 
 	}
 
@@ -153,23 +152,23 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link DeleteTimeEvent}.
 	 */
-	public void onEvent(DeleteTimeEvent e) {
-		AsyncTaskCompat.executeParallel(new AsyncTask<Time, Time, Time>() {
+	public void onEvent( DeleteTimeEvent e ) {
+		AsyncTaskCompat.executeParallel( new AsyncTask<Time, Time, Time>() {
 			@Override
-			protected Time doInBackground(Time... params) {
-				Time time = params[0];
-				if (time != null) {
-					DB.getInstance(getApplication()).removeTime(time);
+			protected Time doInBackground( Time... params ) {
+				Time time = params[ 0 ];
+				if( time != null ) {
+					DB.getInstance( getApplication() ).removeTime( time );
 				}
 				return time;
 			}
 
 			@Override
-			protected void onPostExecute(Time time) {
-				super.onPostExecute(time);
-				mBinding.getAdapter().removeItem(time);
+			protected void onPostExecute( Time time ) {
+				super.onPostExecute( time );
+				mBinding.getAdapter().removeItem( time );
 			}
-		}, e.getTime());
+		}, e.getTime() );
 	}
 
 	/**
@@ -178,8 +177,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link EditTimeEvent}.
 	 */
-	public void onEvent(EditTimeEvent e) {
-		editTime(e.getTime());
+	public void onEvent( EditTimeEvent e ) {
+		editTime( e.getTime() );
 	}
 
 
@@ -189,8 +188,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link SwitchOnOffTimeEvent}.
 	 */
-	public void onEvent(SwitchOnOffTimeEvent e) {
-		setTimeOnOff(e.getTime());
+	public void onEvent( SwitchOnOffTimeEvent e ) {
+		setTimeOnOff( e.getTime() );
 	}
 
 
@@ -200,7 +199,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link}.
 	 */
-	public void onEvent(CloseDrawerEvent e) {
+	public void onEvent( CloseDrawerEvent e ) {
 		mBinding.drawerLayout.closeDrawers();
 	}
 
@@ -211,8 +210,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link SelectItemEvent}.
 	 */
-	public void onEvent(SelectItemEvent e) {
-		toggleSelection(e.getPosition());
+	public void onEvent( SelectItemEvent e ) {
+		toggleSelection( e.getPosition() );
 	}
 
 	/**
@@ -221,70 +220,70 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link  StartActionModeEvent}.
 	 */
-	public void onEvent(StartActionModeEvent e) {
+	public void onEvent( StartActionModeEvent e ) {
 		//See more about action-mode.
 		//http://databasefaq.com/index.php/answer/19065/android-android-fragments-recyclerview-android-actionmode-problems-with-implementing-contextual-action-mode-in-recyclerview-fragment
-		mActionMode = startSupportActionMode(new Callback() {
+		mActionMode = startSupportActionMode( new Callback() {
 			@Override
-			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-				mode.getMenuInflater().inflate(ACTION_MODE_MENU, menu);
-				mBinding.toolbar.setVisibility(View.GONE);
-				mBinding.errorContent.setStatusBarBackgroundColor(R.color.primary_dark_color);
-				mBinding.getAdapter().setActionMode(true);
+			public boolean onCreateActionMode( ActionMode mode, Menu menu ) {
+				mode.getMenuInflater().inflate( ACTION_MODE_MENU, menu );
+				mBinding.toolbar.setVisibility( View.GONE );
+				mBinding.errorContent.setStatusBarBackgroundColor( R.color.primary_dark_color );
+				mBinding.getAdapter().setActionMode( true );
 				mBinding.getAdapter().notifyDataSetChanged();
 				mBinding.addNewTimeBtn.hide();
 				return true;
 			}
 
 			@Override
-			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			public boolean onPrepareActionMode( ActionMode mode, Menu menu ) {
 				return false;
 			}
 
 			@Override
-			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-				AsyncTaskCompat.executeParallel(new AsyncTask<List<Integer>, Void, Void>() {
+			public boolean onActionItemClicked( ActionMode mode, MenuItem item ) {
+				AsyncTaskCompat.executeParallel( new AsyncTask<List<Integer>, Void, Void>() {
 					@Override
-					protected Void doInBackground(List<Integer>... params) {
-						List<Integer> selectedItems = params[0];
-						List<Time> selectedTimes = new ArrayList<>();
-						for (Integer pos : selectedItems) {
-							selectedTimes.add(mBinding.getAdapter().getData().get(pos));
+					protected Void doInBackground( List<Integer>... params ) {
+						List<Integer> selectedItems = params[ 0 ];
+						List<Time>    selectedTimes = new ArrayList<>();
+						for( Integer pos : selectedItems ) {
+							selectedTimes.add( mBinding.getAdapter().getData().get( pos ) );
 						}
-						DB db = DB.getInstance(getApplication());
-						for (Time delTime : selectedTimes) {
-							db.removeTime(delTime);
+						DB db = DB.getInstance( getApplication() );
+						for( Time delTime : selectedTimes ) {
+							db.removeTime( delTime );
 						}
 
-						for (Time delTime : selectedTimes) {
-							mBinding.getAdapter().getData().remove(delTime);
+						for( Time delTime : selectedTimes ) {
+							mBinding.getAdapter().getData().remove( delTime );
 						}
 						return null;
 					}
 
 					@Override
-					protected void onPostExecute(Void result) {
-						super.onPostExecute(result);
+					protected void onPostExecute( Void result ) {
+						super.onPostExecute( result );
 						mBinding.getAdapter().notifyDataSetChanged();
-						if (mActionMode != null) {
+						if( mActionMode != null ) {
 							mActionMode.finish();
 						}
 					}
-				}, mBinding.getAdapter().getSelectedItems());
+				}, mBinding.getAdapter().getSelectedItems() );
 				return true;
 			}
 
 			@Override
-			public void onDestroyActionMode(ActionMode mode) {
+			public void onDestroyActionMode( ActionMode mode ) {
 				mActionMode = null;
-				mBinding.toolbar.setVisibility(View.VISIBLE);
+				mBinding.toolbar.setVisibility( View.VISIBLE );
 
 				mBinding.getAdapter().clearSelection();
-				mBinding.getAdapter().setActionMode(false);
+				mBinding.getAdapter().setActionMode( false );
 				mBinding.getAdapter().notifyDataSetChanged();
 				mBinding.addNewTimeBtn.show();
 			}
-		});
+		} );
 	}
 
 	/**
@@ -293,8 +292,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link com.timekeeping.bus.EditTaskEvent}.
 	 */
-	public void onEvent(EditTaskEvent e) {
-		showDialogFragment(CommentDialogFragment.newInstance(App.Instance, e.getTime()), null);
+	public void onEvent( EditTaskEvent e ) {
+		showDialogFragment( CommentDialogFragment.newInstance( App.Instance, e.getTime() ), null );
 	}
 
 
@@ -304,7 +303,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link com.timekeeping.bus.SavedTaskEvent}.
 	 */
-	public void onEvent(SavedTaskEvent e) {
+	public void onEvent( SavedTaskEvent e ) {
 		mEditedTime = e.getTime();
 		updateOthers();
 	}
@@ -315,7 +314,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param e
 	 * 		Event {@link com.timekeeping.bus.SavedWeekDaysEvent}.
 	 */
-	public void onEvent(SavedWeekDaysEvent e) {
+	public void onEvent( SavedWeekDaysEvent e ) {
 		mEditedTime = e.getTime();
 		updateOthers();
 	}
@@ -323,69 +322,69 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(MENU_MAIN, menu);
-		MenuItem menuShare = menu.findItem(R.id.action_share_app);
+	public boolean onCreateOptionsMenu( Menu menu ) {
+		getMenuInflater().inflate( MENU_MAIN, menu );
+		MenuItem menuShare = menu.findItem( R.id.action_share_app );
 		//Getting the actionprovider associated with the menu item whose id is share.
-		android.support.v7.widget.ShareActionProvider provider =
-				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
+		android.support.v7.widget.ShareActionProvider provider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(
+				menuShare );
 		//Setting a share intent.
-		String subject = getString(R.string.lbl_share_app_title, getString(R.string.application_name));
-		String text = getString(R.string.lbl_share_app_content, getString(R.string.tray_info));
-		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
+		String subject = getString( R.string.lbl_share_app_title, getString( R.string.application_name ) );
+		String text    = getString( R.string.lbl_share_app_content, getString( R.string.tray_info ) );
+		provider.setShareIntent( Utils.getDefaultShareIntent( provider, subject, text ) );
 
-		MenuItem volMi = menu.findItem(R.id.action_volume);
-		int volume = Prefs.getInstance(getApplication()).getVolume();
-		String[] labels = getResources().getStringArray(R.array.volumes);
-		String label;
-		int icon;
-		switch (volume) {
-		case 0:
-			label = labels[0];
-			icon = R.drawable.ic_volume_vibration;
-			break;
-		case 2:
-			label = labels[2];
-			icon = R.drawable.ic_volume_sharp;
-			break;
-		default:
-			label = labels[1];
-			icon = R.drawable.ic_volume_medium;
-			break;
+		MenuItem volMi  = menu.findItem( R.id.action_volume );
+		int      volume = Prefs.getInstance( getApplication() ).getVolume();
+		String[] labels = getResources().getStringArray( R.array.volumes );
+		String   label;
+		int      icon;
+		switch( volume ) {
+			case 0:
+				label = labels[ 0 ];
+				icon = R.drawable.ic_volume_vibration;
+				break;
+			case 2:
+				label = labels[ 2 ];
+				icon = R.drawable.ic_volume_sharp;
+				break;
+			default:
+				label = labels[ 1 ];
+				icon = R.drawable.ic_volume_medium;
+				break;
 		}
-		volMi.setIcon(icon);
-		volMi.setTitle(label);
+		volMi.setIcon( icon );
+		volMi.setTitle( label );
 		return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
+	public boolean onOptionsItemSelected( MenuItem item ) {
+		if( mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected( item ) ) {
 			return true;
 		}
 		int id = item.getItemId();
-		switch (id) {
-		case R.id.action_about:
-			showDialogFragment(AboutDialogFragment.newInstance(this), null);
-			break;
-		case R.id.action_volume:
-			showDialogFragment(VolumeDialogFragment.newInstance(this), null);
-			break;
+		switch( id ) {
+			case R.id.action_about:
+				showDialogFragment( AboutDialogFragment.newInstance( this ), null );
+				break;
+			case R.id.action_volume:
+				showDialogFragment( VolumeDialogFragment.newInstance( this ), null );
+				break;
 		}
-		return super.onOptionsItemSelected(item);
+		return super.onOptionsItemSelected( item );
 	}
 
 
 	@Override
-	public void onInit(int status) {
+	public void onInit( int status ) {
 	}
 
 	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.add_new_time_btn:
-			addNewTime();
-			break;
+	public void onClick( View v ) {
+		switch( v.getId() ) {
+			case R.id.add_new_time_btn:
+				addNewTime();
+				break;
 		}
 	}
 
@@ -394,10 +393,9 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	private void addNewTime() {
 		mBinding.addNewTimeBtn.hide();
-		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance(this, 0, 0,
-				DateFormat.is24HourFormat(this));
-		timePickerDialog.setOnDismissListener(this);
-		timePickerDialog.show(getSupportFragmentManager(), null);
+		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance( this, 0, 0, DateFormat.is24HourFormat( this ) );
+		timePickerDialog.setOnDismissListener( this );
+		timePickerDialog.show( getSupportFragmentManager(), null );
 	}
 
 	/**
@@ -405,10 +403,12 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	private void editTime() {
 		mBinding.addNewTimeBtn.show();
-		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance(this,
-				mEditedTime.getHour(), mEditedTime.getMinute(), DateFormat.is24HourFormat(this));
-		timePickerDialog.setOnDismissListener(this);
-		timePickerDialog.show(getSupportFragmentManager(), null);
+		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance( this, mEditedTime.getHour(),
+																									  mEditedTime.getMinute(),
+																									  DateFormat.is24HourFormat( this )
+		);
+		timePickerDialog.setOnDismissListener( this );
+		timePickerDialog.show( getSupportFragmentManager(), null );
 	}
 
 	/**
@@ -417,10 +417,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param timeToEdit
 	 * 		The object to edit.
 	 */
-	private void editTime(Time timeToEdit) {
+	private void editTime( Time timeToEdit ) {
 		mEdit = true;
 		mEditedTime = timeToEdit;
-		if (mEditedTime != null) {
+		if( mEditedTime != null ) {
 			editTime();
 		}
 	}
@@ -431,27 +431,27 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param timeToSet
 	 * 		The object to set.
 	 */
-	private void setTimeOnOff(Time timeToSet) {
+	private void setTimeOnOff( Time timeToSet ) {
 		mEdit = true;
 		mEditedTime = timeToSet;
-		mEditedTime.setOnOff(!mEditedTime.isOnOff());
+		mEditedTime.setOnOff( !mEditedTime.isOnOff() );
 		switchTimeOnOff();
 	}
 
 	private void refreshGrid() {
-		AsyncTaskCompat.executeParallel(new AsyncTask<Void, List<Time>, List<Time>>() {
+		AsyncTaskCompat.executeParallel( new AsyncTask<Void, List<Time>, List<Time>>() {
 			@Override
-			protected List<Time> doInBackground(Void... params) {
-				return DB.getInstance(getApplication()).getTimes(Sort.DESC);
+			protected List<Time> doInBackground( Void... params ) {
+				return DB.getInstance( getApplication() ).getTimes( Sort.DESC );
 			}
 
 			@Override
-			protected void onPostExecute(List<Time> times) {
-				super.onPostExecute(times);
-				mBinding.getAdapter().setData(times);
+			protected void onPostExecute( List<Time> times ) {
+				super.onPostExecute( times );
+				mBinding.getAdapter().setData( times );
 				mBinding.getAdapter().notifyDataSetChanged();
 			}
-		});
+		} );
 	}
 
 
@@ -463,14 +463,14 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param minute
 	 * 		Minute.
 	 */
-	private void insertNewTime(int hourOfDay, int minute) {
-		AsyncTaskCompat.executeParallel(new AsyncTask<Time, Time, Time>() {
+	private void insertNewTime( int hourOfDay, int minute ) {
+		AsyncTaskCompat.executeParallel( new AsyncTask<Time, Time, Time>() {
 			@Override
-			protected Time doInBackground(Time... params) {
-				Time newTime = params[0];
-				DB db = DB.getInstance(getApplication());
-				boolean find = db.findTime(newTime);
-				if (!find && db.addTime(newTime)) {
+			protected Time doInBackground( Time... params ) {
+				Time    newTime = params[ 0 ];
+				DB      db      = DB.getInstance( getApplication() );
+				boolean find    = db.findTime( newTime );
+				if( !find && db.addTime( newTime ) ) {
 					return newTime;
 				} else {
 					return null;
@@ -478,15 +478,15 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 			}
 
 			@Override
-			protected void onPostExecute(Time time) {
-				super.onPostExecute(time);
-				if (time != null) {
+			protected void onPostExecute( Time time ) {
+				super.onPostExecute( time );
+				if( time != null ) {
 					refreshGrid();
-					showStatusMessage(time);
-					mBinding.scheduleGv.getLayoutManager().scrollToPosition(0);
+					showStatusMessage( time );
+					mBinding.scheduleGv.getLayoutManager().scrollToPosition( 0 );
 				}
 			}
-		}, new Time(-1, hourOfDay, minute, -1, true));
+		}, new Time( -1, hourOfDay, minute, -1, true ) );
 	}
 
 
@@ -494,27 +494,27 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * Edited and update a {@link com.timekeeping.data.Time} to database.
 	 */
 	private void updateTime() {
-		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Time>() {
+		AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, Time>() {
 			@Override
-			protected Time doInBackground(Void... params) {
-				DB db = DB.getInstance(getApplication());
-				boolean find = db.findTime(mEditedTime);
-				if (!find && db.updateTime(mEditedTime)) {
-					return mBinding.getAdapter().findItem(mEditedTime);
+			protected Time doInBackground( Void... params ) {
+				DB      db   = DB.getInstance( getApplication() );
+				boolean find = db.findTime( mEditedTime );
+				if( !find && db.updateTime( mEditedTime ) ) {
+					return mBinding.getAdapter().findItem( mEditedTime );
 				} else {
 					return null;
 				}
 			}
 
 			@Override
-			protected void onPostExecute(Time oldEntry) {
-				super.onPostExecute(oldEntry);
-				if (oldEntry != null) {
-					mBinding.getAdapter().editItem(oldEntry, mEditedTime);
+			protected void onPostExecute( Time oldEntry ) {
+				super.onPostExecute( oldEntry );
+				if( oldEntry != null ) {
+					mBinding.getAdapter().editItem( oldEntry, mEditedTime );
 					mEdit = false;
 				}
 			}
-		});
+		} );
 	}
 
 
@@ -522,27 +522,27 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * Edited and update a {@link com.timekeeping.data.Time}'s comment/task to database.
 	 */
 	private void updateOthers() {
-		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Time>() {
+		AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, Time>() {
 			@Override
-			protected Time doInBackground(Void... params) {
-				DB db = DB.getInstance(getApplication());
-				boolean find = db.findTime(mEditedTime);
-				if (find && db.updateTime(mEditedTime)) {
-					return mBinding.getAdapter().findItem(mEditedTime);
+			protected Time doInBackground( Void... params ) {
+				DB      db   = DB.getInstance( getApplication() );
+				boolean find = db.findTime( mEditedTime );
+				if( find && db.updateTime( mEditedTime ) ) {
+					return mBinding.getAdapter().findItem( mEditedTime );
 				} else {
 					return null;
 				}
 			}
 
 			@Override
-			protected void onPostExecute(Time oldEntry) {
-				super.onPostExecute(oldEntry);
-				if (oldEntry != null) {
-					mBinding.getAdapter().editItem(oldEntry, mEditedTime);
+			protected void onPostExecute( Time oldEntry ) {
+				super.onPostExecute( oldEntry );
+				if( oldEntry != null ) {
+					mBinding.getAdapter().editItem( oldEntry, mEditedTime );
 					mEdit = false;
 				}
 			}
-		});
+		} );
 	}
 
 
@@ -550,27 +550,27 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * Edited and update a {@link com.timekeeping.data.Time} to database.
 	 */
 	private void switchTimeOnOff() {
-		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Time, Time>() {
+		AsyncTaskCompat.executeParallel( new AsyncTask<Void, Time, Time>() {
 			@Override
-			protected Time doInBackground(Void... params) {
-				if (DB.getInstance(getApplication()).updateTime(mEditedTime)) {
-					return mBinding.getAdapter().findItem(mEditedTime);
+			protected Time doInBackground( Void... params ) {
+				if( DB.getInstance( getApplication() ).updateTime( mEditedTime ) ) {
+					return mBinding.getAdapter().findItem( mEditedTime );
 				} else {
 					return null;
 				}
 			}
 
 			@Override
-			protected void onPostExecute(Time oldEntry) {
-				super.onPostExecute(oldEntry);
-				if (oldEntry != null) {
-					mBinding.getAdapter().editItem(oldEntry, mEditedTime);
+			protected void onPostExecute( Time oldEntry ) {
+				super.onPostExecute( oldEntry );
+				if( oldEntry != null ) {
+					mBinding.getAdapter().editItem( oldEntry, mEditedTime );
 					mEdit = false;
 
-					showStatusMessage(mEditedTime);
+					showStatusMessage( mEditedTime );
 				}
 			}
-		});
+		} );
 	}
 
 	/**
@@ -579,20 +579,20 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param time
 	 * 		The item that has been changed.
 	 */
-	private void showStatusMessage(Time time) {
-		String fmt = getString(time.isOnOff() ? R.string.on_status : R.string.off_status);
-		String message = String.format(fmt, Utils.formatTime(time));
-		Snackbar.make(findViewById(R.id.error_content), message, Snackbar.LENGTH_LONG).show();
+	private void showStatusMessage( Time time ) {
+		String fmt     = getString( time.isOnOff() ? R.string.on_status : R.string.off_status );
+		String message = String.format( fmt, Utils.formatTime( time ) );
+		Snackbar.make( findViewById( R.id.error_content ), message, Snackbar.LENGTH_LONG ).show();
 	}
 
 	@Override
-	public void onTimeSet(RadialTimePickerDialogFragment dialog, int hourOfDay, int minute) {
-		if (mEdit) {
-			mEditedTime.setHour(hourOfDay);
-			mEditedTime.setMinute(minute);
+	public void onTimeSet( RadialTimePickerDialogFragment dialog, int hourOfDay, int minute ) {
+		if( mEdit ) {
+			mEditedTime.setHour( hourOfDay );
+			mEditedTime.setMinute( minute );
 			updateTime();
 		} else {
-			insertNewTime(hourOfDay, minute);
+			insertNewTime( hourOfDay, minute );
 		}
 	}
 
@@ -610,21 +610,21 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	}
 
 	private void addDrawerHeader() {
-		if (mBinding.navView.getHeaderCount() == 0) {
-			mBinding.navView.addHeaderView(getLayoutInflater().inflate(R.layout.nav_header, mBinding.navView, false));
+		if( mBinding.navView.getHeaderCount() == 0 ) {
+			mBinding.navView.addHeaderView( getLayoutInflater().inflate( R.layout.nav_header, mBinding.navView, false ) );
 		}
 	}
 
 
 	@Override
 	protected BasicPrefs getPrefs() {
-		return Prefs.getInstance(getApplication());
+		return Prefs.getInstance( getApplication() );
 	}
 
 	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		setErrorHandlerAvailable(false);
+	protected void onPostCreate( Bundle savedInstanceState ) {
+		super.onPostCreate( savedInstanceState );
+		setErrorHandlerAvailable( false );
 	}
 
 	/**
@@ -632,12 +632,11 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	private void initDrawer() {
 		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setHomeButtonEnabled(true);
-			actionBar.setDisplayHomeAsUpEnabled(true);
-			mBinding.drawerLayout.setDrawerListener(mDrawerToggle =
-					new ActionBarDrawerToggle(this, mBinding.drawerLayout, R.string.application_name,
-							R.string.application_name));
+		if( actionBar != null ) {
+			actionBar.setHomeButtonEnabled( true );
+			actionBar.setDisplayHomeAsUpEnabled( true );
+			mBinding.drawerLayout.setDrawerListener(
+					mDrawerToggle = new ActionBarDrawerToggle( this, mBinding.drawerLayout, R.string.application_name, R.string.application_name ) );
 		}
 	}
 
@@ -645,33 +644,33 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * To confirm whether the validation of the Play-service of Google Inc.
 	 */
 	private void checkPlayService() {
-		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-		if (isFound == ConnectionResult.SUCCESS) {//Ignore update.
+		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable( this );
+		if( isFound == ConnectionResult.SUCCESS ) {//Ignore update.
 			//The "End User License Agreement" must be confirmed before you use this application.
-			if (!Prefs.getInstance(getApplication()).isEULAOnceConfirmed()) {
-				showDialogFragment(new EulaConfirmationDialog(), null);
+			if( !Prefs.getInstance( getApplication() ).isEULAOnceConfirmed() ) {
+				showDialogFragment( new EulaConfirmationDialog(), null );
 			}
 		} else {
-			new Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_play_service).setCancelable(
-					false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					dialog.dismiss();
-					Intent intent = new Intent(Intent.ACTION_VIEW);
-					intent.setData(Uri.parse(getString(R.string.play_service_url)));
-					try {
-						startActivity(intent);
-					} catch (ActivityNotFoundException e0) {
-						intent.setData(Uri.parse(getString(R.string.play_service_web)));
-						try {
-							startActivity(intent);
-						} catch (Exception e1) {
-							//Ignore now.
+			new Builder( this ).setTitle( R.string.application_name ).setMessage( R.string.lbl_play_service ).setCancelable( false )
+					.setPositiveButton( R.string.btn_ok, new DialogInterface.OnClickListener() {
+						public void onClick( DialogInterface dialog, int whichButton ) {
+							dialog.dismiss();
+							Intent intent = new Intent( Intent.ACTION_VIEW );
+							intent.setData( Uri.parse( getString( R.string.play_service_url ) ) );
+							try {
+								startActivity( intent );
+							} catch( ActivityNotFoundException e0 ) {
+								intent.setData( Uri.parse( getString( R.string.play_service_web ) ) );
+								try {
+									startActivity( intent );
+								} catch( Exception e1 ) {
+									//Ignore now.
+								}
+							} finally {
+								finish();
+							}
 						}
-					} finally {
-						finish();
-					}
-				}
-			}).create().show();
+					} ).create().show();
 		}
 	}
 
@@ -681,35 +680,34 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param _dlgFrg
 	 * 		An instance of {@link android.support.v4.app.DialogFragment}.
 	 * @param _tagName
-	 * 		Tag name for dialog, default is "dlg". To grantee that only one instance of {@link
-	 * 		android.support.v4.app.DialogFragment} can been seen.
+	 * 		Tag name for dialog, default is "dlg". To grantee that only one instance of {@link android.support.v4.app.DialogFragment} can been seen.
 	 */
-	protected void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
+	protected void showDialogFragment( DialogFragment _dlgFrg, String _tagName ) {
 		try {
-			if (_dlgFrg != null) {
-				DialogFragment dialogFragment = _dlgFrg;
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			if( _dlgFrg != null ) {
+				DialogFragment      dialogFragment = _dlgFrg;
+				FragmentTransaction ft             = getSupportFragmentManager().beginTransaction();
 				// Ensure that there's only one dialog to the user.
-				Fragment prev = getSupportFragmentManager().findFragmentByTag("dlg");
-				if (prev != null) {
-					ft.remove(prev);
+				Fragment prev = getSupportFragmentManager().findFragmentByTag( "dlg" );
+				if( prev != null ) {
+					ft.remove( prev );
 				}
 				try {
-					if (TextUtils.isEmpty(_tagName)) {
-						dialogFragment.show(ft, "dlg");
+					if( TextUtils.isEmpty( _tagName ) ) {
+						dialogFragment.show( ft, "dlg" );
 					} else {
-						dialogFragment.show(ft, _tagName);
+						dialogFragment.show( ft, _tagName );
 					}
-				} catch (Exception _e) {
+				} catch( Exception _e ) {
 				}
 			}
-		} catch (Exception _e) {
+		} catch( Exception _e ) {
 		}
 	}
 
 
 	@Override
-	public void onDialogDismiss(DialogInterface dialoginterface) {
+	public void onDialogDismiss( DialogInterface dialoginterface ) {
 		mBinding.addNewTimeBtn.show();
 	}
 
@@ -717,7 +715,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * Invoke displayInterstitial() when you are ready to display an interstitial.
 	 */
 	public void displayInterstitial() {
-		if (mInterstitialAd.isLoaded()) {
+		if( mInterstitialAd.isLoaded() ) {
 			mInterstitialAd.show();
 		}
 	}
@@ -729,32 +727,31 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param position
 	 * 		The select position.
 	 */
-	private void toggleSelection(int position) {
-		mBinding.getAdapter().toggleSelection(position);
+	private void toggleSelection( int position ) {
+		mBinding.getAdapter().toggleSelection( position );
 		int count = mBinding.getAdapter().getSelectedItemCount();
 
-		if (count == 0) {
+		if( count == 0 ) {
 			mActionMode.finish();
 		} else {
-			mActionMode.setTitle(String.valueOf(count));
+			mActionMode.setTitle( String.valueOf( count ) );
 			mActionMode.invalidate();
 		}
 	}
 
 	private void initGrid() {
-		mBinding.scheduleGv.setLayoutManager(
-				new GridLayoutManager(this, getResources().getInteger(R.integer.card_count)));
-		mBinding.scheduleGv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+		mBinding.scheduleGv.setLayoutManager( new GridLayoutManager( this, getResources().getInteger( R.integer.card_count ) ) );
+		mBinding.scheduleGv.addOnScrollListener( new RecyclerView.OnScrollListener() {
 			@Override
-			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				float y = ViewCompat.getY(recyclerView);
-				if (y < dy) {
-					if (mBinding.addNewTimeBtn.isShown()) {
+			public void onScrolled( RecyclerView recyclerView, int dx, int dy ) {
+				float y = ViewCompat.getY( recyclerView );
+				if( y < dy ) {
+					if( mBinding.addNewTimeBtn.isShown() ) {
 						mBinding.addNewTimeBtn.hide();
 					}
 				} else {
-					if (!mBinding.addNewTimeBtn.isShown()) {
-						if (mBinding.getAdapter() != null && mBinding.getAdapter().isActionMode()) {
+					if( !mBinding.addNewTimeBtn.isShown() ) {
+						if( mBinding.getAdapter() != null && mBinding.getAdapter().isActionMode() ) {
 							return;
 						}
 						mBinding.addNewTimeBtn.show();
@@ -762,16 +759,16 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				}
 			}
 
-		});
-		mBinding.setAdapter(new TimeKeepingListAdapter(null));
+		} );
+		mBinding.setAdapter( new TimeKeepingListAdapter( null ) );
 		refreshGrid();
 	}
 
 	private void initBar() {
-		SpannableString s = new SpannableString(getString(R.string.application_name));
-		s.setSpan(new TypefaceSpan(this, Fonts.FONT_LIGHT), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		setSupportActionBar(mBinding.toolbar);
-		mBinding.toolbar.setTitle(s);
+		SpannableString s = new SpannableString( getString( R.string.application_name ) );
+		s.setSpan( new TypefaceSpan( this, Fonts.FONT_LIGHT ), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
+		setSupportActionBar( mBinding.toolbar );
+		mBinding.toolbar.setTitle( s );
 	}
 
 	/**
@@ -780,16 +777,15 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * @param cxt
 	 * 		{@link Context}.
 	 */
-	public static void showInstance(Activity cxt) {
-		Intent intent = new Intent(cxt, MainActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		ActivityCompat.startActivity(cxt, intent, null);
+	public static void showInstance( Activity cxt ) {
+		Intent intent = new Intent( cxt, MainActivity.class );
+		intent.setFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP );
+		ActivityCompat.startActivity( cxt, intent, null );
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (mBinding.drawerLayout.isDrawerOpen(GravityCompat.START) || mBinding.drawerLayout.isDrawerOpen(
-				GravityCompat.END)) {
+		if( mBinding.drawerLayout.isDrawerOpen( GravityCompat.START ) || mBinding.drawerLayout.isDrawerOpen( GravityCompat.END ) ) {
 			mBinding.drawerLayout.closeDrawers();
 		} else {
 			super.onBackPressed();
@@ -798,40 +794,40 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 
 	private void initAds() {
-		Prefs prefs = Prefs.getInstance(getApplication());
-		int curTime = prefs.getShownDetailsTimes();
-		int adsTimes = 10;
-		if (curTime % adsTimes == 0) {
+		Prefs prefs    = Prefs.getInstance( getApplication() );
+		int   curTime  = prefs.getShownDetailsTimes();
+		int   adsTimes = 10;
+		if( curTime % adsTimes == 0 ) {
 			// Create an ad.
-			mInterstitialAd = new InterstitialAd(this);
-			mInterstitialAd.setAdUnitId(getString(R.string.ad_unit_id));
+			mInterstitialAd = new InterstitialAd( this );
+			mInterstitialAd.setAdUnitId( getString( R.string.ad_unit_id ) );
 			// Create ad request.
 			AdRequest adRequest = new AdRequest.Builder().build();
 			// Begin loading your interstitial.
-			mInterstitialAd.setAdListener(new AdListener() {
+			mInterstitialAd.setAdListener( new AdListener() {
 				@Override
 				public void onAdLoaded() {
 					super.onAdLoaded();
 					displayInterstitial();
 				}
-			});
-			mInterstitialAd.loadAd(adRequest);
+			} );
+			mInterstitialAd.loadAd( adRequest );
 		}
 		curTime++;
-		prefs.setShownDetailsTimes(curTime);
+		prefs.setShownDetailsTimes( curTime );
 	}
 
 
 	private void initComponents() {
-		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
-		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
+		mBinding = DataBindingUtil.setContentView( this, LAYOUT );
+		setUpErrorHandling( (ViewGroup) findViewById( R.id.error_content ) );
 		//FAB
-		mBinding.addNewTimeBtn.setOnClickListener(this);
+		mBinding.addNewTimeBtn.setOnClickListener( this );
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	protected void onCreate( Bundle savedInstanceState ) {
+		super.onCreate( savedInstanceState );
 		initComponents();
 		initBar();
 		initDrawer();
@@ -842,7 +838,7 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (mDrawerToggle != null) {
+		if( mDrawerToggle != null ) {
 			mDrawerToggle.syncState();
 		}
 

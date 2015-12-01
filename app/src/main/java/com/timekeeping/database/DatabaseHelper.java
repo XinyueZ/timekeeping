@@ -13,11 +13,11 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 	/**
 	 * DB name.
 	 */
-	public static final String DATABASE_NAME = "timekeepingDB";
+	public static final  String DATABASE_NAME    = "timekeepingDB";
 	/**
 	 * Init version of DB.
 	 */
-	private static final int DATABASE_VERSION = 3;
+	private static final int    DATABASE_VERSION = 3;
 
 	/**
 	 * Constructor of {@link DatabaseHelper}.
@@ -25,25 +25,25 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 	 * @param context
 	 * 		{@link android.content.Context}.
 	 */
-	public DatabaseHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	public DatabaseHelper( Context context ) {
+		super( context, DATABASE_NAME, null, DATABASE_VERSION );
 	}
 
 	@Override
-	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(TimeTbl.SQL_CREATE);
+	public void onCreate( SQLiteDatabase db ) {
+		db.execSQL( TimeTbl.SQL_CREATE );
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		switch (oldVersion) {
-		case 1:
-			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.TASK + " TEXT DEFAULT \"\"");
-			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"0,1,2,3,4,5,6,\"");
-			break;
-		case 2:
-			db.execSQL("ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"0,1,2,3,4,5,6,\"");
-			break;
+	public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion ) {
+		switch( oldVersion ) {
+			case 1:
+				db.execSQL( "ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.TASK + " TEXT DEFAULT \"\"" );
+				db.execSQL( "ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"0,1,2,3,4,5,6,\"" );
+				break;
+			case 2:
+				db.execSQL( "ALTER TABLE " + TimeTbl.TABLE_NAME + " ADD COLUMN " + TimeTbl.WEEK_DAYS + " TEXT DEFAULT \"0,1,2,3,4,5,6,\"" );
+				break;
 		}
 	}
 }

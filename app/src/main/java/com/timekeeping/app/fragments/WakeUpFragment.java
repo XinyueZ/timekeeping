@@ -25,49 +25,49 @@ public final class WakeUpFragment extends Fragment {
 	 */
 	private static final int LAYOUT = R.layout.fragment_wake_up;
 
-	private static final String EXTRAS_TIME = WakeUpFragment.class.getName() + ".EXTRAS.time";
+	private static final String EXTRAS_TIME     = WakeUpFragment.class.getName() + ".EXTRAS.time";
 	private static final String EXTRAS_IF_ERROR = WakeUpFragment.class.getName() + ".EXTRAS.if.error";
 	private WakeUpBinding mBinding;
 	private int mCountDown = 5;
 
-	public static WakeUpFragment newInstance(Context context, Time time, boolean ifError) {
+	public static WakeUpFragment newInstance( Context context, Time time, boolean ifError ) {
 		Bundle args = new Bundle();
-		args.putSerializable(EXTRAS_TIME, (Serializable) time);
-		args.putBoolean(EXTRAS_IF_ERROR, ifError);
-		return (WakeUpFragment) WakeUpFragment.instantiate(context, WakeUpFragment.class.getName(), args);
+		args.putSerializable( EXTRAS_TIME, (Serializable) time );
+		args.putBoolean( EXTRAS_IF_ERROR, ifError );
+		return (WakeUpFragment) WakeUpFragment.instantiate( context, WakeUpFragment.class.getName(), args );
 	}
 
 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(LAYOUT, container, false);
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		return inflater.inflate( LAYOUT, container, false );
 	}
 
 
 	@Override
-	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
+	public void onViewCreated( View view, @Nullable Bundle savedInstanceState ) {
+		super.onViewCreated( view, savedInstanceState );
 		Bundle args = getArguments();
 
-		mBinding = DataBindingUtil.bind(view.findViewById(R.id.wake_up_ll));
-		mBinding.setTime((Time) args.getSerializable(EXTRAS_TIME));
-		mBinding.setIfError(args.getBoolean(EXTRAS_IF_ERROR));
-		mBinding.wakeUpLl.setOnClickListener(new OnClickListener() {
+		mBinding = DataBindingUtil.bind( view.findViewById( R.id.wake_up_ll ) );
+		mBinding.setTime( (Time) args.getSerializable( EXTRAS_TIME ) );
+		mBinding.setIfError( args.getBoolean( EXTRAS_IF_ERROR ) );
+		mBinding.wakeUpLl.setOnClickListener( new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				MainActivity.showInstance(getActivity());
-				ActivityCompat.finishAfterTransition(getActivity());
+			public void onClick( View v ) {
+				MainActivity.showInstance( getActivity() );
+				ActivityCompat.finishAfterTransition( getActivity() );
 			}
-		});
+		} );
 
 
-		sHandler.postDelayed(mDismissTask, 1000);
+		sHandler.postDelayed( mDismissTask, 1000 );
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		if (mDismissTask != null) {
-			sHandler.removeCallbacks(mDismissTask);
+		if( mDismissTask != null ) {
+			sHandler.removeCallbacks( mDismissTask );
 		}
 	}
 
@@ -76,13 +76,13 @@ public final class WakeUpFragment extends Fragment {
 	private Runnable mDismissTask = new Runnable() {
 		@Override
 		public void run() {
-			if (mCountDown == 0) {
+			if( mCountDown == 0 ) {
 				mDismissTask = null;
-				ActivityCompat.finishAfterTransition(getActivity());
+				ActivityCompat.finishAfterTransition( getActivity() );
 			} else {
 				mCountDown--;
-				mBinding.countdownTv.setText(mCountDown + "");
-				sHandler.postDelayed(mDismissTask, 1000);
+				mBinding.countdownTv.setText( mCountDown + "" );
+				sHandler.postDelayed( mDismissTask, 1000 );
 			}
 		}
 

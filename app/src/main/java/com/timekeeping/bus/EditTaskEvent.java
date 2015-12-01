@@ -7,7 +7,7 @@ public final class EditTaskEvent {
 	private Time mTime;
 
 
-	public EditTaskEvent(Time time) {
+	public EditTaskEvent( Time time ) {
 		mTime = time;
 	}
 

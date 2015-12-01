@@ -5,23 +5,23 @@ import java.io.Serializable;
 /**
  * Structure of a time instance.
  */
-public final class Time  implements Serializable{
+public final class Time implements Serializable {
 	/**
 	 * Id of the item, might be retrieved from database.
 	 */
-	private long mId;
+	private long    mId;
 	/**
 	 * Hour.
 	 */
-	private int mHour;
+	private int     mHour;
 	/**
 	 * Minute.
 	 */
-	private int mMinute;
+	private int     mMinute;
 	/**
 	 * A timestamps for the item when it was operated by database.
 	 */
-	private long mEditTime;
+	private long    mEditTime;
 	/**
 	 * {@code true=on}, {@code false=off}.
 	 */
@@ -29,11 +29,11 @@ public final class Time  implements Serializable{
 	/**
 	 * Task for this time point.
 	 */
-	private String mTask;
+	private String  mTask;
 	/**
 	 * Selected week-days to fire event.
 	 */
-	private String mWeekDays="0,1,2,3,4,5,6,";
+	private String mWeekDays = "0,1,2,3,4,5,6,";
 
 	/**
 	 * Instantiates a new Time.
@@ -49,7 +49,7 @@ public final class Time  implements Serializable{
 	 * @param onOff
 	 * 		Status of this {@link Time}, {@code true=on}, {@code false=off}.
 	 */
-	public Time(long id, int hour, int minute, long editTime, boolean onOff) {
+	public Time( long id, int hour, int minute, long editTime, boolean onOff ) {
 		mId = id;
 		mHour = hour;
 		mMinute = minute;
@@ -57,14 +57,14 @@ public final class Time  implements Serializable{
 		mOnOff = onOff;
 	}
 
-	public Time(long id, int hour, int minute, long editTime, boolean onOff, String task) {
-		this(  id,   hour,   minute,   editTime,   onOff);
+	public Time( long id, int hour, int minute, long editTime, boolean onOff, String task ) {
+		this( id, hour, minute, editTime, onOff );
 		mTask = task;
 	}
 
 
-	public Time(long id, int hour, int minute, long editTime, boolean onOff, String task, String weekDays) {
-		this(  id,   hour,   minute,   editTime,   onOff,   task);
+	public Time( long id, int hour, int minute, long editTime, boolean onOff, String task, String weekDays ) {
+		this( id, hour, minute, editTime, onOff, task );
 		mWeekDays = weekDays;
 	}
 
@@ -76,7 +76,15 @@ public final class Time  implements Serializable{
 	public long getId() {
 		return mId;
 	}
-
+	/**
+	 * Sets id.
+	 *
+	 * @param id
+	 * 		the id
+	 */
+	public void setId( long id ) {
+		mId = id;
+	}
 	/**
 	 * Gets hour.
 	 *
@@ -85,7 +93,15 @@ public final class Time  implements Serializable{
 	public int getHour() {
 		return mHour;
 	}
-
+	/**
+	 * Sets hour.
+	 *
+	 * @param hour
+	 * 		the hour
+	 */
+	public void setHour( int hour ) {
+		mHour = hour;
+	}
 	/**
 	 * Gets minute.
 	 *
@@ -94,34 +110,13 @@ public final class Time  implements Serializable{
 	public int getMinute() {
 		return mMinute;
 	}
-
-	/**
-	 * Sets id.
-	 *
-	 * @param id
-	 * 		the id
-	 */
-	public void setId(long id) {
-		mId = id;
-	}
-
-	/**
-	 * Sets hour.
-	 *
-	 * @param hour
-	 * 		the hour
-	 */
-	public void setHour(int hour) {
-		mHour = hour;
-	}
-
 	/**
 	 * Sets minute.
 	 *
 	 * @param minute
 	 * 		the minute
 	 */
-	public void setMinute(int minute) {
+	public void setMinute( int minute ) {
 		mMinute = minute;
 	}
 
@@ -140,7 +135,7 @@ public final class Time  implements Serializable{
 	 * @param editTime
 	 * 		the edit time
 	 */
-	public void setEditTime(long editTime) {
+	public void setEditTime( long editTime ) {
 		mEditTime = editTime;
 	}
 
@@ -163,7 +158,7 @@ public final class Time  implements Serializable{
 	 * @param onOff
 	 * 		the on off
 	 */
-	public void setOnOff(boolean onOff) {
+	public void setOnOff( boolean onOff ) {
 		mOnOff = onOff;
 	}
 
@@ -177,7 +172,7 @@ public final class Time  implements Serializable{
 	/**
 	 * Set task for this time point.
 	 */
-	public void setTask(String task) {
+	public void setTask( String task ) {
 		mTask = task;
 	}
 
@@ -186,7 +181,7 @@ public final class Time  implements Serializable{
 		return mWeekDays;
 	}
 
-	public void setWeekDays(String weekDays) {
+	public void setWeekDays( String weekDays ) {
 		mWeekDays = weekDays;
 	}
 }

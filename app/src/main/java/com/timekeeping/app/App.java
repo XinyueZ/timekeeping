@@ -61,21 +61,21 @@ public final class App extends MultiDexApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Fabric.with(this, new Crashlytics());
-		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
-		TaskHelper.init(this);
+		Fabric.with( this, new Crashlytics() );
+		Stetho.initialize( Stetho.newInitializerBuilder( this ).enableDumpapp( Stetho.defaultDumperPluginsProvider( this ) )
+								   .enableWebKitInspector( Stetho.defaultInspectorModulesProvider( this ) ).build() );
+		TaskHelper.init( this );
 		startAppGuardService();
 	}
 
 
 	public static void startAppGuardService() {
-		if (!Prefs.getInstance(App.Instance).areAllPaused()) {
-			App.Instance.startService(new Intent(App.Instance, TickerService.class));
+		if( !Prefs.getInstance( App.Instance ).areAllPaused() ) {
+			App.Instance.startService( new Intent( App.Instance, TickerService.class ) );
 		}
 	}
 
 	public static void stopAppGuardService() {
-		App.Instance.stopService(new Intent(App.Instance, TickerService.class));
+		App.Instance.stopService( new Intent( App.Instance, TickerService.class ) );
 	}
 }

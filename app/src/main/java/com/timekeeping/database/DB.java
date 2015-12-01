@@ -25,19 +25,19 @@ public final class DB {
 	/**
 	 * {@link android.content.Context}.
 	 */
-	private Context mContext;
+	private        Context        mContext;
 	/**
 	 * Impl singleton pattern.
 	 */
-	private static DB sInstance;
+	private static DB             sInstance;
 	/**
 	 * Helper class that create, delete, update tables of database.
 	 */
-	private DatabaseHelper mDatabaseHelper;
+	private        DatabaseHelper mDatabaseHelper;
 	/**
 	 * The database object.
 	 */
-	private SQLiteDatabase mDB;
+	private        SQLiteDatabase mDB;
 
 	/**
 	 * Constructor of {@link DB}. Impl singleton pattern so that it is private.
@@ -45,7 +45,7 @@ public final class DB {
 	 * @param cxt
 	 * 		{@link android.content.Context}.
 	 */
-	private DB(Context cxt) {
+	private DB( Context cxt ) {
 		mContext = cxt;
 	}
 
@@ -57,9 +57,9 @@ public final class DB {
 	 *
 	 * @return The {@link DB} singleton.
 	 */
-	public static DB getInstance(Context cxt) {
-		if (sInstance == null) {
-			sInstance = new DB(cxt);
+	public static DB getInstance( Context cxt ) {
+		if( sInstance == null ) {
+			sInstance = new DB( cxt );
 		}
 		return sInstance;
 	}
@@ -68,7 +68,7 @@ public final class DB {
 	 * Open database.
 	 */
 	public synchronized void open() {
-		mDatabaseHelper = new DatabaseHelper(mContext);
+		mDatabaseHelper = new DatabaseHelper( mContext );
 		mDB = mDatabaseHelper.getWritableDatabase();
 	}
 
@@ -87,22 +87,22 @@ public final class DB {
 	 *
 	 * @return {@code true} if insert is success.
 	 */
-	public synchronized boolean addTime(Time item) {
-		if (mDB == null || !mDB.isOpen()) {
+	public synchronized boolean addTime( Time item ) {
+		if( mDB == null || !mDB.isOpen() ) {
 			open();
 		}
 		boolean success = false;
 		try {
-			long rowId = -1;
-			ContentValues v = new ContentValues();
-			v.put(TimeTbl.HOUR, item.getHour());
-			v.put(TimeTbl.MINUTE, item.getMinute());
-			v.put(TimeTbl.ONOFF, item.isOnOff() ? 1 : 0);
-			v.put(TimeTbl.TASK, item.getTask());
-			v.put(TimeTbl.WEEK_DAYS, item.getWeekDays());
-			v.put(TimeTbl.EDIT_TIME, System.currentTimeMillis());
-			rowId = mDB.insert(TimeTbl.TABLE_NAME, null, v);
-			item.setId(rowId);
+			long          rowId = -1;
+			ContentValues v     = new ContentValues();
+			v.put( TimeTbl.HOUR, item.getHour() );
+			v.put( TimeTbl.MINUTE, item.getMinute() );
+			v.put( TimeTbl.ONOFF, item.isOnOff() ? 1 : 0 );
+			v.put( TimeTbl.TASK, item.getTask() );
+			v.put( TimeTbl.WEEK_DAYS, item.getWeekDays() );
+			v.put( TimeTbl.EDIT_TIME, System.currentTimeMillis() );
+			rowId = mDB.insert( TimeTbl.TABLE_NAME, null, v );
+			item.setId( rowId );
 			success = rowId != -1;
 		} finally {
 			close();
@@ -119,22 +119,22 @@ public final class DB {
 	 *
 	 * @return {@code true} if insert is success.
 	 */
-	public synchronized boolean updateTime(Time item) {
-		if (mDB == null || !mDB.isOpen()) {
+	public synchronized boolean updateTime( Time item ) {
+		if( mDB == null || !mDB.isOpen() ) {
 			open();
 		}
 		boolean success = false;
 		try {
-			long rowId = -1;
-			ContentValues v = new ContentValues();
-			v.put(TimeTbl.HOUR, item.getHour());
-			v.put(TimeTbl.MINUTE, item.getMinute());
-			v.put(TimeTbl.ONOFF, item.isOnOff() ? 1 : 0);
-			v.put(TimeTbl.TASK, item.getTask());
-			v.put(TimeTbl.WEEK_DAYS, item.getWeekDays());
-			v.put(TimeTbl.EDIT_TIME, System.currentTimeMillis());
+			long          rowId = -1;
+			ContentValues v     = new ContentValues();
+			v.put( TimeTbl.HOUR, item.getHour() );
+			v.put( TimeTbl.MINUTE, item.getMinute() );
+			v.put( TimeTbl.ONOFF, item.isOnOff() ? 1 : 0 );
+			v.put( TimeTbl.TASK, item.getTask() );
+			v.put( TimeTbl.WEEK_DAYS, item.getWeekDays() );
+			v.put( TimeTbl.EDIT_TIME, System.currentTimeMillis() );
 			String[] args = new String[] { item.getId() + "" };
-			rowId = mDB.update(TimeTbl.TABLE_NAME, v, TimeTbl.ID + " = ?", args);
+			rowId = mDB.update( TimeTbl.TABLE_NAME, v, TimeTbl.ID + " = ?", args );
 			success = rowId != -1;
 		} finally {
 			close();
@@ -153,20 +153,20 @@ public final class DB {
 	 * <p/>
 	 * Return -1 if there's error when removed data.
 	 */
-	public synchronized int removeTime(Time item) {
-		if (mDB == null || !mDB.isOpen()) {
+	public synchronized int removeTime( Time item ) {
+		if( mDB == null || !mDB.isOpen() ) {
 			open();
 		}
-		int rowsRemain = -1;
+		int     rowsRemain = -1;
 		boolean success;
 		try {
-			long rowId;
-			String whereClause = TimeTbl.ID + "=?";
-			String[] whereArgs = new String[] { String.valueOf(item.getId()) };
-			rowId = mDB.delete(TimeTbl.TABLE_NAME, whereClause, whereArgs);
+			long     rowId;
+			String   whereClause = TimeTbl.ID + "=?";
+			String[] whereArgs   = new String[] { String.valueOf( item.getId() ) };
+			rowId = mDB.delete( TimeTbl.TABLE_NAME, whereClause, whereArgs );
 			success = rowId > 0;
-			if (success) {
-				Cursor c = mDB.query(TimeTbl.TABLE_NAME, new String[] { TimeTbl.ID }, null, null, null, null, null);
+			if( success ) {
+				Cursor c = mDB.query( TimeTbl.TABLE_NAME, new String[] { TimeTbl.ID }, null, null, null, null, null );
 				rowsRemain = c.getCount();
 			} else {
 				rowsRemain = -1;
@@ -182,7 +182,7 @@ public final class DB {
 	 * Sort direction.
 	 */
 	public enum Sort {
-		DESC("DESC"), ASC("ASC");
+		DESC( "DESC" ), ASC( "ASC" );
 		/**
 		 * Text represents this enum.
 		 */
@@ -194,7 +194,7 @@ public final class DB {
 		 * @param nm
 		 * 		{@code DESC or ASC}.
 		 */
-		Sort(String nm) {
+		Sort( String nm ) {
 			this.nm = nm;
 		}
 
@@ -212,25 +212,25 @@ public final class DB {
 	 *
 	 * @return All {@link  }s from DB order by the time of edition.
 	 */
-	public synchronized List<Time> getTimes(Sort sort) {
-		if (mDB == null || !mDB.isOpen()) {
+	public synchronized List<Time> getTimes( Sort sort ) {
+		if( mDB == null || !mDB.isOpen() ) {
 			open();
 		}
-		Cursor c = mDB.query(TimeTbl.TABLE_NAME, null, null, null, null, null,
-				TimeTbl.EDIT_TIME + " " + sort.toString());
-		Time item = null;
+		Cursor c = mDB.query( TimeTbl.TABLE_NAME, null, null, null, null, null, TimeTbl.EDIT_TIME + " " + sort.toString() );
+		Time       item = null;
 		List<Time> list = new LinkedList<Time>();
 		try {
 
-			while (c.moveToNext()) {
-				item = new Time(c.getLong(c.getColumnIndex(TimeTbl.ID)), c.getInt(c.getColumnIndex(TimeTbl.HOUR)),
-						c.getInt(c.getColumnIndex(TimeTbl.MINUTE)), c.getLong(c.getColumnIndex(TimeTbl.EDIT_TIME)),
-						c.getInt(c.getColumnIndex(TimeTbl.ONOFF)) == 1, c.getString(c.getColumnIndex(TimeTbl.TASK)),
-						c.getString(c.getColumnIndex(TimeTbl.WEEK_DAYS)));
-				list.add(item);
+			while( c.moveToNext() ) {
+				item = new Time( c.getLong( c.getColumnIndex( TimeTbl.ID ) ), c.getInt( c.getColumnIndex( TimeTbl.HOUR ) ),
+								 c.getInt( c.getColumnIndex( TimeTbl.MINUTE ) ), c.getLong( c.getColumnIndex( TimeTbl.EDIT_TIME ) ),
+								 c.getInt( c.getColumnIndex( TimeTbl.ONOFF ) ) == 1, c.getString( c.getColumnIndex( TimeTbl.TASK ) ),
+								 c.getString( c.getColumnIndex( TimeTbl.WEEK_DAYS ) )
+				);
+				list.add( item );
 			}
 		} finally {
-			if (c != null) {
+			if( c != null ) {
 				c.close();
 			}
 			close();
@@ -239,24 +239,22 @@ public final class DB {
 	}
 
 	/**
-	 * To check whether the {@link com.timekeeping.data.Time} with hour and minute is in DB or not. To prevent from
-	 * storing duplicated item.
+	 * To check whether the {@link com.timekeeping.data.Time} with hour and minute is in DB or not. To prevent from storing duplicated item.
 	 *
 	 * @param item
 	 * 		The item to check.
 	 *
 	 * @return {@link true} if find.
 	 */
-	public boolean findTime(Time item) {
-		if (mDB == null || !mDB.isOpen()) {
+	public boolean findTime( Time item ) {
+		if( mDB == null || !mDB.isOpen() ) {
 			open();
 		}
 		boolean success;
 		try {
-			String whereClause = TimeTbl.HOUR + "=? AND " + TimeTbl.MINUTE + "=?";
-			String[] whereArgs = new String[] { String.valueOf(item.getHour()), String.valueOf(item.getMinute()) };
-			Cursor c = mDB.query(TimeTbl.TABLE_NAME, new String[] { TimeTbl.ID }, whereClause, whereArgs, null, null,
-					null);
+			String   whereClause = TimeTbl.HOUR + "=? AND " + TimeTbl.MINUTE + "=?";
+			String[] whereArgs   = new String[] { String.valueOf( item.getHour() ) , String.valueOf( item.getMinute() ) };
+			Cursor c = mDB.query( TimeTbl.TABLE_NAME, new String[] { TimeTbl.ID }, whereClause, whereArgs, null, null, null );
 			success = c.getCount() >= 1;
 		} finally {
 			close();

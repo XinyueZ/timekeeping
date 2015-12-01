@@ -18,10 +18,11 @@ public class WakeUpReceiver extends BroadcastReceiver {
 	}
 
 	@Override
-	public void onReceive(Context context, Intent intent) {
-		if (intent != null && TextUtils.equals(intent.getAction(), ACTION_WAKE_UP)) {
-			WakeUpActivity.showInstance(context, (Time) intent.getSerializableExtra(EXTRAS_TIME),
-					intent.getBooleanExtra(EXTRAS_IF_ERROR, false));
+	public void onReceive( Context context, Intent intent ) {
+		if( intent != null && TextUtils.equals( intent.getAction(), ACTION_WAKE_UP ) ) {
+			WakeUpActivity.showInstance( context, (Time) intent.getSerializableExtra( EXTRAS_TIME ),
+										 intent.getBooleanExtra( EXTRAS_IF_ERROR, false )
+			);
 		}
 	}
 }

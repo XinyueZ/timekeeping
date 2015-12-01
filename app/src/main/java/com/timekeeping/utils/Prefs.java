@@ -18,18 +18,18 @@ public final class Prefs extends BasicPrefs {
 	 * <p/>
 	 * {@code true} if EULA has been shown and agreed.
 	 */
-	private static final String KEY_EULA_SHOWN = "key_eula_shown";
+	private static final String KEY_EULA_SHOWN          = "key_eula_shown";
 	/**
 	 * Storage. Pause all items or not.
 	 */
-	private static final String KEY_PAUSE_ALL = "key_pause_all";
+	private static final String KEY_PAUSE_ALL           = "key_pause_all";
 	/**
 	 * Storage. Whether data has been initialized.
 	 */
-	private static final String KEY_INIT_DATA = "key_init_data";
+	private static final String KEY_INIT_DATA           = "key_init_data";
 	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
-	private static final String KEY_VOLUME = "key.volume";
-	private static final String KEY_WELCOME = "key.welcome";
+	private static final String KEY_VOLUME              = "key.volume";
+	private static final String KEY_WELCOME             = "key.welcome";
 
 	/**
 	 * Created a DeviceData storage.
@@ -37,8 +37,8 @@ public final class Prefs extends BasicPrefs {
 	 * @param context
 	 * 		A context object.
 	 */
-	private Prefs(Context context) {
-		super(context);
+	private Prefs( Context context ) {
+		super( context );
 	}
 
 	/**
@@ -49,9 +49,9 @@ public final class Prefs extends BasicPrefs {
 	 *
 	 * @return The {@link Prefs} singleton.
 	 */
-	public static Prefs getInstance(Context cxt) {
-		if (sInstance == null) {
-			sInstance = new Prefs(cxt);
+	public static Prefs getInstance( Context cxt ) {
+		if( sInstance == null ) {
+			sInstance = new Prefs( cxt );
 		}
 		return sInstance;
 	}
@@ -63,7 +63,7 @@ public final class Prefs extends BasicPrefs {
 	 * @return {@code true} if EULA has been shown and agreed.
 	 */
 	public boolean isEULAOnceConfirmed() {
-		return getBoolean(KEY_EULA_SHOWN, false);
+		return getBoolean( KEY_EULA_SHOWN, false );
 	}
 
 	/**
@@ -73,8 +73,8 @@ public final class Prefs extends BasicPrefs {
 	 * @param isConfirmed
 	 * 		{@code true} if EULA has been shown and agreed.
 	 */
-	public void setEULAOnceConfirmed(boolean isConfirmed) {
-		setBoolean(KEY_EULA_SHOWN, isConfirmed);
+	public void setEULAOnceConfirmed( boolean isConfirmed ) {
+		setBoolean( KEY_EULA_SHOWN, isConfirmed );
 	}
 
 
@@ -84,8 +84,8 @@ public final class Prefs extends BasicPrefs {
 	 * @param pause
 	 * 		{@code true} if all items are paused.
 	 */
-	public void setPauseAll(boolean pause) {
-		setBoolean(KEY_PAUSE_ALL, pause);
+	public void setPauseAll( boolean pause ) {
+		setBoolean( KEY_PAUSE_ALL, pause );
 	}
 
 	/**
@@ -94,44 +94,38 @@ public final class Prefs extends BasicPrefs {
 	 * @return {@code true} if all items are paused.
 	 */
 	public boolean areAllPaused() {
-		return getBoolean(KEY_PAUSE_ALL, false);
+		return getBoolean( KEY_PAUSE_ALL, false );
 	}
-
 
 
 	/**
 	 * Set whether data has been initialized.
 	 */
-	public void setInitData(boolean init) {
-		  setBoolean(KEY_INIT_DATA, init);
+	public void setInitData( boolean init ) {
+		setBoolean( KEY_INIT_DATA, init );
 	}
 	/**
 	 * Whether data has been initialized.
 	 */
 	public boolean hasInitData() {
-		return getBoolean(KEY_INIT_DATA, false);
-	}
-
-	public void setShownDetailsTimes(int times) {
-		setInt(KEY_SHOWN_DETAILS_TIMES, times);
+		return getBoolean( KEY_INIT_DATA, false );
 	}
 	public int getShownDetailsTimes() {
-		return getInt(KEY_SHOWN_DETAILS_TIMES, 1);
+		return getInt( KEY_SHOWN_DETAILS_TIMES, 1 );
 	}
-
-	public void setVolume(int vol) {
-		setInt(KEY_VOLUME, vol);
+	public void setShownDetailsTimes( int times ) {
+		setInt( KEY_SHOWN_DETAILS_TIMES, times );
 	}
-
 	public int getVolume() {
-		return getInt(KEY_VOLUME, 1);
+		return getInt( KEY_VOLUME, 1 );
 	}
-
-	public void setWelcomed(boolean welcomed) {
-		setBoolean(KEY_WELCOME, welcomed);
+	public void setVolume( int vol ) {
+		setInt( KEY_VOLUME, vol );
 	}
-
 	public boolean isWelcomed() {
-		return getBoolean(KEY_WELCOME, false);
+		return getBoolean( KEY_WELCOME, false );
+	}
+	public void setWelcomed( boolean welcomed ) {
+		setBoolean( KEY_WELCOME, welcomed );
 	}
 }

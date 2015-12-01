@@ -41,10 +41,9 @@ public class SplashActivity extends AppCompatActivity {
 	private TextToSpeech mTextToSpeech;
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-			@NonNull int[] grantResults) {
+	public void onRequestPermissionsResult( int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults ) {
 		// delegate the permission handling to generated method
-		SplashActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+		SplashActivityPermissionsDispatcher.onRequestPermissionsResult( this, requestCode, grantResults );
 	}
 
 
@@ -56,13 +55,13 @@ public class SplashActivity extends AppCompatActivity {
 
 	@DeniedPermission(permission.WRITE_EXTERNAL_STORAGE)
 	void noReadPhoneStatePermission() {
-		Snackbar.make(findViewById(R.id.splash_v), R.string.msg_permission_prompt, Snackbar.LENGTH_INDEFINITE)
-				.setAction(R.string.btn_agree, new OnClickListener() {
+		Snackbar.make( findViewById( R.id.splash_v ), R.string.msg_permission_prompt, Snackbar.LENGTH_INDEFINITE ).setAction(
+				R.string.btn_agree, new OnClickListener() {
 					@Override
-					public void onClick(View v) {
-						ActivityCompat.finishAffinity(SplashActivity.this);
+					public void onClick( View v ) {
+						ActivityCompat.finishAffinity( SplashActivity.this );
 					}
-				}).show();
+				} ).show();
 
 	}
 
@@ -70,32 +69,32 @@ public class SplashActivity extends AppCompatActivity {
 	 * Insert default items first time.
 	 */
 	public void insertDefaults() {
-		if (!Prefs.getInstance(getApplication()).hasInitData()) {
-			AsyncTaskCompat.executeParallel(new AsyncTask<Time, Time, Time>() {
+		if( !Prefs.getInstance( getApplication() ).hasInitData() ) {
+			AsyncTaskCompat.executeParallel( new AsyncTask<Time, Time, Time>() {
 				@Override
-				protected Time doInBackground(Time... params) {
-					DB db = DB.getInstance(getApplication());
-					Time t = new Time(-1, 9, 0, -1, true);
-					db.addTime(t);
-					t = new Time(-1, 12, 0, -1, true);
-					db.addTime(t);
-					t = new Time(-1, 18, 0, -1, true);
-					db.addTime(t);
-					t = new Time(-1, 20, 0, -1, false);
-					db.addTime(t);
-					t = new Time(-1, 22, 30, -1, false);
-					db.addTime(t);
+				protected Time doInBackground( Time... params ) {
+					DB db  = DB.getInstance( getApplication() );
+					Time t = new Time( -1, 9, 0, -1, true );
+					db.addTime( t );
+					t = new Time( -1, 12, 0, -1, true );
+					db.addTime( t );
+					t = new Time( -1, 18, 0, -1, true );
+					db.addTime( t );
+					t = new Time( -1, 20, 0, -1, false );
+					db.addTime( t );
+					t = new Time( -1, 22, 30, -1, false );
+					db.addTime( t );
 
-					Prefs.getInstance(getApplication()).setInitData(true);
+					Prefs.getInstance( getApplication() ).setInitData( true );
 					return null;
 				}
 
 				@Override
-				protected void onPostExecute(Time time) {
-					super.onPostExecute(time);
+				protected void onPostExecute( Time time ) {
+					super.onPostExecute( time );
 					initSpeech();
 				}
-			});
+			} );
 		} else {
 			initSpeech();
 		}
@@ -103,98 +102,98 @@ public class SplashActivity extends AppCompatActivity {
 
 	private void initSpeech() {
 		Intent checkIntent = new Intent();
-		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-		startActivityForResult(checkIntent, SPEECH_REQ);
+		checkIntent.setAction( TextToSpeech.Engine.ACTION_CHECK_TTS_DATA );
+		startActivityForResult( checkIntent, SPEECH_REQ );
 	}
 
 
-	private void doneSpeak(boolean isError) {
-		TextToSpeechUtils.doneSpeak(mTextToSpeech);
-		if (!isError) {
+	private void doneSpeak( boolean isError ) {
+		TextToSpeechUtils.doneSpeak( mTextToSpeech );
+		if( !isError ) {
 			goToMain();
 		} else {
-			Snackbar.make(findViewById(R.id.splash_v), R.string.msg_app_cant_be_used, Snackbar.LENGTH_INDEFINITE)
-					.setAction(R.string.btn_close, new OnClickListener() {
+			Snackbar.make( findViewById( R.id.splash_v ), R.string.msg_app_cant_be_used, Snackbar.LENGTH_INDEFINITE ).setAction(
+					R.string.btn_close, new OnClickListener() {
 						@Override
-						public void onClick(View v) {
-							ActivityCompat.finishAffinity(SplashActivity.this);
+						public void onClick( View v ) {
+							ActivityCompat.finishAffinity( SplashActivity.this );
 						}
-					}).show();
+					} ).show();
 
 		}
 	}
 
 	private void goToMain() {
-		MainActivity.showInstance(SplashActivity.this);
-		ActivityCompat.finishAfterTransition(SplashActivity.this);
+		MainActivity.showInstance( SplashActivity.this );
+		ActivityCompat.finishAfterTransition( SplashActivity.this );
 	}
 
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == SPEECH_REQ) {
-			if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-				Prefs prefs = Prefs.getInstance(getApplication());
-				if (!prefs.isWelcomed()) {
-					prefs.setWelcomed(true);
-					TextToSpeechUtils.prepareSpeak(getApplication(), Prefs.getInstance(getApplication()).getVolume());
-					mTextToSpeech = new TextToSpeech(getApplication(), new OnInitListener() {
+	protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
+		if( requestCode == SPEECH_REQ ) {
+			if( resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS ) {
+				Prefs prefs = Prefs.getInstance( getApplication() );
+				if( !prefs.isWelcomed() ) {
+					prefs.setWelcomed( true );
+					TextToSpeechUtils.prepareSpeak( getApplication(), Prefs.getInstance( getApplication() ).getVolume() );
+					mTextToSpeech = new TextToSpeech( getApplication(), new OnInitListener() {
 						@Override
-						public void onInit(int status) {
-							if (status == TextToSpeech.SUCCESS) {
-								TextToSpeechUtils.doSpeak(mTextToSpeech, getString(R.string.welcome));
+						public void onInit( int status ) {
+							if( status == TextToSpeech.SUCCESS ) {
+								TextToSpeechUtils.doSpeak( mTextToSpeech, getString( R.string.welcome ) );
 							} else {
-								doneSpeak(true);
+								doneSpeak( true );
 							}
 						}
-					});
-					if (Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-						mTextToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+					} );
+					if( Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1 ) {
+						mTextToSpeech.setOnUtteranceProgressListener( new UtteranceProgressListener() {
 							@Override
-							public void onStart(String utteranceId) {
+							public void onStart( String utteranceId ) {
 
 							}
 
 							@Override
-							public void onDone(String utteranceId) {
-								doneSpeak(false);
+							public void onDone( String utteranceId ) {
+								doneSpeak( false );
 							}
 
 							@Override
-							public void onError(String utteranceId) {
-								doneSpeak(true);
+							public void onError( String utteranceId ) {
+								doneSpeak( true );
 							}
-						});
+						} );
 					} else {
-						mTextToSpeech.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
+						mTextToSpeech.setOnUtteranceCompletedListener( new OnUtteranceCompletedListener() {
 							@Override
-							public void onUtteranceCompleted(String utteranceId) {
-								doneSpeak(false);
+							public void onUtteranceCompleted( String utteranceId ) {
+								doneSpeak( false );
 							}
-						});
+						} );
 					}
 				} else {
-					Utils.showLongToast(getApplication(), R.string.welcome);
+					Utils.showLongToast( getApplication(), R.string.welcome );
 					goToMain();
 				}
 
 			} else {
 				// missing data, install it
 				Intent installIntent = new Intent();
-				installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-				startActivity(installIntent);
-				ActivityCompat.finishAffinity(SplashActivity.this);
+				installIntent.setAction( TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA );
+				startActivity( installIntent );
+				ActivityCompat.finishAffinity( SplashActivity.this );
 			}
 		}
 	}
 
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_splash);
-		SplashActivityPermissionsDispatcher.getReadPhoneStatePermissionWithCheck(this);
+	protected void onCreate( Bundle savedInstanceState ) {
+		requestWindowFeature( Window.FEATURE_NO_TITLE );
+		getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+		super.onCreate( savedInstanceState );
+		setContentView( R.layout.activity_splash );
+		SplashActivityPermissionsDispatcher.getReadPhoneStatePermissionWithCheck( this );
 	}
 }

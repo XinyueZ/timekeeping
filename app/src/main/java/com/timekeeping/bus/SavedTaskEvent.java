@@ -6,7 +6,7 @@ import com.timekeeping.data.Time;
 public final class SavedTaskEvent {
 	private Time mTime;
 
-	public SavedTaskEvent(Time time) {
+	public SavedTaskEvent( Time time ) {
 		mTime = time;
 
 	}
