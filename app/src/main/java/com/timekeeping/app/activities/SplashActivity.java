@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import com.chopping.utils.Utils;
 import com.timekeeping.R;
 import com.timekeeping.app.App;
+import com.timekeeping.bus.InitEvent;
 import com.timekeeping.bus.MigratedEvent;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
@@ -51,6 +52,15 @@ public class SplashActivity extends AppCompatActivity {
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+	/**
+	 * Handler for {@link com.timekeeping.bus.InitEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.timekeeping.bus.InitEvent}.
+	 */
+	public void onEvent( InitEvent e ) {
+		initSpeech();
+	}
 
 	/**
 	 * Handler for {@link com.timekeeping.bus.MigratedEvent}.
@@ -154,16 +164,18 @@ public class SplashActivity extends AppCompatActivity {
 					new Realm.Transaction.Callback() {
 						@Override
 						public void onSuccess() {
-							Prefs.getInstance( getApplication() )
-								 .setInitData( true );
-							initSpeech();
+							Prefs prefs = Prefs.getInstance( getApplication() );
+							prefs.setInitData( true );
+							prefs.setMigrated( true );
+							EventBus.getDefault().post( new InitEvent() );
 						}
 
 						@Override
 						public void onError( Exception e ) {
-							Prefs.getInstance( getApplication() )
-								 .setInitData( true );
-							initSpeech();
+							Prefs prefs = Prefs.getInstance( getApplication() );
+							prefs.setInitData( true );
+							prefs.setMigrated( true );
+							EventBus.getDefault().post( new InitEvent() );
 						}
 					}
 			);

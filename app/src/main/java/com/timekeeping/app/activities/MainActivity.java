@@ -156,7 +156,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	 * 		Event {@link DeleteTimeEvent}.
 	 */
 	public void onEvent( DeleteTimeEvent e ) {
-		final Time time = e.getTime();
+		Time time = e.getTime();
 		if( time != null ) {
 			mRealm.beginTransaction();
 			time.removeFromRealm();
