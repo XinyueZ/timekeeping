@@ -189,8 +189,6 @@ public class SplashActivity extends AppCompatActivity {
 						new Runnable() {
 							@Override
 							public void run() {
-								Prefs.getInstance( App.Instance )
-									 .setMigrated( true );
 							}
 						}
 				);

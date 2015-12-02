@@ -9,13 +9,19 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 
 import com.timekeeping.R;
+import com.timekeeping.app.App;
+import com.timekeeping.database.DB;
 import com.timekeeping.utils.NotifyUtils;
+import com.timekeeping.utils.Prefs;
+
+import io.realm.Realm;
 
 public class TickerService extends Service {
 	private static final int          ONGOING_NOTIFICATION_ID = 0x57;
 	private static final String       TAG                     = "TickerService";
 	private              boolean      mReg                    = false;
 	private              IntentFilter mTickerFilter           = new IntentFilter( Intent.ACTION_TIME_TICK );
+	private Realm mRealm;
 
 	private BroadcastReceiver mTickerReceiver = new BroadcastReceiver() {
 		@Override
@@ -38,8 +44,27 @@ public class TickerService extends Service {
 	}
 
 	@Override
-	public int onStartCommand( Intent intent, int flags, int startId
-	) {
+	public int onStartCommand( Intent intent, int flags, int startId ) {
+		Prefs prefs = Prefs.getInstance( getApplication() );
+		if( prefs.hasInitData() && !prefs.isMigrated() ) {
+			mRealm = Realm.getInstance( App.Instance );
+			com.timekeeping.utils.Utils.migrateToRealm(
+					DB.getInstance( App.Instance ),
+					mRealm,
+					new Runnable() {
+						@Override
+						public void run() {
+							registerHandler();
+						}
+					}
+			);
+		} else {
+			registerHandler();
+		}
+		return START_STICKY;
+	}
+
+	private void registerHandler() {
 		if( !mReg ) {
 			Notification notification = NotifyUtils.buildNotifyWithoutBigImage(
 					this,
@@ -60,13 +85,15 @@ public class TickerService extends Service {
 			);
 			mReg = true;
 		}
-		return START_STICKY;
 	}
 
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		if( mRealm != null ) {
+			mRealm.close();
+		}
 		if( mTickerReceiver != null ) {
 			unregisterReceiver( mTickerReceiver );
 			mTickerReceiver = null;

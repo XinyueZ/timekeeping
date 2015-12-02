@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.os.AsyncTaskCompat;
 
+import com.timekeeping.app.App;
 import com.timekeeping.bus.MigratedEvent;
 import com.timekeeping.data.Time;
 import com.timekeeping.database.DB;
@@ -112,25 +113,33 @@ public final class Utils {
 			protected void onPostExecute( final List<Time> times ) {
 				super.onPostExecute( times );
 				if( times.size() > 0 ) {
-					realm.executeTransaction( new Realm.Transaction() {
-												  @Override
-												  public void execute( Realm bgRealm ) {
-													  bgRealm.copyToRealm( times );
-												  }
-											  },
-											  new Realm.Transaction.Callback() {
-												  @Override
-												  public void onSuccess() {
-													  afterMigrateCallback.run();
-													  EventBus.getDefault().post( new MigratedEvent() );
-												  }
+					realm.executeTransaction(
+							new Realm.Transaction() {
+								@Override
+								public void execute( Realm bgRealm ) {
+									bgRealm.copyToRealm( times );
+								}
+							},
+							new Realm.Transaction.Callback() {
+								@Override
+								public void onSuccess() {
+									Prefs.getInstance( App.Instance )
+										 .setMigrated( true );
+									afterMigrateCallback.run();
+									EventBus.getDefault()
+											.post( new MigratedEvent() );
+								}
 
-												  @Override
-												  public void onError( Exception e ) {
-													  afterMigrateCallback.run();
-													  EventBus.getDefault().post( new MigratedEvent() );
-												  }
-											  } );
+								@Override
+								public void onError( Exception e ) {
+									Prefs.getInstance( App.Instance )
+										 .setMigrated( true );
+									afterMigrateCallback.run();
+									EventBus.getDefault()
+											.post( new MigratedEvent() );
+								}
+							}
+					);
 				}
 			}
 		} );
