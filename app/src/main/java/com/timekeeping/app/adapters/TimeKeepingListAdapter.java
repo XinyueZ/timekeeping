@@ -349,9 +349,8 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 					}
 					Time time = mAdapter.getData()
 										.get( mPosition );
-					time.setWeekDays( weekDays.toString() );
 					EventBus.getDefault()
-							.post( new SavedWeekDaysEvent( time ) );
+							.post( new SavedWeekDaysEvent( time , weekDays.toString()) );
 				}
 			} );
 		}

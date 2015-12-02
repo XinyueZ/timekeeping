@@ -59,7 +59,7 @@ import com.timekeeping.bus.EULAConfirmedEvent;
 import com.timekeeping.bus.EULARejectEvent;
 import com.timekeeping.bus.EditTaskEvent;
 import com.timekeeping.bus.EditTimeEvent;
-import com.timekeeping.bus.SavedTaskEvent;
+import com.timekeeping.bus.SaveCommentEvent;
 import com.timekeeping.bus.SavedWeekDaysEvent;
 import com.timekeeping.bus.SelectItemEvent;
 import com.timekeeping.bus.StartActionModeEvent;
@@ -302,15 +302,16 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 
 
 	/**
-	 * Handler for {@link com.timekeeping.bus.SavedTaskEvent}.
+	 * Handler for {@link SaveCommentEvent}.
 	 *
 	 * @param e
-	 * 		Event {@link com.timekeeping.bus.SavedTaskEvent}.
+	 * 		Event {@link SaveCommentEvent}.
 	 */
-	public void onEvent( SavedTaskEvent e ) {
+	public void onEvent( SaveCommentEvent e ) {
 		mEdit = true;
 		mRealm.beginTransaction();
 		mEditedTime = e.getTime();
+		mEditedTime.setTask( e.getComment() );
 		updateOthers();
 	}
 
@@ -324,6 +325,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 		mEdit = true;
 		mRealm.beginTransaction();
 		mEditedTime = e.getTime();
+		mEditedTime.setWeekDays( e.getWeekDays() );
 		updateOthers();
 	}
 	//------------------------------------------------

@@ -103,38 +103,18 @@ public final class AppGuardService extends IntentService {
 										   .equalTo(
 												   "onOff",
 												   true
-										   )
-										   .or()
-										   .equalTo(
-												   "hour",
-												   hour
-										   )
-										   .equalTo(
-												   "minute",
-												   minute
-										   )
-										   .isEmpty( "weekDays" )
-										   .equalTo(
-												   "onOff",
-												   true
-										   )
-										   .or()
-										   .equalTo(
-												   "hour",
-												   hour
-										   )
-										   .equalTo(
-												   "minute",
-												   minute
-										   )
-										   .isNull( "weekDays" )
-										   .equalTo(
-												   "onOff",
-												   true
 										   );
 			RealmResults<Time> times = query.findAll();
 			if( times.size() > 0 ) {
-				final Time time = times.first();
+				final Time found = times.first();
+				final Time time = new Time( found.getId(),
+											found.getHour(),
+											found.getMinute(),
+											found.getEditTime(),
+											found.isOnOff(),
+											found.getTask(),
+											found.getWeekDays()
+				);
 				prepareSpeak();
 				//Speak time.
 				mTextToSpeech = new TextToSpeech(

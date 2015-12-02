@@ -2,10 +2,19 @@ package com.timekeeping.utils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.support.v4.os.AsyncTaskCompat;
 
+import com.timekeeping.bus.MigratedEvent;
 import com.timekeeping.data.Time;
+import com.timekeeping.database.DB;
+import com.timekeeping.database.DB.Sort;
+
+import de.greenrobot.event.EventBus;
+import io.realm.Realm;
 
 /**
  * Define util-methods.
@@ -28,7 +37,7 @@ public final class Utils {
 	public static String formatTime( Time item ) {
 		String       fmt    = "%s:%s";
 		NumberFormat fmtNum = new DecimalFormat( "##00" );
-		String       ret    = String.format(
+		String ret = String.format(
 				fmt,
 				fmtNum.format( item.getHour() ),
 				fmtNum.format( item.getMinute() )
@@ -89,5 +98,41 @@ public final class Utils {
 			return i;
 		}
 		return null;
+	}
+
+
+	public static void migrateToRealm( final DB db, final Realm realm, final Runnable afterMigrateCallback ) {
+		AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, List<Time>>() {
+			@Override
+			protected List<Time> doInBackground( Void... params ) {
+				return db.getTimes( Sort.DESC );
+			}
+
+			@Override
+			protected void onPostExecute( final List<Time> times ) {
+				super.onPostExecute( times );
+				if( times.size() > 0 ) {
+					realm.executeTransaction( new Realm.Transaction() {
+												  @Override
+												  public void execute( Realm bgRealm ) {
+													  bgRealm.copyToRealm( times );
+												  }
+											  },
+											  new Realm.Transaction.Callback() {
+												  @Override
+												  public void onSuccess() {
+													  afterMigrateCallback.run();
+													  EventBus.getDefault().post( new MigratedEvent() );
+												  }
+
+												  @Override
+												  public void onError( Exception e ) {
+													  afterMigrateCallback.run();
+													  EventBus.getDefault().post( new MigratedEvent() );
+												  }
+											  } );
+				}
+			}
+		} );
 	}
 }

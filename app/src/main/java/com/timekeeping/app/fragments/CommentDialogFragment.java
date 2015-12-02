@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 import com.timekeeping.R;
 import com.timekeeping.app.App;
-import com.timekeeping.bus.SavedTaskEvent;
+import com.timekeeping.bus.SaveCommentEvent;
 import com.timekeeping.data.Time;
 
 import de.greenrobot.event.EventBus;
@@ -66,10 +66,9 @@ public final class CommentDialogFragment extends DialogFragment {
 																   public void onClick( DialogInterface dialog, int whichButton ) {
 																	   Time editedTime = (Time) getArguments().getSerializable( EXTRAS_TIME );
 																	   if( editedTime != null ) {
-																		   editedTime.setTask( content.getText()
-																									  .toString() );
 																		   EventBus.getDefault()
-																				   .post( new SavedTaskEvent( editedTime ) );
+																				   .post( new SaveCommentEvent( editedTime, content.getText()
+																																   .toString() ) );
 																	   }
 																	   dismiss();
 																   }

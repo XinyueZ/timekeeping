@@ -24,10 +24,13 @@ import android.view.WindowManager;
 import com.chopping.utils.Utils;
 import com.timekeeping.R;
 import com.timekeeping.app.App;
+import com.timekeeping.bus.MigratedEvent;
 import com.timekeeping.data.Time;
+import com.timekeeping.database.DB;
 import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.TextToSpeechUtils;
 
+import de.greenrobot.event.EventBus;
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import permissions.dispatcher.DeniedPermission;
@@ -43,8 +46,24 @@ public class SplashActivity extends AppCompatActivity {
 	 */
 	private TextToSpeech mTextToSpeech;
 
-	private Realm mRealm;
+	private Realm          mRealm;
 	private RealmAsyncTask mTransaction;
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+	/**
+	 * Handler for {@link com.timekeeping.bus.MigratedEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.timekeeping.bus.MigratedEvent}.
+	 */
+	public void onEvent( MigratedEvent e ) {
+		initSpeech();
+	}
+
+	//------------------------------------------------
+
 
 	@Override
 	public void onRequestPermissionsResult( int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults ) {
@@ -87,8 +106,8 @@ public class SplashActivity extends AppCompatActivity {
 	 * Insert default items first time.
 	 */
 	public void insertDefaults() {
-		if( !Prefs.getInstance( getApplication() )
-				  .hasInitData() ) {
+		Prefs prefs = Prefs.getInstance( getApplication() );
+		if( !prefs.hasInitData() ) {
 			mTransaction = mRealm.executeTransaction(
 					new Realm.Transaction() {
 						@Override
@@ -149,7 +168,21 @@ public class SplashActivity extends AppCompatActivity {
 					}
 			);
 		} else {
-			initSpeech();
+			if( prefs.isMigrated() ) {
+				initSpeech();
+			} else {
+				com.timekeeping.utils.Utils.migrateToRealm(
+						DB.getInstance( App.Instance ),
+						mRealm,
+						new Runnable() {
+							@Override
+							public void run() {
+								Prefs.getInstance( App.Instance )
+									 .setMigrated( true );
+							}
+						}
+				);
+			}
 		}
 	}
 
@@ -276,6 +309,8 @@ public class SplashActivity extends AppCompatActivity {
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_splash );
 		SplashActivityPermissionsDispatcher.getReadPhoneStatePermissionWithCheck( this );
+		EventBus.getDefault()
+				.register( this );
 	}
 
 	@Override
@@ -286,6 +321,10 @@ public class SplashActivity extends AppCompatActivity {
 		if( mRealm != null ) {
 			mRealm.close();
 		}
+		EventBus.getDefault()
+				.unregister( this );
 		super.onDestroy();
 	}
+
+
 }

@@ -30,6 +30,7 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
 	private static final String KEY_VOLUME = "key.volume";
 	private static final String KEY_WELCOME = "key.welcome";
+	private static final String KEY_MIGRATED = "key.migrated";
 
 	/**
 	 * Created a DeviceData storage.
@@ -171,4 +172,18 @@ public final class Prefs extends BasicPrefs {
 				welcomed
 		);
 	}
+	public boolean isMigrated() {
+		return getBoolean(
+				KEY_MIGRATED,
+				false
+		);
+	}
+
+	public void setMigrated( boolean migrated ) {
+		setBoolean(
+				KEY_MIGRATED,
+				migrated
+		);
+	}
+
 }

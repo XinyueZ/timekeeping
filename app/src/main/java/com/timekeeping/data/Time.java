@@ -13,19 +13,19 @@ public class Time extends RealmObject implements Serializable {
 	 * Id of the item, might be retrieved from database.
 	 */
 	@PrimaryKey
-	private long id;
+	private long    id;
 	/**
 	 * Hour.
 	 */
-	private int hour;
+	private int     hour;
 	/**
 	 * Minute.
 	 */
-	private int minute;
+	private int     minute;
 	/**
 	 * A timestamps for the item when it was operated by database.
 	 */
-	private long editTime;
+	private long    editTime;
 	/**
 	 * {@code true=on}, {@code false=off}.
 	 */
@@ -33,7 +33,7 @@ public class Time extends RealmObject implements Serializable {
 	/**
 	 * Task for this time point.
 	 */
-	private String task;
+	private String  task;
 	/**
 	 * Selected week-days to fire event.
 	 */
