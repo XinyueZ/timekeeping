@@ -11,15 +11,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
@@ -68,20 +65,24 @@ import com.timekeeping.bus.SelectItemEvent;
 import com.timekeeping.bus.StartActionModeEvent;
 import com.timekeeping.bus.SwitchOnOffTimeEvent;
 import com.timekeeping.data.Time;
-import com.timekeeping.database.DB;
-import com.timekeeping.database.DB.Sort;
-import com.timekeeping.databinding.MainBinding;
+import com.timekeeping.databinding.ActivityMainBinding;
 import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.TypefaceSpan;
 import com.timekeeping.utils.Utils;
 import com.timekeeping.widget.FontTextView.Fonts;
+
+import io.realm.Realm;
+import io.realm.RealmAsyncTask;
+import io.realm.RealmChangeListener;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 /**
  * The {@link MainActivity}.
  *
  * @author Xinyue Zhao
  */
-public class MainActivity extends BaseActivity implements OnInitListener, OnClickListener, OnTimeSetListener, OnDialogDismissListener {
+public class MainActivity extends BaseActivity implements OnClickListener, OnTimeSetListener, OnDialogDismissListener {
 	/**
 	 * Main layout for this component.
 	 */
@@ -119,8 +120,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	/**
 	 * Data-binding.
 	 */
-	private MainBinding           mBinding;
+	private ActivityMainBinding   mBinding;
 
+	private Realm          mRealm;
+	private RealmAsyncTask mTransaction;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -153,22 +156,14 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		Event {@link DeleteTimeEvent}.
 	 */
 	public void onEvent( DeleteTimeEvent e ) {
-		AsyncTaskCompat.executeParallel( new AsyncTask<Time, Time, Time>() {
-			@Override
-			protected Time doInBackground( Time... params ) {
-				Time time = params[ 0 ];
-				if( time != null ) {
-					DB.getInstance( getApplication() ).removeTime( time );
-				}
-				return time;
-			}
-
-			@Override
-			protected void onPostExecute( Time time ) {
-				super.onPostExecute( time );
-				mBinding.getAdapter().removeItem( time );
-			}
-		}, e.getTime() );
+		final Time time = e.getTime();
+		if( time != null ) {
+			mRealm.beginTransaction();
+			time.removeFromRealm();
+			mBinding.getAdapter()
+					.notifyDataSetChanged();
+			mRealm.commitTransaction();
+		}
 	}
 
 	/**
@@ -226,11 +221,17 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		mActionMode = startSupportActionMode( new Callback() {
 			@Override
 			public boolean onCreateActionMode( ActionMode mode, Menu menu ) {
-				mode.getMenuInflater().inflate( ACTION_MODE_MENU, menu );
+				mode.getMenuInflater()
+					.inflate(
+							ACTION_MODE_MENU,
+							menu
+					);
 				mBinding.toolbar.setVisibility( View.GONE );
 				mBinding.errorContent.setStatusBarBackgroundColor( R.color.primary_dark_color );
-				mBinding.getAdapter().setActionMode( true );
-				mBinding.getAdapter().notifyDataSetChanged();
+				mBinding.getAdapter()
+						.setActionMode( true );
+				mBinding.getAdapter()
+						.notifyDataSetChanged();
 				mBinding.addNewTimeBtn.hide();
 				return true;
 			}
@@ -242,34 +243,28 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 			@Override
 			public boolean onActionItemClicked( ActionMode mode, MenuItem item ) {
-				AsyncTaskCompat.executeParallel( new AsyncTask<List<Integer>, Void, Void>() {
-					@Override
-					protected Void doInBackground( List<Integer>... params ) {
-						List<Integer> selectedItems = params[ 0 ];
-						List<Time>    selectedTimes = new ArrayList<>();
-						for( Integer pos : selectedItems ) {
-							selectedTimes.add( mBinding.getAdapter().getData().get( pos ) );
-						}
-						DB db = DB.getInstance( getApplication() );
-						for( Time delTime : selectedTimes ) {
-							db.removeTime( delTime );
-						}
+				List<Integer> selectedItems = mBinding.getAdapter()
+													  .getSelectedItems();
+				List<Time> selectedTimes = new ArrayList<>();
 
-						for( Time delTime : selectedTimes ) {
-							mBinding.getAdapter().getData().remove( delTime );
-						}
-						return null;
-					}
+				for( Integer pos : selectedItems ) {
+					selectedTimes.add( mBinding.getAdapter()
+											   .getData()
+											   .get( pos ) );
+				}
 
-					@Override
-					protected void onPostExecute( Void result ) {
-						super.onPostExecute( result );
-						mBinding.getAdapter().notifyDataSetChanged();
-						if( mActionMode != null ) {
-							mActionMode.finish();
-						}
-					}
-				}, mBinding.getAdapter().getSelectedItems() );
+				mRealm.beginTransaction();
+				for( Time delTime : selectedTimes ) {
+					delTime.removeFromRealm();
+				}
+				mRealm.commitTransaction();
+
+				mBinding.getAdapter()
+						.notifyDataSetChanged();
+
+				if( mActionMode != null ) {
+					mActionMode.finish();
+				}
 				return true;
 			}
 
@@ -278,9 +273,12 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				mActionMode = null;
 				mBinding.toolbar.setVisibility( View.VISIBLE );
 
-				mBinding.getAdapter().clearSelection();
-				mBinding.getAdapter().setActionMode( false );
-				mBinding.getAdapter().notifyDataSetChanged();
+				mBinding.getAdapter()
+						.clearSelection();
+				mBinding.getAdapter()
+						.setActionMode( false );
+				mBinding.getAdapter()
+						.notifyDataSetChanged();
 				mBinding.addNewTimeBtn.show();
 			}
 		} );
@@ -293,7 +291,13 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		Event {@link com.timekeeping.bus.EditTaskEvent}.
 	 */
 	public void onEvent( EditTaskEvent e ) {
-		showDialogFragment( CommentDialogFragment.newInstance( App.Instance, e.getTime() ), null );
+		showDialogFragment(
+				CommentDialogFragment.newInstance(
+						App.Instance,
+						e.getTime()
+				),
+				null
+		);
 	}
 
 
@@ -304,6 +308,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		Event {@link com.timekeeping.bus.SavedTaskEvent}.
 	 */
 	public void onEvent( SavedTaskEvent e ) {
+		mEdit = true;
+		mRealm.beginTransaction();
 		mEditedTime = e.getTime();
 		updateOthers();
 	}
@@ -315,6 +321,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		Event {@link com.timekeeping.bus.SavedWeekDaysEvent}.
 	 */
 	public void onEvent( SavedWeekDaysEvent e ) {
+		mEdit = true;
+		mRealm.beginTransaction();
 		mEditedTime = e.getTime();
 		updateOthers();
 	}
@@ -323,18 +331,32 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	@Override
 	public boolean onCreateOptionsMenu( Menu menu ) {
-		getMenuInflater().inflate( MENU_MAIN, menu );
+		getMenuInflater().inflate(
+				MENU_MAIN,
+				menu
+		);
 		MenuItem menuShare = menu.findItem( R.id.action_share_app );
 		//Getting the actionprovider associated with the menu item whose id is share.
-		android.support.v7.widget.ShareActionProvider provider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(
-				menuShare );
+		android.support.v7.widget.ShareActionProvider provider
+				= (android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider( menuShare );
 		//Setting a share intent.
-		String subject = getString( R.string.lbl_share_app_title, getString( R.string.application_name ) );
-		String text    = getString( R.string.lbl_share_app_content, getString( R.string.tray_info ) );
-		provider.setShareIntent( Utils.getDefaultShareIntent( provider, subject, text ) );
+		String subject = getString(
+				R.string.lbl_share_app_title,
+				getString( R.string.application_name )
+		);
+		String text = getString(
+				R.string.lbl_share_app_content,
+				getString( R.string.tray_info )
+		);
+		provider.setShareIntent( Utils.getDefaultShareIntent(
+				provider,
+				subject,
+				text
+		) );
 
-		MenuItem volMi  = menu.findItem( R.id.action_volume );
-		int      volume = Prefs.getInstance( getApplication() ).getVolume();
+		MenuItem volMi = menu.findItem( R.id.action_volume );
+		int volume = Prefs.getInstance( getApplication() )
+						  .getVolume();
 		String[] labels = getResources().getStringArray( R.array.volumes );
 		String   label;
 		int      icon;
@@ -365,19 +387,21 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		int id = item.getItemId();
 		switch( id ) {
 			case R.id.action_about:
-				showDialogFragment( AboutDialogFragment.newInstance( this ), null );
+				showDialogFragment(
+						AboutDialogFragment.newInstance( this ),
+						null
+				);
 				break;
 			case R.id.action_volume:
-				showDialogFragment( VolumeDialogFragment.newInstance( this ), null );
+				showDialogFragment(
+						VolumeDialogFragment.newInstance( this ),
+						null
+				);
 				break;
 		}
 		return super.onOptionsItemSelected( item );
 	}
 
-
-	@Override
-	public void onInit( int status ) {
-	}
 
 	@Override
 	public void onClick( View v ) {
@@ -393,9 +417,17 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	private void addNewTime() {
 		mBinding.addNewTimeBtn.hide();
-		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance( this, 0, 0, DateFormat.is24HourFormat( this ) );
+		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance(
+				this,
+				0,
+				0,
+				DateFormat.is24HourFormat( this )
+		);
 		timePickerDialog.setOnDismissListener( this );
-		timePickerDialog.show( getSupportFragmentManager(), null );
+		timePickerDialog.show(
+				getSupportFragmentManager(),
+				null
+		);
 	}
 
 	/**
@@ -403,12 +435,17 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 */
 	private void editTime() {
 		mBinding.addNewTimeBtn.show();
-		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance( this, mEditedTime.getHour(),
-																									  mEditedTime.getMinute(),
-																									  DateFormat.is24HourFormat( this )
+		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance(
+				this,
+				mEditedTime.getHour(),
+				mEditedTime.getMinute(),
+				DateFormat.is24HourFormat( this )
 		);
 		timePickerDialog.setOnDismissListener( this );
-		timePickerDialog.show( getSupportFragmentManager(), null );
+		timePickerDialog.show(
+				getSupportFragmentManager(),
+				null
+		);
 	}
 
 	/**
@@ -434,22 +471,25 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	private void setTimeOnOff( Time timeToSet ) {
 		mEdit = true;
 		mEditedTime = timeToSet;
+		mRealm.beginTransaction();
 		mEditedTime.setOnOff( !mEditedTime.isOnOff() );
-		switchTimeOnOff();
+		updateOthers();
 	}
 
 	private void refreshGrid() {
-		AsyncTaskCompat.executeParallel( new AsyncTask<Void, List<Time>, List<Time>>() {
+		final RealmResults<Time> result = mRealm.where( Time.class )
+												.findAllSortedAsync(
+														"editTime",
+														RealmResults.SORT_ORDER_DESCENDING
+												);
+		result.addChangeListener( new RealmChangeListener() {
 			@Override
-			protected List<Time> doInBackground( Void... params ) {
-				return DB.getInstance( getApplication() ).getTimes( Sort.DESC );
-			}
-
-			@Override
-			protected void onPostExecute( List<Time> times ) {
-				super.onPostExecute( times );
-				mBinding.getAdapter().setData( times );
-				mBinding.getAdapter().notifyDataSetChanged();
+			public void onChange() {
+				mBinding.getAdapter()
+						.setData( result );
+				mBinding.getAdapter()
+						.notifyDataSetChanged();
+				mRealm.removeChangeListener( this );
 			}
 		} );
 	}
@@ -464,54 +504,75 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		Minute.
 	 */
 	private void insertNewTime( int hourOfDay, int minute ) {
-		AsyncTaskCompat.executeParallel( new AsyncTask<Time, Time, Time>() {
-			@Override
-			protected Time doInBackground( Time... params ) {
-				Time    newTime = params[ 0 ];
-				DB      db      = DB.getInstance( getApplication() );
-				boolean find    = db.findTime( newTime );
-				if( !find && db.addTime( newTime ) ) {
-					return newTime;
-				} else {
-					return null;
-				}
-			}
+		final Time newTime = new Time(
+				System.currentTimeMillis(),
+				hourOfDay,
+				minute,
+				System.currentTimeMillis(),
+				true
+		);
+		mTransaction = mRealm.executeTransaction(
+				new Realm.Transaction() {
+					@Override
+					public void execute( Realm bgRealm ) {
+						RealmQuery<Time> query = bgRealm.where( Time.class )
+														.equalTo(
+																"hour",
+																newTime.getHour()
+														)
+														.equalTo(
+																"minute",
+																newTime.getMinute()
+														);
+						if( query.count() == 0 ) {
+							bgRealm.copyToRealm( newTime );
+						}
+					}
+				},
+				new Realm.Transaction.Callback() {
+					@Override
+					public void onSuccess() {
+						refreshGrid();
+						showStatusMessage( newTime );
+						mBinding.scheduleGv.getLayoutManager()
+										   .scrollToPosition( 0 );
+					}
 
-			@Override
-			protected void onPostExecute( Time time ) {
-				super.onPostExecute( time );
-				if( time != null ) {
-					refreshGrid();
-					showStatusMessage( time );
-					mBinding.scheduleGv.getLayoutManager().scrollToPosition( 0 );
+					@Override
+					public void onError( Exception e ) {
+					}
 				}
-			}
-		}, new Time( -1, hourOfDay, minute, -1, true ) );
+		);
 	}
 
 
 	/**
 	 * Edited and update a {@link com.timekeeping.data.Time} to database.
 	 */
-	private void updateTime() {
-		AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, Time>() {
+	private void updateTime( final int hourOfDay, final int minute ) {
+		final RealmQuery<Time> query = mRealm.where( Time.class )
+											 .equalTo(
+													 "hour",
+													 hourOfDay
+											 )
+											 .equalTo(
+													 "minute",
+													 minute
+											 );
+		final RealmResults<Time> results = query.findAllAsync();
+		results.addChangeListener( new RealmChangeListener() {
 			@Override
-			protected Time doInBackground( Void... params ) {
-				DB      db   = DB.getInstance( getApplication() );
-				boolean find = db.findTime( mEditedTime );
-				if( !find && db.updateTime( mEditedTime ) ) {
-					return mBinding.getAdapter().findItem( mEditedTime );
-				} else {
-					return null;
-				}
-			}
-
-			@Override
-			protected void onPostExecute( Time oldEntry ) {
-				super.onPostExecute( oldEntry );
-				if( oldEntry != null ) {
-					mBinding.getAdapter().editItem( oldEntry, mEditedTime );
+			public void onChange() {
+				if( query.count() == 0 ) {
+					mRealm.beginTransaction();
+					mEditedTime.setHour( hourOfDay );
+					mEditedTime.setMinute( minute );
+					mRealm.copyToRealmOrUpdate( mEditedTime );
+					mRealm.commitTransaction();
+					mBinding.getAdapter()
+							.notifyDataSetChanged();
 					mEdit = false;
+					results.removeChangeListener( this );
 				}
 			}
 		} );
@@ -522,56 +583,13 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * Edited and update a {@link com.timekeeping.data.Time}'s comment/task to database.
 	 */
 	private void updateOthers() {
-		AsyncTaskCompat.executeParallel( new AsyncTask<Void, Void, Time>() {
-			@Override
-			protected Time doInBackground( Void... params ) {
-				DB      db   = DB.getInstance( getApplication() );
-				boolean find = db.findTime( mEditedTime );
-				if( find && db.updateTime( mEditedTime ) ) {
-					return mBinding.getAdapter().findItem( mEditedTime );
-				} else {
-					return null;
-				}
-			}
-
-			@Override
-			protected void onPostExecute( Time oldEntry ) {
-				super.onPostExecute( oldEntry );
-				if( oldEntry != null ) {
-					mBinding.getAdapter().editItem( oldEntry, mEditedTime );
-					mEdit = false;
-				}
-			}
-		} );
+		mRealm.copyToRealmOrUpdate( mEditedTime );
+		mRealm.commitTransaction();
+		mBinding.getAdapter()
+				.notifyDataSetChanged();
+		mEdit = false;
 	}
 
-
-	/**
-	 * Edited and update a {@link com.timekeeping.data.Time} to database.
-	 */
-	private void switchTimeOnOff() {
-		AsyncTaskCompat.executeParallel( new AsyncTask<Void, Time, Time>() {
-			@Override
-			protected Time doInBackground( Void... params ) {
-				if( DB.getInstance( getApplication() ).updateTime( mEditedTime ) ) {
-					return mBinding.getAdapter().findItem( mEditedTime );
-				} else {
-					return null;
-				}
-			}
-
-			@Override
-			protected void onPostExecute( Time oldEntry ) {
-				super.onPostExecute( oldEntry );
-				if( oldEntry != null ) {
-					mBinding.getAdapter().editItem( oldEntry, mEditedTime );
-					mEdit = false;
-
-					showStatusMessage( mEditedTime );
-				}
-			}
-		} );
-	}
 
 	/**
 	 * Show a message after changing item on database.
@@ -580,19 +598,31 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		The item that has been changed.
 	 */
 	private void showStatusMessage( Time time ) {
-		String fmt     = getString( time.isOnOff() ? R.string.on_status : R.string.off_status );
-		String message = String.format( fmt, Utils.formatTime( time ) );
-		Snackbar.make( findViewById( R.id.error_content ), message, Snackbar.LENGTH_LONG ).show();
+		String fmt = getString( time.isOnOff() ? R.string.on_status : R.string.off_status );
+		String message = String.format(
+				fmt,
+				Utils.formatTime( time )
+		);
+		Snackbar.make(
+				findViewById( R.id.error_content ),
+				message,
+				Snackbar.LENGTH_LONG
+		)
+				.show();
 	}
 
 	@Override
 	public void onTimeSet( RadialTimePickerDialogFragment dialog, int hourOfDay, int minute ) {
 		if( mEdit ) {
-			mEditedTime.setHour( hourOfDay );
-			mEditedTime.setMinute( minute );
-			updateTime();
+			updateTime(
+					hourOfDay,
+					minute
+			);
 		} else {
-			insertNewTime( hourOfDay, minute );
+			insertNewTime(
+					hourOfDay,
+					minute
+			);
 		}
 	}
 
@@ -611,7 +641,11 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	private void addDrawerHeader() {
 		if( mBinding.navView.getHeaderCount() == 0 ) {
-			mBinding.navView.addHeaderView( getLayoutInflater().inflate( R.layout.nav_header, mBinding.navView, false ) );
+			mBinding.navView.addHeaderView( getLayoutInflater().inflate(
+					R.layout.nav_header,
+					mBinding.navView,
+					false
+			) );
 		}
 	}
 
@@ -635,8 +669,12 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		if( actionBar != null ) {
 			actionBar.setHomeButtonEnabled( true );
 			actionBar.setDisplayHomeAsUpEnabled( true );
-			mBinding.drawerLayout.setDrawerListener(
-					mDrawerToggle = new ActionBarDrawerToggle( this, mBinding.drawerLayout, R.string.application_name, R.string.application_name ) );
+			mBinding.drawerLayout.setDrawerListener( mDrawerToggle = new ActionBarDrawerToggle(
+					this,
+					mBinding.drawerLayout,
+					R.string.application_name,
+					R.string.application_name
+			) );
 		}
 	}
 
@@ -647,30 +685,41 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable( this );
 		if( isFound == ConnectionResult.SUCCESS ) {//Ignore update.
 			//The "End User License Agreement" must be confirmed before you use this application.
-			if( !Prefs.getInstance( getApplication() ).isEULAOnceConfirmed() ) {
-				showDialogFragment( new EulaConfirmationDialog(), null );
+			if( !Prefs.getInstance( getApplication() )
+					  .isEULAOnceConfirmed() ) {
+				showDialogFragment(
+						new EulaConfirmationDialog(),
+						null
+				);
 			}
 		} else {
-			new Builder( this ).setTitle( R.string.application_name ).setMessage( R.string.lbl_play_service ).setCancelable( false )
-					.setPositiveButton( R.string.btn_ok, new DialogInterface.OnClickListener() {
-						public void onClick( DialogInterface dialog, int whichButton ) {
-							dialog.dismiss();
-							Intent intent = new Intent( Intent.ACTION_VIEW );
-							intent.setData( Uri.parse( getString( R.string.play_service_url ) ) );
-							try {
-								startActivity( intent );
-							} catch( ActivityNotFoundException e0 ) {
-								intent.setData( Uri.parse( getString( R.string.play_service_web ) ) );
-								try {
-									startActivity( intent );
-								} catch( Exception e1 ) {
-									//Ignore now.
-								}
-							} finally {
-								finish();
-							}
-						}
-					} ).create().show();
+			new Builder( this ).setTitle( R.string.application_name )
+							   .setMessage( R.string.lbl_play_service )
+							   .setCancelable( false )
+							   .setPositiveButton(
+									   R.string.btn_ok,
+									   new DialogInterface.OnClickListener() {
+										   public void onClick( DialogInterface dialog, int whichButton ) {
+											   dialog.dismiss();
+											   Intent intent = new Intent( Intent.ACTION_VIEW );
+											   intent.setData( Uri.parse( getString( R.string.play_service_url ) ) );
+											   try {
+												   startActivity( intent );
+											   } catch( ActivityNotFoundException e0 ) {
+												   intent.setData( Uri.parse( getString( R.string.play_service_web ) ) );
+												   try {
+													   startActivity( intent );
+												   } catch( Exception e1 ) {
+													   //Ignore now.
+												   }
+											   } finally {
+												   finish();
+											   }
+										   }
+									   }
+							   )
+							   .create()
+							   .show();
 		}
 	}
 
@@ -694,9 +743,15 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 				}
 				try {
 					if( TextUtils.isEmpty( _tagName ) ) {
-						dialogFragment.show( ft, "dlg" );
+						dialogFragment.show(
+								ft,
+								"dlg"
+						);
 					} else {
-						dialogFragment.show( ft, _tagName );
+						dialogFragment.show(
+								ft,
+								_tagName
+						);
 					}
 				} catch( Exception _e ) {
 				}
@@ -728,8 +783,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		The select position.
 	 */
 	private void toggleSelection( int position ) {
-		mBinding.getAdapter().toggleSelection( position );
-		int count = mBinding.getAdapter().getSelectedItemCount();
+		mBinding.getAdapter()
+				.toggleSelection( position );
+		int count = mBinding.getAdapter()
+							.getSelectedItemCount();
 
 		if( count == 0 ) {
 			mActionMode.finish();
@@ -740,7 +797,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	}
 
 	private void initGrid() {
-		mBinding.scheduleGv.setLayoutManager( new GridLayoutManager( this, getResources().getInteger( R.integer.card_count ) ) );
+		mBinding.scheduleGv.setLayoutManager( new GridLayoutManager(
+				this,
+				getResources().getInteger( R.integer.card_count )
+		) );
 		mBinding.scheduleGv.addOnScrollListener( new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled( RecyclerView recyclerView, int dx, int dy ) {
@@ -751,7 +811,8 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 					}
 				} else {
 					if( !mBinding.addNewTimeBtn.isShown() ) {
-						if( mBinding.getAdapter() != null && mBinding.getAdapter().isActionMode() ) {
+						if( mBinding.getAdapter() != null && mBinding.getAdapter()
+																	 .isActionMode() ) {
 							return;
 						}
 						mBinding.addNewTimeBtn.show();
@@ -766,7 +827,15 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	private void initBar() {
 		SpannableString s = new SpannableString( getString( R.string.application_name ) );
-		s.setSpan( new TypefaceSpan( this, Fonts.FONT_LIGHT ), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE );
+		s.setSpan(
+				new TypefaceSpan(
+						this,
+						Fonts.FONT_LIGHT
+				),
+				0,
+				s.length(),
+				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+		);
 		setSupportActionBar( mBinding.toolbar );
 		mBinding.toolbar.setTitle( s );
 	}
@@ -778,9 +847,16 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 	 * 		{@link Context}.
 	 */
 	public static void showInstance( Activity cxt ) {
-		Intent intent = new Intent( cxt, MainActivity.class );
+		Intent intent = new Intent(
+				cxt,
+				MainActivity.class
+		);
 		intent.setFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP );
-		ActivityCompat.startActivity( cxt, intent, null );
+		ActivityCompat.startActivity(
+				cxt,
+				intent,
+				null
+		);
 	}
 
 	@Override
@@ -819,7 +895,10 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 
 	private void initComponents() {
-		mBinding = DataBindingUtil.setContentView( this, LAYOUT );
+		mBinding = DataBindingUtil.setContentView(
+				this,
+				LAYOUT
+		);
 		setUpErrorHandling( (ViewGroup) findViewById( R.id.error_content ) );
 		//FAB
 		mBinding.addNewTimeBtn.setOnClickListener( this );
@@ -827,12 +906,24 @@ public class MainActivity extends BaseActivity implements OnInitListener, OnClic
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
+		mRealm = Realm.getInstance( App.Instance );
 		super.onCreate( savedInstanceState );
 		initComponents();
 		initBar();
 		initDrawer();
 		initGrid();
 		initAds();
+	}
+
+	@Override
+	protected void onDestroy() {
+		if( mTransaction != null && !mTransaction.isCancelled() ) {
+			mTransaction.cancel();
+		}
+		if( mRealm != null ) {
+			mRealm.close();
+		}
+		super.onDestroy();
 	}
 
 	@Override

@@ -28,7 +28,11 @@ public final class Utils {
 	public static String formatTime( Time item ) {
 		String       fmt    = "%s:%s";
 		NumberFormat fmtNum = new DecimalFormat( "##00" );
-		String       ret    = String.format( fmt, fmtNum.format( item.getHour() ), fmtNum.format( item.getMinute() ) );
+		String       ret    = String.format(
+				fmt,
+				fmtNum.format( item.getHour() ),
+				fmtNum.format( item.getMinute() )
+		);
 		return ret;
 	}
 
@@ -50,10 +54,18 @@ public final class Utils {
 	public static String formatTime( int hour, int minute, boolean isTwoDigits ) {
 		String fmt = "%s:%s";
 		if( !isTwoDigits ) {
-			return String.format( fmt, hour, minute );
+			return String.format(
+					fmt,
+					hour,
+					minute
+			);
 		} else {
 			NumberFormat fmtNum = new DecimalFormat( "##00" );
-			return String.format( fmt, fmtNum.format( hour ), fmtNum.format( minute ) );
+			return String.format(
+					fmt,
+					fmtNum.format( hour ),
+					fmtNum.format( minute )
+			);
 		}
 	}
 
@@ -65,8 +77,14 @@ public final class Utils {
 		if( provider != null ) {
 			Intent i = new Intent( Intent.ACTION_SEND );
 			i.setType( "text/plain" );
-			i.putExtra( android.content.Intent.EXTRA_SUBJECT, subject );
-			i.putExtra( android.content.Intent.EXTRA_TEXT, body );
+			i.putExtra(
+					android.content.Intent.EXTRA_SUBJECT,
+					subject
+			);
+			i.putExtra(
+					android.content.Intent.EXTRA_TEXT,
+					body
+			);
 			provider.setShareIntent( i );
 			return i;
 		}

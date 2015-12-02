@@ -25,27 +25,44 @@ public final class WakeUpFragment extends Fragment {
 	 */
 	private static final int LAYOUT = R.layout.fragment_wake_up;
 
-	private static final String EXTRAS_TIME     = WakeUpFragment.class.getName() + ".EXTRAS.time";
+	private static final String EXTRAS_TIME = WakeUpFragment.class.getName() + ".EXTRAS.time";
 	private static final String EXTRAS_IF_ERROR = WakeUpFragment.class.getName() + ".EXTRAS.if.error";
 	private WakeUpBinding mBinding;
 	private int mCountDown = 5;
 
 	public static WakeUpFragment newInstance( Context context, Time time, boolean ifError ) {
 		Bundle args = new Bundle();
-		args.putSerializable( EXTRAS_TIME, (Serializable) time );
-		args.putBoolean( EXTRAS_IF_ERROR, ifError );
-		return (WakeUpFragment) WakeUpFragment.instantiate( context, WakeUpFragment.class.getName(), args );
+		args.putSerializable(
+				EXTRAS_TIME,
+				(Serializable) time
+		);
+		args.putBoolean(
+				EXTRAS_IF_ERROR,
+				ifError
+		);
+		return (WakeUpFragment) WakeUpFragment.instantiate(
+				context,
+				WakeUpFragment.class.getName(),
+				args
+		);
 	}
 
 
 	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-		return inflater.inflate( LAYOUT, container, false );
+		return inflater.inflate(
+				LAYOUT,
+				container,
+				false
+		);
 	}
 
 
 	@Override
 	public void onViewCreated( View view, @Nullable Bundle savedInstanceState ) {
-		super.onViewCreated( view, savedInstanceState );
+		super.onViewCreated(
+				view,
+				savedInstanceState
+		);
 		Bundle args = getArguments();
 
 		mBinding = DataBindingUtil.bind( view.findViewById( R.id.wake_up_ll ) );
@@ -60,7 +77,10 @@ public final class WakeUpFragment extends Fragment {
 		} );
 
 
-		sHandler.postDelayed( mDismissTask, 1000 );
+		sHandler.postDelayed(
+				mDismissTask,
+				1000
+		);
 	}
 
 	@Override
@@ -82,7 +102,10 @@ public final class WakeUpFragment extends Fragment {
 			} else {
 				mCountDown--;
 				mBinding.countdownTv.setText( mCountDown + "" );
-				sHandler.postDelayed( mDismissTask, 1000 );
+				sHandler.postDelayed(
+						mDismissTask,
+						1000
+				);
 			}
 		}
 

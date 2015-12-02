@@ -25,33 +25,60 @@ public final class CommentDialogFragment extends DialogFragment {
 
 	public static DialogFragment newInstance( Context context, Time time ) {
 		Bundle args = new Bundle();
-		args.putSerializable( EXTRAS_TIME, (Serializable) time );
-		return (DialogFragment) CommentDialogFragment.instantiate( context, CommentDialogFragment.class.getName(), args );
+		args.putSerializable(
+				EXTRAS_TIME,
+				(Serializable) time
+		);
+		return (DialogFragment) CommentDialogFragment.instantiate(
+				context,
+				CommentDialogFragment.class.getName(),
+				args
+		);
 	}
 
 	@Override
 	public Dialog onCreateDialog( Bundle savedInstanceState ) {
-		final EditText content   = new EditText( App.Instance );
+		final EditText content = new EditText( App.Instance );
 		Resources      resources = App.Instance.getResources();
 		int            rightleft = resources.getDimensionPixelSize( R.dimen.activity_edit_content );
 		int            topbottom = resources.getDimensionPixelSize( R.dimen.activity_vertical_margin );
-		content.setTextColor( ContextCompat.getColor( App.Instance, R.color.common_black ) );
+		content.setTextColor( ContextCompat.getColor(
+				App.Instance,
+				R.color.common_black
+		) );
 		content.setInputType( InputType.TYPE_TEXT_FLAG_MULTI_LINE );
-		content.setPadding( rightleft, topbottom, rightleft, topbottom );
+		content.setPadding(
+				rightleft,
+				topbottom,
+				rightleft,
+				topbottom
+		);
 		Time editedTime = (Time) getArguments().getSerializable( EXTRAS_TIME );
 		if( editedTime != null ) {
 			content.setText( editedTime.getTask() );
 		}
-		return new AlertDialog.Builder( getActivity() ).setTitle( R.string.lbl_comment ).setView( content ).setCancelable( true ).setPositiveButton(
-				R.string.save_label, new DialogInterface.OnClickListener() {
-					public void onClick( DialogInterface dialog, int whichButton ) {
-						Time editedTime = (Time) getArguments().getSerializable( EXTRAS_TIME );
-						if( editedTime != null ) {
-							editedTime.setTask( content.getText().toString() );
-							EventBus.getDefault().post( new SavedTaskEvent( editedTime ) );
-						}
-						dismiss();
-					}
-				} ).setNegativeButton( R.string.btn_cancel, null ).create();
+		return new AlertDialog.Builder( getActivity() ).setTitle( R.string.lbl_comment )
+													   .setView( content )
+													   .setCancelable( true )
+													   .setPositiveButton(
+															   R.string.save_label,
+															   new DialogInterface.OnClickListener() {
+																   public void onClick( DialogInterface dialog, int whichButton ) {
+																	   Time editedTime = (Time) getArguments().getSerializable( EXTRAS_TIME );
+																	   if( editedTime != null ) {
+																		   editedTime.setTask( content.getText()
+																									  .toString() );
+																		   EventBus.getDefault()
+																				   .post( new SavedTaskEvent( editedTime ) );
+																	   }
+																	   dismiss();
+																   }
+															   }
+													   )
+													   .setNegativeButton(
+															   R.string.btn_cancel,
+															   null
+													   )
+													   .create();
 	}
 }

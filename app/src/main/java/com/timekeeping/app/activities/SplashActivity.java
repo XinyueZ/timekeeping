@@ -1,8 +1,10 @@
 package com.timekeeping.app.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.Manifest.permission;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -13,7 +15,6 @@ import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,11 +23,13 @@ import android.view.WindowManager;
 
 import com.chopping.utils.Utils;
 import com.timekeeping.R;
+import com.timekeeping.app.App;
 import com.timekeeping.data.Time;
-import com.timekeeping.database.DB;
 import com.timekeeping.utils.Prefs;
 import com.timekeeping.utils.TextToSpeechUtils;
 
+import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 import permissions.dispatcher.DeniedPermission;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
@@ -40,10 +43,17 @@ public class SplashActivity extends AppCompatActivity {
 	 */
 	private TextToSpeech mTextToSpeech;
 
+	private Realm mRealm;
+	private RealmAsyncTask mTransaction;
+
 	@Override
 	public void onRequestPermissionsResult( int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults ) {
 		// delegate the permission handling to generated method
-		SplashActivityPermissionsDispatcher.onRequestPermissionsResult( this, requestCode, grantResults );
+		SplashActivityPermissionsDispatcher.onRequestPermissionsResult(
+				this,
+				requestCode,
+				grantResults
+		);
 	}
 
 
@@ -55,13 +65,21 @@ public class SplashActivity extends AppCompatActivity {
 
 	@DeniedPermission(permission.WRITE_EXTERNAL_STORAGE)
 	void noReadPhoneStatePermission() {
-		Snackbar.make( findViewById( R.id.splash_v ), R.string.msg_permission_prompt, Snackbar.LENGTH_INDEFINITE ).setAction(
-				R.string.btn_agree, new OnClickListener() {
-					@Override
-					public void onClick( View v ) {
-						ActivityCompat.finishAffinity( SplashActivity.this );
-					}
-				} ).show();
+		Snackbar.make(
+				findViewById( R.id.splash_v ),
+				R.string.msg_permission_prompt,
+				Snackbar.LENGTH_INDEFINITE
+		)
+				.setAction(
+						R.string.btn_agree,
+						new OnClickListener() {
+							@Override
+							public void onClick( View v ) {
+								ActivityCompat.finishAffinity( SplashActivity.this );
+							}
+						}
+				)
+				.show();
 
 	}
 
@@ -69,32 +87,67 @@ public class SplashActivity extends AppCompatActivity {
 	 * Insert default items first time.
 	 */
 	public void insertDefaults() {
-		if( !Prefs.getInstance( getApplication() ).hasInitData() ) {
-			AsyncTaskCompat.executeParallel( new AsyncTask<Time, Time, Time>() {
-				@Override
-				protected Time doInBackground( Time... params ) {
-					DB db  = DB.getInstance( getApplication() );
-					Time t = new Time( -1, 9, 0, -1, true );
-					db.addTime( t );
-					t = new Time( -1, 12, 0, -1, true );
-					db.addTime( t );
-					t = new Time( -1, 18, 0, -1, true );
-					db.addTime( t );
-					t = new Time( -1, 20, 0, -1, false );
-					db.addTime( t );
-					t = new Time( -1, 22, 30, -1, false );
-					db.addTime( t );
+		if( !Prefs.getInstance( getApplication() )
+				  .hasInitData() ) {
+			mTransaction = mRealm.executeTransaction(
+					new Realm.Transaction() {
+						@Override
+						public void execute( Realm bgRealm ) {
+							List<Time> defaultTimes = new ArrayList<>();
+							defaultTimes.add( new Time(
+									System.currentTimeMillis(),
+									9,
+									0,
+									System.currentTimeMillis(),
+									true
+							) );
+							defaultTimes.add( new Time(
+									System.currentTimeMillis() + 1,
+									12,
+									0,
+									System.currentTimeMillis(),
+									true
+							) );
+							defaultTimes.add( new Time(
+									System.currentTimeMillis() + 2,
+									18,
+									0,
+									System.currentTimeMillis(),
+									true
+							) );
+							defaultTimes.add( new Time(
+									System.currentTimeMillis() + 3,
+									20,
+									0,
+									System.currentTimeMillis(),
+									true
+							) );
+							defaultTimes.add( new Time(
+									System.currentTimeMillis() + 4,
+									22,
+									30,
+									System.currentTimeMillis(),
+									true
+							) );
+							bgRealm.copyToRealm( defaultTimes );
+						}
+					},
+					new Realm.Transaction.Callback() {
+						@Override
+						public void onSuccess() {
+							Prefs.getInstance( getApplication() )
+								 .setInitData( true );
+							initSpeech();
+						}
 
-					Prefs.getInstance( getApplication() ).setInitData( true );
-					return null;
-				}
-
-				@Override
-				protected void onPostExecute( Time time ) {
-					super.onPostExecute( time );
-					initSpeech();
-				}
-			} );
+						@Override
+						public void onError( Exception e ) {
+							Prefs.getInstance( getApplication() )
+								 .setInitData( true );
+							initSpeech();
+						}
+					}
+			);
 		} else {
 			initSpeech();
 		}
@@ -103,7 +156,10 @@ public class SplashActivity extends AppCompatActivity {
 	private void initSpeech() {
 		Intent checkIntent = new Intent();
 		checkIntent.setAction( TextToSpeech.Engine.ACTION_CHECK_TTS_DATA );
-		startActivityForResult( checkIntent, SPEECH_REQ );
+		startActivityForResult(
+				checkIntent,
+				SPEECH_REQ
+		);
 	}
 
 
@@ -112,13 +168,21 @@ public class SplashActivity extends AppCompatActivity {
 		if( !isError ) {
 			goToMain();
 		} else {
-			Snackbar.make( findViewById( R.id.splash_v ), R.string.msg_app_cant_be_used, Snackbar.LENGTH_INDEFINITE ).setAction(
-					R.string.btn_close, new OnClickListener() {
-						@Override
-						public void onClick( View v ) {
-							ActivityCompat.finishAffinity( SplashActivity.this );
-						}
-					} ).show();
+			Snackbar.make(
+					findViewById( R.id.splash_v ),
+					R.string.msg_app_cant_be_used,
+					Snackbar.LENGTH_INDEFINITE
+			)
+					.setAction(
+							R.string.btn_close,
+							new OnClickListener() {
+								@Override
+								public void onClick( View v ) {
+									ActivityCompat.finishAffinity( SplashActivity.this );
+								}
+							}
+					)
+					.show();
 
 		}
 	}
@@ -136,17 +200,27 @@ public class SplashActivity extends AppCompatActivity {
 				Prefs prefs = Prefs.getInstance( getApplication() );
 				if( !prefs.isWelcomed() ) {
 					prefs.setWelcomed( true );
-					TextToSpeechUtils.prepareSpeak( getApplication(), Prefs.getInstance( getApplication() ).getVolume() );
-					mTextToSpeech = new TextToSpeech( getApplication(), new OnInitListener() {
-						@Override
-						public void onInit( int status ) {
-							if( status == TextToSpeech.SUCCESS ) {
-								TextToSpeechUtils.doSpeak( mTextToSpeech, getString( R.string.welcome ) );
-							} else {
-								doneSpeak( true );
+					TextToSpeechUtils.prepareSpeak(
+							getApplication(),
+							Prefs.getInstance( getApplication() )
+								 .getVolume()
+					);
+					mTextToSpeech = new TextToSpeech(
+							getApplication(),
+							new OnInitListener() {
+								@Override
+								public void onInit( int status ) {
+									if( status == TextToSpeech.SUCCESS ) {
+										TextToSpeechUtils.doSpeak(
+												mTextToSpeech,
+												getString( R.string.welcome )
+										);
+									} else {
+										doneSpeak( true );
+									}
+								}
 							}
-						}
-					} );
+					);
 					if( Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH_MR1 ) {
 						mTextToSpeech.setOnUtteranceProgressListener( new UtteranceProgressListener() {
 							@Override
@@ -173,7 +247,10 @@ public class SplashActivity extends AppCompatActivity {
 						} );
 					}
 				} else {
-					Utils.showLongToast( getApplication(), R.string.welcome );
+					Utils.showLongToast(
+							getApplication(),
+							R.string.welcome
+					);
 					goToMain();
 				}
 
@@ -190,10 +267,25 @@ public class SplashActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
+		mRealm = Realm.getInstance( App.Instance );
 		requestWindowFeature( Window.FEATURE_NO_TITLE );
-		getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+		getWindow().setFlags(
+				WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN
+		);
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_splash );
 		SplashActivityPermissionsDispatcher.getReadPhoneStatePermissionWithCheck( this );
+	}
+
+	@Override
+	protected void onDestroy() {
+		if( mTransaction != null && !mTransaction.isCancelled() ) {
+			mTransaction.cancel();
+		}
+		if( mRealm != null ) {
+			mRealm.close();
+		}
+		super.onDestroy();
 	}
 }

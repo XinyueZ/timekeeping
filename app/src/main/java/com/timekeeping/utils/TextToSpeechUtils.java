@@ -27,7 +27,11 @@ public final class TextToSpeechUtils {
 				break;
 		}
 		int vol = v != 0 ? am.getStreamMaxVolume( AudioManager.STREAM_MUSIC ) / v : 0;
-		am.setStreamVolume( AudioManager.STREAM_MUSIC, vol, 0 );
+		am.setStreamVolume(
+				AudioManager.STREAM_MUSIC,
+				vol,
+				0
+		);
 	}
 
 
@@ -35,12 +39,27 @@ public final class TextToSpeechUtils {
 		String id = java.lang.System.currentTimeMillis() + "";
 		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
 			Bundle args = new Bundle();
-			args.putString( Engine.KEY_PARAM_UTTERANCE_ID, "com.svox.pico" );
-			tts.speak( timeToSpeak, TextToSpeech.QUEUE_ADD, args, id );
+			args.putString(
+					Engine.KEY_PARAM_UTTERANCE_ID,
+					"com.svox.pico"
+			);
+			tts.speak(
+					timeToSpeak,
+					TextToSpeech.QUEUE_ADD,
+					args,
+					id
+			);
 		} else {
 			HashMap<String, String> map = new HashMap<>();
-			map.put( TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, id );
-			tts.speak( timeToSpeak, TextToSpeech.QUEUE_ADD, map );
+			map.put(
+					TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,
+					id
+			);
+			tts.speak(
+					timeToSpeak,
+					TextToSpeech.QUEUE_ADD,
+					map
+			);
 		}
 	}
 

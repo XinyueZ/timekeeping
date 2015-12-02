@@ -2,43 +2,46 @@ package com.timekeeping.data;
 
 import java.io.Serializable;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
-
-import com.timekeeping.BR;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Structure of a time instance.
  */
-public final class Time   extends BaseObservable implements Serializable {
+public class Time extends RealmObject implements Serializable {
 	/**
 	 * Id of the item, might be retrieved from database.
 	 */
-	private long    mId;
+	@PrimaryKey
+	private long id;
 	/**
 	 * Hour.
 	 */
-	private int     mHour;
+	private int hour;
 	/**
 	 * Minute.
 	 */
-	private int     mMinute;
+	private int minute;
 	/**
 	 * A timestamps for the item when it was operated by database.
 	 */
-	private long    mEditTime;
+	private long editTime;
 	/**
 	 * {@code true=on}, {@code false=off}.
 	 */
-	private boolean mOnOff;
+	private boolean onOff;
 	/**
 	 * Task for this time point.
 	 */
-	private String  mTask;
+	private String task;
 	/**
 	 * Selected week-days to fire event.
 	 */
-	private String mWeekDays = "0,1,2,3,4,5,6,";
+	private String weekDays = "0,1,2,3,4,5,6,";
+
+
+	public Time() {
+	}
 
 	/**
 	 * Instantiates a new Time.
@@ -55,22 +58,35 @@ public final class Time   extends BaseObservable implements Serializable {
 	 * 		Status of this {@link Time}, {@code true=on}, {@code false=off}.
 	 */
 	public Time( long id, int hour, int minute, long editTime, boolean onOff ) {
-		mId = id;
-		mHour = hour;
-		mMinute = minute;
-		mEditTime = editTime;
-		mOnOff = onOff;
+		this.id = id;
+		this.hour = hour;
+		this.minute = minute;
+		this.editTime = editTime;
+		this.onOff = onOff;
 	}
 
 	public Time( long id, int hour, int minute, long editTime, boolean onOff, String task ) {
-		this( id, hour, minute, editTime, onOff );
-		mTask = task;
+		this(
+				id,
+				hour,
+				minute,
+				editTime,
+				onOff
+		);
+		this.task = task;
 	}
 
 
 	public Time( long id, int hour, int minute, long editTime, boolean onOff, String task, String weekDays ) {
-		this( id, hour, minute, editTime, onOff, task );
-		mWeekDays = weekDays;
+		this(
+				id,
+				hour,
+				minute,
+				editTime,
+				onOff,
+				task
+		);
+		this.weekDays = weekDays;
 	}
 
 	/**
@@ -79,8 +95,9 @@ public final class Time   extends BaseObservable implements Serializable {
 	 * @return the id
 	 */
 	public long getId() {
-		return mId;
+		return id;
 	}
+
 	/**
 	 * Sets id.
 	 *
@@ -88,16 +105,18 @@ public final class Time   extends BaseObservable implements Serializable {
 	 * 		the id
 	 */
 	public void setId( long id ) {
-		mId = id;
+		this.id = id;
 	}
+
 	/**
 	 * Gets hour.
 	 *
 	 * @return the hour
 	 */
 	public int getHour() {
-		return mHour;
+		return hour;
 	}
+
 	/**
 	 * Sets hour.
 	 *
@@ -105,16 +124,18 @@ public final class Time   extends BaseObservable implements Serializable {
 	 * 		the hour
 	 */
 	public void setHour( int hour ) {
-		mHour = hour;
+		this.hour = hour;
 	}
+
 	/**
 	 * Gets minute.
 	 *
 	 * @return the minute
 	 */
 	public int getMinute() {
-		return mMinute;
+		return minute;
 	}
+
 	/**
 	 * Sets minute.
 	 *
@@ -122,7 +143,7 @@ public final class Time   extends BaseObservable implements Serializable {
 	 * 		the minute
 	 */
 	public void setMinute( int minute ) {
-		mMinute = minute;
+		this.minute = minute;
 	}
 
 	/**
@@ -131,7 +152,7 @@ public final class Time   extends BaseObservable implements Serializable {
 	 * @return the edit time
 	 */
 	public long getEditTime() {
-		return mEditTime;
+		return editTime;
 	}
 
 	/**
@@ -141,7 +162,7 @@ public final class Time   extends BaseObservable implements Serializable {
 	 * 		the edit time
 	 */
 	public void setEditTime( long editTime ) {
-		mEditTime = editTime;
+		this.editTime = editTime;
 	}
 
 	/**
@@ -151,9 +172,8 @@ public final class Time   extends BaseObservable implements Serializable {
 	 *
 	 * @return the boolean
 	 */
-	@Bindable
 	public boolean isOnOff() {
-		return mOnOff;
+		return onOff;
 	}
 
 	/**
@@ -165,30 +185,29 @@ public final class Time   extends BaseObservable implements Serializable {
 	 * 		the on off
 	 */
 	public void setOnOff( boolean onOff ) {
-		mOnOff = onOff;
-		notifyPropertyChanged( BR.onOff);
+		this.onOff = onOff;
 	}
 
 	/**
 	 * Task for this time point.
 	 */
 	public String getTask() {
-		return mTask;
+		return task;
 	}
 
 	/**
 	 * Set task for this time point.
 	 */
 	public void setTask( String task ) {
-		mTask = task;
+		this.task = task;
 	}
 
 
 	public String getWeekDays() {
-		return mWeekDays;
+		return weekDays;
 	}
 
 	public void setWeekDays( String weekDays ) {
-		mWeekDays = weekDays;
+		this.weekDays = weekDays;
 	}
 }

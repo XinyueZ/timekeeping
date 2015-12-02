@@ -29,10 +29,20 @@ public class TypefaceSpan extends MetricAffectingSpan {
 		mTypeface = sTypefaceCache.get( typefaceName );
 
 		if( mTypeface == null ) {
-			mTypeface = Typeface.createFromAsset( context.getApplicationContext().getAssets(), String.format( "fonts/%s", typefaceName ) );
+			mTypeface = Typeface.createFromAsset(
+					context.getApplicationContext()
+						   .getAssets(),
+					String.format(
+							"fonts/%s",
+							typefaceName
+					)
+			);
 
 			// Cache the loaded Typeface
-			sTypefaceCache.put( typefaceName, mTypeface );
+			sTypefaceCache.put(
+					typefaceName,
+					mTypeface
+			);
 		}
 	}
 

@@ -43,6 +43,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	public TimeKeepingListAdapter( List<Time> data ) {
 		setData( data );
 	}
+
 	/**
 	 * Get current used data-source.
 	 *
@@ -51,6 +52,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	public List<Time> getData() {
 		return mVisibleData;
 	}
+
 	/**
 	 * Set data-source for list-view.
 	 *
@@ -60,6 +62,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	public void setData( List<Time> data ) {
 		mVisibleData = data;
 	}
+
 	@Override
 	public int getItemCount() {
 		return mVisibleData == null ? 0 : mVisibleData.size();
@@ -69,7 +72,12 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	public ViewHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
 		Context         cxt      = parent.getContext();
 		LayoutInflater  inflater = LayoutInflater.from( cxt );
-		ViewDataBinding binding  = DataBindingUtil.inflate( inflater, ITEM_LAYOUT, parent, false );
+		ViewDataBinding binding  = DataBindingUtil.inflate(
+				inflater,
+				ITEM_LAYOUT,
+				parent,
+				false
+		);
 		return new TimeKeepingListAdapter.ViewHolder( binding );
 	}
 
@@ -77,9 +85,21 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	public void onBindViewHolder( final ViewHolder holder, final int position ) {
 		final Time entry = mVisibleData.get( position );
 		holder.mCb.setVisibility( !isActionMode() ? View.INVISIBLE : isSelected( position ) ? View.VISIBLE : View.INVISIBLE );
-		holder.mBinding.setVariable( BR.time, entry );
-		holder.mBinding.setVariable( BR.adapter, this );
-		holder.mBinding.setVariable( BR.handler, new GridItemHandler( this, position, entry ) );
+		holder.mBinding.setVariable(
+				BR.time,
+				entry
+		);
+		holder.mBinding.setVariable(
+				BR.adapter,
+				this
+		);
+		holder.mBinding.setVariable(
+				BR.handler,
+				new GridItemHandler( this,
+									 position,
+									 entry
+				)
+		);
 		holder.mBinding.executePendingBindings();
 	}
 
@@ -158,15 +178,19 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	 */
 	static class ViewHolder extends RecyclerView.ViewHolder {
 		private ViewDataBinding mBinding;
-		private View            mOnOffV;
 		private View            mCb;
 
 		ViewHolder( ViewDataBinding binding ) {
 			super( binding.getRoot() );
-			mOnOffV = binding.getRoot().findViewById( R.id.on_off_btn );
-			mCb = binding.getRoot().findViewById( R.id.item_iv );
-			View      menuHolder = binding.getRoot().findViewById( R.id.week_days_btn );
-			PopupMenu menuPopup  = new PopupMenu( binding.getRoot().getContext(), menuHolder );
+			mCb = binding.getRoot()
+						 .findViewById( R.id.item_iv );
+			View menuHolder = binding.getRoot()
+									 .findViewById( R.id.week_days_btn );
+			PopupMenu menuPopup = new PopupMenu(
+					binding.getRoot()
+						   .getContext(),
+					menuHolder
+			);
 			menuPopup.inflate( R.menu.week_days );
 			menuHolder.setTag( menuPopup );
 			mBinding = binding;
@@ -187,30 +211,37 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 
 		public boolean startActionModeEvent( View view ) {
 			if( !mAdapter.isActionMode() ) {
-				EventBus.getDefault().post( new StartActionModeEvent() );
+				EventBus.getDefault()
+						.post( new StartActionModeEvent() );
 			}
 
 			return true;
 		}
 
 		public void editTaskEvent( View view ) {
-			EventBus.getDefault().post( new EditTaskEvent( mAdapter.getData().get( mPosition ) ) );
+			EventBus.getDefault()
+					.post( new EditTaskEvent( mAdapter.getData()
+													  .get( mPosition ) ) );
 		}
 
 		public void selectItemEvent( View view ) {
-			EventBus.getDefault().post( new SelectItemEvent( mPosition ) );
+			EventBus.getDefault()
+					.post( new SelectItemEvent( mPosition ) );
 		}
 
 		public void editTimeEvent( View view ) {
-			EventBus.getDefault().post( new EditTimeEvent( mTime ) );
+			EventBus.getDefault()
+					.post( new EditTimeEvent( mTime ) );
 		}
 
 		public void switchOnOffTimeEvent( View view ) {
-			EventBus.getDefault().post( new SwitchOnOffTimeEvent( mTime ) );
+			EventBus.getDefault()
+					.post( new SwitchOnOffTimeEvent( mTime ) );
 		}
 
 		public void deleteTimeEvent( View view ) {
-			EventBus.getDefault().post( new DeleteTimeEvent( mTime ) );
+			EventBus.getDefault()
+					.post( new DeleteTimeEvent( mTime ) );
 		}
 
 		public void showMenu( View view ) {
@@ -222,7 +253,8 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 				}
 			};
 			PopupMenu menuPopup = (PopupMenu) view.getTag();
-			Time      time      = mAdapter.getData().get( mPosition );
+			Time time = mAdapter.getData()
+								.get( mPosition );
 			menuPopup.show();
 			Menu     menu = menuPopup.getMenu();
 			MenuItem day0 = menu.findItem( R.id.action_week_day_0 );
@@ -247,7 +279,8 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 			day4.setChecked( false );
 			day5.setChecked( false );
 			day6.setChecked( false );
-			String[] days = time.getWeekDays().split( "," );
+			String[] days = time.getWeekDays()
+								.split( "," );
 			for( String day : days ) {
 				switch( day ) {
 					case "0":
@@ -287,29 +320,38 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 					MenuItem      day5     = menu.findItem( R.id.action_week_day_5 );
 					MenuItem      day6     = menu.findItem( R.id.action_week_day_6 );
 					if( day0.isChecked() ) {
-						weekDays.append( "0" ).append( ',' );
+						weekDays.append( "0" )
+								.append( ',' );
 					}
 					if( day1.isChecked() ) {
-						weekDays.append( "1" ).append( ',' );
+						weekDays.append( "1" )
+								.append( ',' );
 					}
 					if( day2.isChecked() ) {
-						weekDays.append( "2" ).append( ',' );
+						weekDays.append( "2" )
+								.append( ',' );
 					}
 					if( day3.isChecked() ) {
-						weekDays.append( "3" ).append( ',' );
+						weekDays.append( "3" )
+								.append( ',' );
 					}
 					if( day4.isChecked() ) {
-						weekDays.append( "4" ).append( ',' );
+						weekDays.append( "4" )
+								.append( ',' );
 					}
 					if( day5.isChecked() ) {
-						weekDays.append( "5" ).append( ',' );
+						weekDays.append( "5" )
+								.append( ',' );
 					}
 					if( day6.isChecked() ) {
-						weekDays.append( "6" ).append( ',' );
+						weekDays.append( "6" )
+								.append( ',' );
 					}
-					Time time = mAdapter.getData().get( mPosition );
+					Time time = mAdapter.getData()
+										.get( mPosition );
 					time.setWeekDays( weekDays.toString() );
-					EventBus.getDefault().post( new SavedWeekDaysEvent( time ) );
+					EventBus.getDefault()
+							.post( new SavedWeekDaysEvent( time ) );
 				}
 			} );
 		}

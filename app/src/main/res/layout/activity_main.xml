@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".app.activities.MainActivity">
 
-    <data class="MainBinding">
+    <data>
         <variable
             name="adapter"
             type="com.timekeeping.app.adapters.TimeKeepingListAdapter" />

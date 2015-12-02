@@ -19,8 +19,12 @@ public class TickerService extends Service {
 
 	private BroadcastReceiver mTickerReceiver = new BroadcastReceiver() {
 		@Override
-		public void onReceive( Context context, Intent intent ) {
-			startService( new Intent( context, AppGuardService.class ) );
+		public void onReceive( Context context, Intent intent
+		) {
+			startService( new Intent(
+					context,
+					AppGuardService.class
+			) );
 		}
 	};
 
@@ -34,14 +38,26 @@ public class TickerService extends Service {
 	}
 
 	@Override
-	public int onStartCommand( Intent intent, int flags, int startId ) {
+	public int onStartCommand( Intent intent, int flags, int startId
+	) {
 		if( !mReg ) {
-			Notification notification = NotifyUtils.buildNotifyWithoutBigImage( this, ONGOING_NOTIFICATION_ID, getString( R.string.application_name ),
-																				getString( R.string.tray_info ), R.drawable.ic_tray,
-																				NotifyUtils.getAppHome( this ), true
+			Notification notification = NotifyUtils.buildNotifyWithoutBigImage(
+					this,
+					ONGOING_NOTIFICATION_ID,
+					getString( R.string.application_name ),
+					getString( R.string.tray_info ),
+					R.drawable.ic_tray,
+					NotifyUtils.getAppHome( this ),
+					false
 			);
-			startForeground( ONGOING_NOTIFICATION_ID, notification );
-			registerReceiver( mTickerReceiver, mTickerFilter );
+			startForeground(
+					ONGOING_NOTIFICATION_ID,
+					notification
+			);
+			registerReceiver(
+					mTickerReceiver,
+					mTickerFilter
+			);
 			mReg = true;
 		}
 		return START_STICKY;

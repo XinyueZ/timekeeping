@@ -33,19 +33,39 @@ public class WakeUpActivity extends AppCompatActivity {
 	 * 		{@link Activity}.
 	 */
 	public static void showInstance( Context cxt, Time time, boolean ifError ) {
-		Intent intent = new Intent( cxt, WakeUpActivity.class );
-		intent.putExtra( EXTRAS_TIME, (Serializable) time );
-		intent.putExtra( EXTRAS_IF_ERROR, ifError );
+		Intent intent = new Intent(
+				cxt,
+				WakeUpActivity.class
+		);
+		intent.putExtra(
+				EXTRAS_TIME,
+				(Serializable) time
+		);
+		intent.putExtra(
+				EXTRAS_IF_ERROR,
+				ifError
+		);
 		intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP );
 		cxt.startActivity( intent );
 	}
 
 	private void handleIntent( Intent intent ) {
 		FragmentManager frgMgr = getSupportFragmentManager();
-		WakeUpFragment frg = WakeUpFragment.newInstance( this, (Time) intent.getSerializableExtra( EXTRAS_TIME ),
-														 intent.getBooleanExtra( EXTRAS_IF_ERROR, false )
+		WakeUpFragment frg = WakeUpFragment.newInstance( this,
+														 (Time) intent.getSerializableExtra( EXTRAS_TIME ),
+														 intent.getBooleanExtra(
+																 EXTRAS_IF_ERROR,
+																 false
+														 )
 		);
-		frgMgr.beginTransaction().replace( R.id.wake_up_fl, frg, frg.getClass().getSimpleName() ).commit();
+		frgMgr.beginTransaction()
+			  .replace(
+					  R.id.wake_up_fl,
+					  frg,
+					  frg.getClass()
+						 .getSimpleName()
+			  )
+			  .commit();
 		frgMgr.executePendingTransactions();
 	}
 
@@ -61,13 +81,16 @@ public class WakeUpActivity extends AppCompatActivity {
 		requestWindowFeature( Window.FEATURE_NO_TITLE );
 		boolean largerThan17 = Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1;
 		if( largerThan17 ) {
-			getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN|
-								  WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-								  WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-								  WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON, WindowManager.LayoutParams.FLAG_FULLSCREEN|
-																				  WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-																				  WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-																				  WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON );
+			getWindow().setFlags(
+					WindowManager.LayoutParams.FLAG_FULLSCREEN      |
+					WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+					WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+					WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+					WindowManager.LayoutParams.FLAG_FULLSCREEN      |
+					WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+					WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+					WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+			);
 		}
 
 		super.onCreate( savedInstanceState );
