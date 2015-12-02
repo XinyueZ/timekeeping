@@ -3,7 +3,7 @@ package com.timekeeping.app.adapters;
 import android.databinding.BindingAdapter;
 import android.support.v7.widget.RecyclerView;
 
-public final class AdapterBinder {
+public final class BinderAdapter {
 
 
 	@SuppressWarnings("unchecked")

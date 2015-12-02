@@ -5,8 +5,8 @@
     <string name="accept">Ja</string>
     <string name="change">Änderen</string>
     <string name="tray_info">Ich erinnere dich.</string>
-    <string name="on_status">Ich erinnere dich um %1$s .</string>
-    <string name="off_status">Stoppe, dich zu erinneren um %1$s .</string>
+    <string name="on_status">Ich erinnere dich um %1$s.</string>
+    <string name="off_status">Stoppe, um %1$s dich zu erinneren.</string>
     <string name="welcome">Willkommen, danke sehr!</string>
 
     <string name="lbl_prefix">Es ist %1$s .</string>

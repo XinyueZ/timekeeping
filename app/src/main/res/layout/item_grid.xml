@@ -122,6 +122,7 @@
                 <View
                     android:id="@+id/on_off_btn"
                     style="@style/Grid_ButtonFloatSmall"
+                    android:background="@{time.onOff ? @drawable/ic_on : @drawable/ic_off}"
                     android:onClick="@{handler.switchOnOffTimeEvent}"
                     android:visibility="@{adapter.isActionMode() ? View.INVISIBLE : View.VISIBLE}" />
 

@@ -2,10 +2,15 @@ package com.timekeeping.data;
 
 import java.io.Serializable;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+
+import com.timekeeping.BR;
+
 /**
  * Structure of a time instance.
  */
-public final class Time implements Serializable {
+public final class Time   extends BaseObservable implements Serializable {
 	/**
 	 * Id of the item, might be retrieved from database.
 	 */
@@ -146,6 +151,7 @@ public final class Time implements Serializable {
 	 *
 	 * @return the boolean
 	 */
+	@Bindable
 	public boolean isOnOff() {
 		return mOnOff;
 	}
@@ -160,6 +166,7 @@ public final class Time implements Serializable {
 	 */
 	public void setOnOff( boolean onOff ) {
 		mOnOff = onOff;
+		notifyPropertyChanged( BR.onOff);
 	}
 
 	/**

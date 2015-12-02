@@ -76,7 +76,6 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	@Override
 	public void onBindViewHolder( final ViewHolder holder, final int position ) {
 		final Time entry = mVisibleData.get( position );
-		holder.mOnOffV.setBackgroundResource( entry.isOnOff() ? R.drawable.ic_on : R.drawable.ic_off );
 		holder.mCb.setVisibility( !isActionMode() ? View.INVISIBLE : isSelected( position ) ? View.VISIBLE : View.INVISIBLE );
 		holder.mBinding.setVariable( BR.time, entry );
 		holder.mBinding.setVariable( BR.adapter, this );
