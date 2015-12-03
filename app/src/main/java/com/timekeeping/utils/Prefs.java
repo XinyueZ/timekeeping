@@ -172,14 +172,14 @@ public final class Prefs extends BasicPrefs {
 				welcomed
 		);
 	}
-	public boolean isMigrated() {
+	public synchronized  boolean isMigrated() {
 		return getBoolean(
 				KEY_MIGRATED,
 				false
 		);
 	}
 
-	public void setMigrated( boolean migrated ) {
+	public synchronized void setMigrated( boolean migrated ) {
 		setBoolean(
 				KEY_MIGRATED,
 				migrated
