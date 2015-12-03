@@ -633,12 +633,14 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	protected void onAppConfigLoaded() {
 		super.onAppConfigLoaded();
 		addDrawerHeader();
+		refreshGrid();
 	}
 
 	@Override
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
 		addDrawerHeader();
+		refreshGrid();
 	}
 
 	private void addDrawerHeader() {
@@ -824,7 +826,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 
 		} );
 		mBinding.setAdapter( new TimeKeepingListAdapter( null ) );
-		refreshGrid();
 	}
 
 	private void initBar() {
