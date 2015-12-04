@@ -540,15 +540,15 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 				true
 		);
 		final RealmResults<Time> results = mRealm.where( Time.class )
-												.equalTo(
-														"hour",
-														newTime.getHour()
-												)
-												.equalTo(
-														"minute",
-														newTime.getMinute()
-												)
-												.findAllAsync();
+												 .equalTo(
+														 "hour",
+														 newTime.getHour()
+												 )
+												 .equalTo(
+														 "minute",
+														 newTime.getMinute()
+												 )
+												 .findAllAsync();
 		results.addChangeListener( new RealmChangeListener() {
 			@Override
 			public void onChange() {
@@ -556,7 +556,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 					mRealm.addChangeListener( new RealmChangeListener() {
 						@Override
 						public void onChange() {
-							refreshGrid();
+							mBinding.getAdapter().notifyItemInserted( 0 );
 							showStatusMessage( newTime );
 							mBinding.scheduleGv.getLayoutManager()
 											   .scrollToPosition( 0 );
@@ -868,7 +868,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 			}
 
 		} );
-		mBinding.setAdapter( new TimeKeepingListAdapter( null ) );
+		mBinding.setAdapter( new TimeKeepingListAdapter() );
 	}
 
 	private void initBar() {

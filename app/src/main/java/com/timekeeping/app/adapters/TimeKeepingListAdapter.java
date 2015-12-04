@@ -1,5 +1,6 @@
 package com.timekeeping.app.adapters;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
@@ -37,12 +38,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	/**
 	 * Data-source.
 	 */
-	private List<Time> mVisibleData;
-
-
-	public TimeKeepingListAdapter( List<Time> data ) {
-		setData( data );
-	}
+	private List<Time> mVisibleData = new LinkedList<>(  );
 
 	/**
 	 * Get current used data-source.
