@@ -194,7 +194,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	 * 		Event {@link SwitchOnOffTimeEvent}.
 	 */
 	public void onEvent( SwitchOnOffTimeEvent e ) {
-		setTimeOnOff(e.getPosition(), e.getTime() );
+		setTimeOnOff(
+				e.getPosition(),
+				e.getTime()
+		);
 	}
 
 
@@ -272,7 +275,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 					public void onChange() {
 						for( Integer pos : selectedItems ) {
 							mBinding.getAdapter()
-									.notifyItemRemoved(pos.intValue());
+									.notifyItemRemoved( pos.intValue() );
 							if( mActionMode != null ) {
 								mActionMode.finish();
 							}
@@ -281,7 +284,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 					}
 				} );
 				mRealm.commitTransaction();
-
 
 
 				return true;
@@ -489,7 +491,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	/**
 	 * Set on/off status of the time. It is toggled.
 	 *
-	 * @param position The position of {@link Time} to update.
+	 * @param position
+	 * 		The position of {@link Time} to update.
 	 * @param timeToSet
 	 * 		The object to set.
 	 */
@@ -498,7 +501,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 		mEditedTime = timeToSet;
 		mRealm.beginTransaction();
 		mEditedTime.setOnOff( !mEditedTime.isOnOff() );
-		updateOthers(position);
+		updateOthers( position );
 	}
 
 	private void refreshGrid() {
@@ -536,38 +539,37 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 				System.currentTimeMillis(),
 				true
 		);
-		mTransaction = mRealm.executeTransaction(
-				new Realm.Transaction() {
-					@Override
-					public void execute( Realm bgRealm ) {
-						RealmQuery<Time> query = bgRealm.where( Time.class )
-														.equalTo(
-																"hour",
-																newTime.getHour()
-														)
-														.equalTo(
-																"minute",
-																newTime.getMinute()
-														);
-						if( query.count() == 0 ) {
-							bgRealm.copyToRealm( newTime );
+		final RealmResults<Time> results = mRealm.where( Time.class )
+												.equalTo(
+														"hour",
+														newTime.getHour()
+												)
+												.equalTo(
+														"minute",
+														newTime.getMinute()
+												)
+												.findAllAsync();
+		results.addChangeListener( new RealmChangeListener() {
+			@Override
+			public void onChange() {
+				if( results.size() == 0 ) {
+					mRealm.addChangeListener( new RealmChangeListener() {
+						@Override
+						public void onChange() {
+							refreshGrid();
+							showStatusMessage( newTime );
+							mBinding.scheduleGv.getLayoutManager()
+											   .scrollToPosition( 0 );
+							mRealm.removeChangeListener( this );
 						}
-					}
-				},
-				new Realm.Transaction.Callback() {
-					@Override
-					public void onSuccess() {
-						refreshGrid();
-						showStatusMessage( newTime );
-						mBinding.scheduleGv.getLayoutManager()
-										   .scrollToPosition( 0 );
-					}
-
-					@Override
-					public void onError( Exception e ) {
-					}
+					} );
+					mRealm.beginTransaction();
+					mRealm.copyToRealm( newTime );
+					mRealm.commitTransaction();
 				}
-		);
+				results.removeChangeListener( this );
+			}
+		} );
 	}
 
 
