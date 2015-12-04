@@ -9,6 +9,10 @@ import com.timekeeping.data.Time;
  */
 public abstract class TimeEvent {
 	/**
+	 * The position of defined {@link Time}.
+	 */
+	private int mPosition;
+	/**
 	 * A {@link com.timekeeping.data.Time} object.
 	 */
 	private Time mTime;
@@ -16,10 +20,12 @@ public abstract class TimeEvent {
 	/**
 	 * Constructor of {@link com.timekeeping.bus.TimeEvent}.
 	 *
+	 * @param  position The position of defined {@link Time}.
 	 * @param time
 	 * 		A {@link com.timekeeping.data.Time} object.
 	 */
-	protected TimeEvent( Time time ) {
+	protected TimeEvent( int position, Time time ) {
+		mPosition = position;
 		mTime = time;
 	}
 
@@ -30,5 +36,13 @@ public abstract class TimeEvent {
 	 */
 	public Time getTime() {
 		return mTime;
+	}
+
+	/**
+	 *
+	 * @return The position of defined {@link Time}.
+	 */
+	public int getPosition() {
+		return mPosition;
 	}
 }

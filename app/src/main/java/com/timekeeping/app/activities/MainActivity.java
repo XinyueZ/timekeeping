@@ -156,12 +156,19 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	 * 		Event {@link DeleteTimeEvent}.
 	 */
 	public void onEvent( DeleteTimeEvent e ) {
-		Time time = e.getTime();
+		Time      time     = e.getTime();
+		final int position = e.getPosition();
 		if( time != null ) {
 			mRealm.beginTransaction();
+			mRealm.addChangeListener( new RealmChangeListener() {
+				@Override
+				public void onChange() {
+					mBinding.getAdapter()
+							.notifyItemRemoved( position );
+					mRealm.removeChangeListener( this );
+				}
+			} );
 			time.removeFromRealm();
-			mBinding.getAdapter()
-					.notifyDataSetChanged();
 			mRealm.commitTransaction();
 		}
 	}
@@ -173,7 +180,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	 * 		Event {@link EditTimeEvent}.
 	 */
 	public void onEvent( EditTimeEvent e ) {
-		editTime( e.getTime() );
+		editTime(
+				e.getPosition(),
+				e.getTime()
+		);
 	}
 
 
@@ -184,7 +194,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	 * 		Event {@link SwitchOnOffTimeEvent}.
 	 */
 	public void onEvent( SwitchOnOffTimeEvent e ) {
-		setTimeOnOff( e.getTime() );
+		setTimeOnOff(e.getPosition(), e.getTime() );
 	}
 
 
@@ -243,9 +253,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 
 			@Override
 			public boolean onActionItemClicked( ActionMode mode, MenuItem item ) {
-				List<Integer> selectedItems = mBinding.getAdapter()
-													  .getSelectedItems();
-				List<Time> selectedTimes = new ArrayList<>();
+				final List<Integer> selectedItems = mBinding.getAdapter()
+															.getSelectedItems();
+				final List<Time> selectedTimes = new ArrayList<>();
 
 				for( Integer pos : selectedItems ) {
 					selectedTimes.add( mBinding.getAdapter()
@@ -257,14 +267,23 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 				for( Time delTime : selectedTimes ) {
 					delTime.removeFromRealm();
 				}
+				mRealm.addChangeListener( new RealmChangeListener() {
+					@Override
+					public void onChange() {
+						for( Integer pos : selectedItems ) {
+							mBinding.getAdapter()
+									.notifyItemRemoved(pos.intValue());
+							if( mActionMode != null ) {
+								mActionMode.finish();
+							}
+						}
+						mRealm.removeChangeListener( this );
+					}
+				} );
 				mRealm.commitTransaction();
 
-				mBinding.getAdapter()
-						.notifyDataSetChanged();
 
-				if( mActionMode != null ) {
-					mActionMode.finish();
-				}
+
 				return true;
 			}
 
@@ -294,6 +313,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 		showDialogFragment(
 				CommentDialogFragment.newInstance(
 						App.Instance,
+						e.getPosition(),
 						e.getTime()
 				),
 				null
@@ -312,7 +332,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 		mRealm.beginTransaction();
 		mEditedTime = e.getTime();
 		mEditedTime.setTask( e.getComment() );
-		updateOthers();
+		updateOthers( e.getPosition() );
 	}
 
 	/**
@@ -326,7 +346,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 		mRealm.beginTransaction();
 		mEditedTime = e.getTime();
 		mEditedTime.setWeekDays( e.getWeekDays() );
-		updateOthers();
+		updateOthers( e.getPosition() );
 	}
 	//------------------------------------------------
 
@@ -435,7 +455,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	/**
 	 * Edit a entry of {@link com.timekeeping.data.Time} to database.
 	 */
-	private void editTime() {
+	private void editTime( int position ) {
 		mBinding.addNewTimeBtn.show();
 		RadialTimePickerDialogFragment timePickerDialog = RadialTimePickerDialogFragment.newInstance(
 				this,
@@ -446,36 +466,39 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 		timePickerDialog.setOnDismissListener( this );
 		timePickerDialog.show(
 				getSupportFragmentManager(),
-				null
+				position + ""
 		);
 	}
 
 	/**
 	 * Start to edit a {@link com.timekeeping.data.Time}
 	 *
+	 * @param position
+	 * 		The position of {@link Time} to edit.
 	 * @param timeToEdit
 	 * 		The object to edit.
 	 */
-	private void editTime( Time timeToEdit ) {
+	private void editTime( int position, Time timeToEdit ) {
 		mEdit = true;
 		mEditedTime = timeToEdit;
 		if( mEditedTime != null ) {
-			editTime();
+			editTime( position );
 		}
 	}
 
 	/**
 	 * Set on/off status of the time. It is toggled.
 	 *
+	 * @param position The position of {@link Time} to update.
 	 * @param timeToSet
 	 * 		The object to set.
 	 */
-	private void setTimeOnOff( Time timeToSet ) {
+	private void setTimeOnOff( int position, Time timeToSet ) {
 		mEdit = true;
 		mEditedTime = timeToSet;
 		mRealm.beginTransaction();
 		mEditedTime.setOnOff( !mEditedTime.isOnOff() );
-		updateOthers();
+		updateOthers(position);
 	}
 
 	private void refreshGrid() {
@@ -551,7 +574,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 	/**
 	 * Edited and update a {@link com.timekeeping.data.Time} to database.
 	 */
-	private void updateTime( final int hourOfDay, final int minute ) {
+	private void updateTime( final int position, final int hourOfDay, final int minute ) {
 		final RealmQuery<Time> query = mRealm.where( Time.class )
 											 .equalTo(
 													 "hour",
@@ -567,12 +590,18 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 			public void onChange() {
 				if( query.count() == 0 ) {
 					mRealm.beginTransaction();
+					mRealm.addChangeListener( new RealmChangeListener() {
+						@Override
+						public void onChange() {
+							mBinding.getAdapter()
+									.notifyItemChanged( position );
+							mRealm.removeChangeListener( this );
+						}
+					} );
 					mEditedTime.setHour( hourOfDay );
 					mEditedTime.setMinute( minute );
 					mRealm.copyToRealmOrUpdate( mEditedTime );
 					mRealm.commitTransaction();
-					mBinding.getAdapter()
-							.notifyDataSetChanged();
 					mEdit = false;
 					results.removeChangeListener( this );
 				}
@@ -583,12 +612,21 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 
 	/**
 	 * Edited and update a {@link com.timekeeping.data.Time}'s comment/task to database.
+	 *
+	 * @param position
+	 * 		The position of {@link Time} to update.
 	 */
-	private void updateOthers() {
+	private void updateOthers( final int position ) {
+		mRealm.addChangeListener( new RealmChangeListener() {
+			@Override
+			public void onChange() {
+				mBinding.getAdapter()
+						.notifyItemChanged( position );
+				mRealm.removeChangeListener( this );
+			}
+		} );
 		mRealm.copyToRealmOrUpdate( mEditedTime );
 		mRealm.commitTransaction();
-		mBinding.getAdapter()
-				.notifyDataSetChanged();
 		mEdit = false;
 	}
 
@@ -615,8 +653,11 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 
 	@Override
 	public void onTimeSet( RadialTimePickerDialogFragment dialog, int hourOfDay, int minute ) {
-		if( mEdit ) {
+		if( mEdit && dialog.getTag() != null ) {
+			int pos = Integer.parseInt( dialog.getTag()
+											  .toString() );
 			updateTime(
+					pos,
 					hourOfDay,
 					minute
 			);
@@ -924,6 +965,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 			mTransaction.cancel();
 		}
 		if( mRealm != null ) {
+			mRealm.removeAllChangeListeners();
 			mRealm.close();
 		}
 		super.onDestroy();

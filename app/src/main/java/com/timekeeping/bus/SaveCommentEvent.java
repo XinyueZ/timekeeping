@@ -3,18 +3,12 @@ package com.timekeeping.bus;
 
 import com.timekeeping.data.Time;
 
-public final class SaveCommentEvent {
-	private Time   mTime;
+public final class SaveCommentEvent extends TimeEvent{
 	private String mComment;
 
-	public SaveCommentEvent( Time time , String comment) {
-		mTime = time;
+	public SaveCommentEvent( int position, Time time , String comment) {
+		super(position, time);
 		mComment = comment;
-	}
-
-
-	public Time getTime() {
-		return mTime;
 	}
 
 

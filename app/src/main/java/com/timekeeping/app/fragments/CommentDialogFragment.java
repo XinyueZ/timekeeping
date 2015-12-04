@@ -22,9 +22,14 @@ import de.greenrobot.event.EventBus;
 
 public final class CommentDialogFragment extends DialogFragment {
 	private static final String EXTRAS_TIME = CommentDialogFragment.class.getName() + ".EXTRAS.time";
+	private static final String EXTRAS_POSITION = CommentDialogFragment.class.getName() + ".EXTRAS.position";
 
-	public static DialogFragment newInstance( Context context, Time time ) {
+	public static DialogFragment newInstance( Context context,int position, Time time ) {
 		Bundle args = new Bundle();
+		args.putInt(
+				EXTRAS_POSITION,
+				position
+		);
 		args.putSerializable(
 				EXTRAS_TIME,
 				(Serializable) time
@@ -67,8 +72,10 @@ public final class CommentDialogFragment extends DialogFragment {
 																	   Time editedTime = (Time) getArguments().getSerializable( EXTRAS_TIME );
 																	   if( editedTime != null ) {
 																		   EventBus.getDefault()
-																				   .post( new SaveCommentEvent( editedTime, content.getText()
-																																   .toString() ) );
+																				   .post( new SaveCommentEvent(
+																						   getArguments().getInt( EXTRAS_POSITION ),
+																						   editedTime,
+																						   content.getText().toString() ) );
 																	   }
 																	   dismiss();
 																   }

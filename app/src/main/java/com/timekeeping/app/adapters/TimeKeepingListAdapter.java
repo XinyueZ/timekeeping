@@ -70,9 +70,9 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 
 	@Override
 	public ViewHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
-		Context         cxt      = parent.getContext();
-		LayoutInflater  inflater = LayoutInflater.from( cxt );
-		ViewDataBinding binding  = DataBindingUtil.inflate(
+		Context        cxt      = parent.getContext();
+		LayoutInflater inflater = LayoutInflater.from( cxt );
+		ViewDataBinding binding = DataBindingUtil.inflate(
 				inflater,
 				ITEM_LAYOUT,
 				parent,
@@ -95,81 +95,13 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 		);
 		holder.mBinding.setVariable(
 				BR.handler,
-				new GridItemHandler( this,
-									 position,
-									 entry
+				new GridItemHandler(
+						holder,
+						this,
+						entry
 				)
 		);
 		holder.mBinding.executePendingBindings();
-	}
-
-
-	/**
-	 * Get the object of {@link Time} whose "id" equals to {@code item} in the data-list.
-	 *
-	 * @param item
-	 * 		The item to search.
-	 *
-	 * @return The object of the item. If not found <b>return null</b>.
-	 */
-	public Time findItem( Time item ) {
-		if( mVisibleData == null ) {
-			return null;
-		}
-		Time ret = null;
-		for( Time i : mVisibleData ) {
-			if( i.getId() == item.getId() ) {
-				ret = i;
-				break;
-			}
-		}
-		return ret;
-	}
-
-
-	/**
-	 * Edit a found item which has been cached by this {@link android.widget.Adapter}.
-	 * <p/>
-	 * It calls <b>{@link #notifyDataSetChanged()}</b> internally.
-	 *
-	 * @param oldEntry
-	 * 		The item that has been cached.
-	 * @param newEntry
-	 * 		The item to edit.
-	 */
-	public void editItem( Time oldEntry, Time newEntry ) {
-		oldEntry.setId( newEntry.getId() );
-		oldEntry.setHour( newEntry.getHour() );
-		oldEntry.setMinute( newEntry.getMinute() );
-		oldEntry.setOnOff( newEntry.isOnOff() );
-		oldEntry.setTask( newEntry.getTask() );
-		oldEntry.setEditTime( newEntry.getEditTime() );
-		notifyDataSetChanged();
-	}
-
-
-	/**
-	 * Remove a found item which has been cached by this {@link android.widget.Adapter}.
-	 * <p/>
-	 * When {@code itemFound} is null, nothing happens.
-	 * <p/>
-	 * It calls <b>{@link #notifyDataSetChanged()}</b> internally.
-	 *
-	 * @param item
-	 * 		The item that has been cached.
-	 * @param item
-	 * 		The item to remove.
-	 */
-	public void removeItem( Time item ) {
-		if( item != null ) {
-			for( Time i : mVisibleData ) {
-				if( i.getId() == item.getId() ) {
-					mVisibleData.remove( i );
-					notifyDataSetChanged();
-					break;
-				}
-			}
-		}
 	}
 
 
@@ -199,13 +131,13 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 
 
 	public static final class GridItemHandler {
+		private ViewHolder             mViewHolder;
 		private TimeKeepingListAdapter mAdapter;
-		private int                    mPosition;
 		private Time                   mTime;
 
-		public GridItemHandler( TimeKeepingListAdapter adapter, int position, Time time ) {
+		public GridItemHandler( ViewHolder viewHolder, TimeKeepingListAdapter adapter, Time time ) {
+			mViewHolder = viewHolder;
 			mAdapter = adapter;
-			mPosition = position;
 			mTime = time;
 		}
 
@@ -219,140 +151,179 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 		}
 
 		public void editTaskEvent( View view ) {
-			EventBus.getDefault()
-					.post( new EditTaskEvent( mAdapter.getData()
-													  .get( mPosition ) ) );
+			int pos = mViewHolder.getAdapterPosition();
+			if( pos != RecyclerView.NO_POSITION ) {
+				EventBus.getDefault()
+						.post( new EditTaskEvent(
+								pos,
+								mAdapter.getData()
+										.get( pos )
+						) );
+			}
 		}
 
 		public void selectItemEvent( View view ) {
-			EventBus.getDefault()
-					.post( new SelectItemEvent( mPosition ) );
+			int pos = mViewHolder.getAdapterPosition();
+			if( pos != RecyclerView.NO_POSITION ) {
+				EventBus.getDefault()
+						.post( new SelectItemEvent( pos ) );
+			}
 		}
 
 		public void editTimeEvent( View view ) {
-			EventBus.getDefault()
-					.post( new EditTimeEvent( mTime ) );
+			int pos = mViewHolder.getAdapterPosition();
+			if( pos != RecyclerView.NO_POSITION ) {
+				EventBus.getDefault()
+						.post( new EditTimeEvent(
+								pos,
+								mTime
+						) );
+			}
 		}
 
 		public void switchOnOffTimeEvent( View view ) {
-			EventBus.getDefault()
-					.post( new SwitchOnOffTimeEvent( mTime ) );
+			int pos = mViewHolder.getAdapterPosition();
+			if( pos != RecyclerView.NO_POSITION ) {
+				EventBus.getDefault()
+						.post( new SwitchOnOffTimeEvent(
+								pos,
+								mTime
+						) );
+			}
 		}
 
 		public void deleteTimeEvent( View view ) {
-			EventBus.getDefault()
-					.post( new DeleteTimeEvent( mTime ) );
+			int pos = mViewHolder.getAdapterPosition();
+			if( pos != RecyclerView.NO_POSITION ) {
+				EventBus.getDefault()
+						.post( new DeleteTimeEvent(
+								pos,
+								mTime
+						) );
+			}
 		}
 
 		public void showMenu( View view ) {
-			OnMenuItemClickListener onMenuItemClickListener = new OnMenuItemClickListener() {
-				@Override
-				public boolean onMenuItemClick( MenuItem item ) {
-					item.setChecked( !item.isChecked() );
-					return true;
-				}
-			};
-			PopupMenu menuPopup = (PopupMenu) view.getTag();
-			Time time = mAdapter.getData()
-								.get( mPosition );
-			menuPopup.show();
-			Menu     menu = menuPopup.getMenu();
-			MenuItem day0 = menu.findItem( R.id.action_week_day_0 );
-			day0.setOnMenuItemClickListener( onMenuItemClickListener );
-			MenuItem day1 = menu.findItem( R.id.action_week_day_1 );
-			day1.setOnMenuItemClickListener( onMenuItemClickListener );
-			MenuItem day2 = menu.findItem( R.id.action_week_day_2 );
-			day2.setOnMenuItemClickListener( onMenuItemClickListener );
-			MenuItem day3 = menu.findItem( R.id.action_week_day_3 );
-			day3.setOnMenuItemClickListener( onMenuItemClickListener );
-			MenuItem day4 = menu.findItem( R.id.action_week_day_4 );
-			day4.setOnMenuItemClickListener( onMenuItemClickListener );
-			MenuItem day5 = menu.findItem( R.id.action_week_day_5 );
-			day5.setOnMenuItemClickListener( onMenuItemClickListener );
-			MenuItem day6 = menu.findItem( R.id.action_week_day_6 );
-			day6.setOnMenuItemClickListener( onMenuItemClickListener );
 
-			day0.setChecked( false );
-			day1.setChecked( false );
-			day2.setChecked( false );
-			day3.setChecked( false );
-			day4.setChecked( false );
-			day5.setChecked( false );
-			day6.setChecked( false );
-			String[] days = time.getWeekDays()
-								.split( "," );
-			for( String day : days ) {
-				switch( day ) {
-					case "0":
-						day0.setChecked( true );
-						break;
-					case "1":
-						day1.setChecked( true );
-						break;
-					case "2":
-						day2.setChecked( true );
-						break;
-					case "3":
-						day3.setChecked( true );
-						break;
-					case "4":
-						day4.setChecked( true );
-						break;
-					case "5":
-						day5.setChecked( true );
-						break;
-					case "6":
-						day6.setChecked( true );
-						break;
+			int pos = mViewHolder.getAdapterPosition();
+			if( pos != RecyclerView.NO_POSITION ) {
+				OnMenuItemClickListener onMenuItemClickListener = new OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick( MenuItem item ) {
+						item.setChecked( !item.isChecked() );
+						return true;
+					}
+				};
+				PopupMenu menuPopup = (PopupMenu) view.getTag();
+				Time time = mAdapter.getData()
+									.get( pos );
+				menuPopup.show();
+				Menu     menu = menuPopup.getMenu();
+				MenuItem day0 = menu.findItem( R.id.action_week_day_0 );
+				day0.setOnMenuItemClickListener( onMenuItemClickListener );
+				MenuItem day1 = menu.findItem( R.id.action_week_day_1 );
+				day1.setOnMenuItemClickListener( onMenuItemClickListener );
+				MenuItem day2 = menu.findItem( R.id.action_week_day_2 );
+				day2.setOnMenuItemClickListener( onMenuItemClickListener );
+				MenuItem day3 = menu.findItem( R.id.action_week_day_3 );
+				day3.setOnMenuItemClickListener( onMenuItemClickListener );
+				MenuItem day4 = menu.findItem( R.id.action_week_day_4 );
+				day4.setOnMenuItemClickListener( onMenuItemClickListener );
+				MenuItem day5 = menu.findItem( R.id.action_week_day_5 );
+				day5.setOnMenuItemClickListener( onMenuItemClickListener );
+				MenuItem day6 = menu.findItem( R.id.action_week_day_6 );
+				day6.setOnMenuItemClickListener( onMenuItemClickListener );
+
+				day0.setChecked( false );
+				day1.setChecked( false );
+				day2.setChecked( false );
+				day3.setChecked( false );
+				day4.setChecked( false );
+				day5.setChecked( false );
+				day6.setChecked( false );
+				String[] days = time.getWeekDays()
+									.split( "," );
+				for( String day : days ) {
+					switch( day ) {
+						case "0":
+							day0.setChecked( true );
+							break;
+						case "1":
+							day1.setChecked( true );
+							break;
+						case "2":
+							day2.setChecked( true );
+							break;
+						case "3":
+							day3.setChecked( true );
+							break;
+						case "4":
+							day4.setChecked( true );
+							break;
+						case "5":
+							day5.setChecked( true );
+							break;
+						case "6":
+							day6.setChecked( true );
+							break;
+					}
 				}
+
+				menuPopup.setOnDismissListener( new OnDismissListener() {
+					@Override
+					public void onDismiss( PopupMenu menuPopup ) {
+						StringBuilder weekDays = new StringBuilder();
+						Menu          menu     = menuPopup.getMenu();
+						MenuItem      day0     = menu.findItem( R.id.action_week_day_0 );
+						MenuItem      day1     = menu.findItem( R.id.action_week_day_1 );
+						MenuItem      day2     = menu.findItem( R.id.action_week_day_2 );
+						MenuItem      day3     = menu.findItem( R.id.action_week_day_3 );
+						MenuItem      day4     = menu.findItem( R.id.action_week_day_4 );
+						MenuItem      day5     = menu.findItem( R.id.action_week_day_5 );
+						MenuItem      day6     = menu.findItem( R.id.action_week_day_6 );
+						if( day0.isChecked() ) {
+							weekDays.append( "0" )
+									.append( ',' );
+						}
+						if( day1.isChecked() ) {
+							weekDays.append( "1" )
+									.append( ',' );
+						}
+						if( day2.isChecked() ) {
+							weekDays.append( "2" )
+									.append( ',' );
+						}
+						if( day3.isChecked() ) {
+							weekDays.append( "3" )
+									.append( ',' );
+						}
+						if( day4.isChecked() ) {
+							weekDays.append( "4" )
+									.append( ',' );
+						}
+						if( day5.isChecked() ) {
+							weekDays.append( "5" )
+									.append( ',' );
+						}
+						if( day6.isChecked() ) {
+							weekDays.append( "6" )
+									.append( ',' );
+						}
+
+						int pos = mViewHolder.getAdapterPosition();
+						if( pos != RecyclerView.NO_POSITION ) {
+							Time time = mAdapter.getData()
+												.get( pos );
+							EventBus.getDefault()
+									.post( new SavedWeekDaysEvent(
+											pos,
+											time,
+											weekDays.toString()
+									) );
+						}
+					}
+				} );
 			}
-
-			menuPopup.setOnDismissListener( new OnDismissListener() {
-				@Override
-				public void onDismiss( PopupMenu menuPopup ) {
-					StringBuilder weekDays = new StringBuilder();
-					Menu          menu     = menuPopup.getMenu();
-					MenuItem      day0     = menu.findItem( R.id.action_week_day_0 );
-					MenuItem      day1     = menu.findItem( R.id.action_week_day_1 );
-					MenuItem      day2     = menu.findItem( R.id.action_week_day_2 );
-					MenuItem      day3     = menu.findItem( R.id.action_week_day_3 );
-					MenuItem      day4     = menu.findItem( R.id.action_week_day_4 );
-					MenuItem      day5     = menu.findItem( R.id.action_week_day_5 );
-					MenuItem      day6     = menu.findItem( R.id.action_week_day_6 );
-					if( day0.isChecked() ) {
-						weekDays.append( "0" )
-								.append( ',' );
-					}
-					if( day1.isChecked() ) {
-						weekDays.append( "1" )
-								.append( ',' );
-					}
-					if( day2.isChecked() ) {
-						weekDays.append( "2" )
-								.append( ',' );
-					}
-					if( day3.isChecked() ) {
-						weekDays.append( "3" )
-								.append( ',' );
-					}
-					if( day4.isChecked() ) {
-						weekDays.append( "4" )
-								.append( ',' );
-					}
-					if( day5.isChecked() ) {
-						weekDays.append( "5" )
-								.append( ',' );
-					}
-					if( day6.isChecked() ) {
-						weekDays.append( "6" )
-								.append( ',' );
-					}
-					Time time = mAdapter.getData()
-										.get( mPosition );
-					EventBus.getDefault()
-							.post( new SavedWeekDaysEvent( time , weekDays.toString()) );
-				}
-			} );
 		}
 	}
 }

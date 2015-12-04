@@ -3,16 +3,8 @@ package com.timekeeping.bus;
 
 import com.timekeeping.data.Time;
 
-public final class EditTaskEvent {
-	private Time mTime;
-
-
-	public EditTaskEvent( Time time ) {
-		mTime = time;
-	}
-
-
-	public Time getTime() {
-		return mTime;
+public final class EditTaskEvent extends TimeEvent {
+	public EditTaskEvent( int position, Time time ) {
+		super(position, time);
 	}
 }
