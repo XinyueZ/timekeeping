@@ -45,6 +45,7 @@
     <string name="msg_pause_all">暂停使用</string>
     <string name="msg_play_all">继续使用</string>
     <string name="msg_app_cant_be_used">对不起，因为一些问题导致我们无法继续。</string>
+    <string name="msg_duplicated_setting">对不起，你已经设置过这个时间了。</string>
 
     <string name="week_day_0">星期日</string>
     <string name="week_day_1">星期一</string>

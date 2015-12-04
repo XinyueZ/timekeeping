@@ -36,6 +36,7 @@
     <string name="msg_pause_all">Alle pausieren</string>
     <string name="msg_play_all">Jetzt geht weiter.</string>
     <string name="msg_app_cant_be_used">Sorry! Einige Fehler tauchen auf, wir können nicht weiter gehen.</string>
+    <string name="msg_duplicated_setting">Sorry! Diese Zeit war gesetzt.</string>
 
     <string name="week_day_0">Sonntag</string>
     <string name="week_day_1">Montag</string>

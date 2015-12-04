@@ -556,7 +556,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 					mRealm.addChangeListener( new RealmChangeListener() {
 						@Override
 						public void onChange() {
-							mBinding.getAdapter().notifyItemInserted( 0 );
+							mBinding.getAdapter()
+									.notifyItemInserted( 0 );
 							showStatusMessage( newTime );
 							mBinding.scheduleGv.getLayoutManager()
 											   .scrollToPosition( 0 );
@@ -566,6 +567,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 					mRealm.beginTransaction();
 					mRealm.copyToRealm( newTime );
 					mRealm.commitTransaction();
+				} else {
+					showStatusMessage( getString( R.string.msg_duplicated_setting ) );
 				}
 				results.removeChangeListener( this );
 			}
@@ -606,6 +609,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 					mRealm.commitTransaction();
 					mEdit = false;
 					results.removeChangeListener( this );
+				} else {
+					showStatusMessage( getString( R.string.msg_duplicated_setting ) );
 				}
 			}
 		} );
@@ -648,6 +653,21 @@ public class MainActivity extends BaseActivity implements OnClickListener, OnTim
 		Snackbar.make(
 				findViewById( R.id.error_content ),
 				message,
+				Snackbar.LENGTH_LONG
+		)
+				.show();
+	}
+
+	/**
+	 * Show a message.
+	 *
+	 * @param msg
+	 * 		Some text to show
+	 */
+	private void showStatusMessage( String msg ) {
+		Snackbar.make(
+				findViewById( R.id.error_content ),
+				msg,
 				Snackbar.LENGTH_LONG
 		)
 				.show();
