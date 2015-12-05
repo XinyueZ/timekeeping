@@ -93,8 +93,7 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 				BR.handler,
 				new GridItemHandler(
 						holder,
-						this,
-						entry
+						this
 				)
 		);
 		holder.mBinding.executePendingBindings();
@@ -129,12 +128,10 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 	public static final class GridItemHandler {
 		private ViewHolder             mViewHolder;
 		private TimeKeepingListAdapter mAdapter;
-		private Time                   mTime;
 
-		public GridItemHandler( ViewHolder viewHolder, TimeKeepingListAdapter adapter, Time time ) {
+		public GridItemHandler( ViewHolder viewHolder, TimeKeepingListAdapter adapter ) {
 			mViewHolder = viewHolder;
 			mAdapter = adapter;
-			mTime = time;
 		}
 
 		public boolean startActionModeEvent( View view ) {
@@ -172,7 +169,8 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 				EventBus.getDefault()
 						.post( new EditTimeEvent(
 								pos,
-								mTime
+								mAdapter.getData()
+										.get( pos )
 						) );
 			}
 		}
@@ -183,7 +181,8 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 				EventBus.getDefault()
 						.post( new SwitchOnOffTimeEvent(
 								pos,
-								mTime
+								mAdapter.getData()
+										.get( pos )
 						) );
 			}
 		}
@@ -194,7 +193,8 @@ public final class TimeKeepingListAdapter extends SelectableAdapter<TimeKeepingL
 				EventBus.getDefault()
 						.post( new DeleteTimeEvent(
 								pos,
-								mTime
+								mAdapter.getData()
+										.get( pos )
 						) );
 			}
 		}
